@@ -5,15 +5,9 @@ if(require("pacman")=="FALSE"){
   install.packages("pacman")
 } 
 
-# Install fstplyr package
-# remotes::install_github("krlmlr/fstplyr")
-
-# Install the stringi package
-# install.packages("stringi", dependencies=TRUE, INSTALL_opts = c('--no-lock'))
-
 # Load/install the other pakcages
-pacman::p_load(rstudioapi,dplyr, ggplot2, lubridate, devtools, rlang, stringi,
-               tidyr,magrittr)
+pacman::p_load(rstudioapi,dplyr, ggplot2, lubridate, devtools, tidyr,magrittr, 
+               lemis)
 
 # Setwd (set current wd where is the script, then we move back to the 
 # general folder)
@@ -22,30 +16,7 @@ setwd(dirname(current_path))
 setwd("..")
 rm(current_path)
 
-# Create a GitHub PAT
-# usethis::browse_github_pat()
-
-# Put your PAT in your .Renviron file. You can edit your .Renviron file with 
-# this function 
-# usethis::edit_r_environ()
-
-# Check that the PAT is available 
-usethis::git_sitrep()
-
-# Install Rtools from http://cran.r-project.org/bin/windows/Rtools/
-
-# Install the lemis package (download Github repo)
-# The lemis R package provides access to the United States Fish and Wildlife 
-# Service's (USFWS) Law Enforcement Management Information System (LEMIS) data 
-# on wildlife and wildlife product imports into the US.
-# devtools::install_github("ecohealthalliance/lemis")
-
-# Loading lemis package
-pacman::p_load(lemis)
-
-# Reading dataset
-# data<- lemis_data()
-# saveRDS(data, file="./data/data.rds")
+# Reading dataset 
 data<-readRDS("./data/data.rds")
 
 #### 1.   CLEANING / PREPROCESSING ####
@@ -74,5 +45,6 @@ rm(data_types)
 #### 2.0  EXPLORATORY ANALYSIS #### 
 
 #### 2.1. TAXA  ___________________________________________________________ ####
-
-
+levels(data$taxa)   # 14 levels
+ggplot(data, aes(x=taxa, fill=taxa)) + geom_bar() +
+  theme(axis.text.x = element_text(angle=60, hjust=1)) 
