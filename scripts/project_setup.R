@@ -13,7 +13,7 @@ setwd(dirname(current_path))
 setwd("..")
 rm(current_path)
 
-# Install some packages
+# Install some packages 
 install.packages("digest", dependencies=TRUE)
 devtools::install_github("ropenscilabs/datastorr")
 
@@ -24,6 +24,8 @@ devtools::install_github("ropenscilabs/datastorr")
 devtools::install_github("ecohealthalliance/lemis")
 
 # Reading dataset  - You will need to download the dataset the first time - 
+library(lemis)
 data<- lemis_data()   
+dir.create("./data")
 saveRDS(data, file="./data/data.rds")
 
