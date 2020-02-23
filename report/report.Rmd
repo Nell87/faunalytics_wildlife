@@ -95,7 +95,7 @@ rm(missing_values)
 ```
 
 ### 2.1.  EXPLORATORY ANALYSIS: individual shipments  ###
-#### 2.1.1. control_number ####
+#### 2.1.1. control_number & shipment_date ####
 **It represents a unique individual shipment processed by the USFWS.** 
 <ul>
  <li> There are 2,088,676 unique shiptments </li></br>
@@ -133,10 +133,22 @@ ggplot(unique_shipments_week, aes(x = week, y = unique_shipments, color=factor(y
 rm(unique_shipments_year)
 rm(unique_shipments_week)
 ```
-</br>
+#### 2.1.2. Imports and exports ####
+**It represents Whether the shipment is an (I)mport or (E)xport**. In this dataset, a 100% is an import. 
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+data %>% group_by(import_export) %>% 
+  summarise(total=n()/nrow(data)*100) %>% 
+  ggplot(aes(x=import_export, y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="import_export") 
+  
+```
 
 ### 2.2.  EXPLORATORY ANALYSIS: identifing the wildlife or wildlife product  ###
-The ‘control_number’ represents a unique individual shipment. The ‘species_code’, ‘taxa’, ‘class’, ‘genus’, ‘species’,‘subspecies’, ‘specifc_name’, and ‘generic_name’ columns all provide information serving to identify the wildlife or wildlife product.
+**The ‘control_number’ represents a unique individual shipment. The ‘species_code’, ‘taxa’, ‘class’, ‘genus’, ‘species’,‘subspecies’, ‘specifc_name’, and ‘generic_name’ columns all provide information serving to identify the wildlife or wildlife product.**
 
 #### 2.2.1. species_code ####
 **It represents the USFWS code for the wildlife product**
@@ -227,6 +239,305 @@ rm(genus)
 ```
 
 #### 2.2.5. species ####
+**It representss species of the wildlife product**
+<ul>
+ <li> There are 8239 species levels </li>
+ <li> The top 15 represents 42.6% of data </li>
+ <li> The top 50 represents 61.3% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+species <-data %>% group_by(species) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(species) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=species, aes(x=reorder(species, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="species") 
+
+rm(species)
+```
+
 #### 2.2.6. subspecies ####
+**It representss subspecies of the wildlife product**
+<ul>
+ <li> There are 451 subspecies levels </li>
+ <li> The top 15 just represents 2.4% of data </li>
+ <li> The top 50 just represents 2.5% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+subspecies <-data %>% group_by(subspecies) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  filter(subspecies!="other shipments") %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=subspecies, aes(x=reorder(subspecies, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="subspecies") 
+
+rm(subspecies)
+```
 #### 2.2.7. specific_name ####
+**It representss a specifc common name for the wildlife product**
+<ul>
+ <li> There are 6734 specific names levels </li>
+ <li> The top 15 represents 29.5% of data </li>
+ <li> The top 50 represents 45.6% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+specific_name <-data %>% group_by(specific_name) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(specific_name) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=specific_name, aes(x=reorder(specific_name, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="specific_name") 
+
+rm(specific_name)
+```
+
 #### 2.2.8. generic_name ####
+**It representss a general common name for the wildlife product**
+<ul>
+ <li> There are 2099 generic names levels </li>
+ <li> The top 15 represents 48.7% of data </li>
+ <li> The top 50 represents 70.8% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+generic_name <-data %>% group_by(generic_name) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(generic_name) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=generic_name, aes(x=reorder(generic_name, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="generic_name") 
+
+rm(generic_name)
+```
+### 2.3.  EXPLORATORY ANALYSIS: countries ###
+#### 2.3.1. country_origin ####
+**It representss the code for the country of origin of the wildlife product**
+<ul>
+ <li> There are 252 countries of origin </li>
+ <li> The top 15 represents 74.2% of data </li>
+ <li> The top 50 represents 94.3% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+country_origin <-data %>% group_by(country_origin) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(country_origin) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=country_origin, aes(x=reorder(country_origin, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="country_origin") 
+
+rm(country_origin)
+```
+#### 2.3.2. country_imp_exp ####
+**It representss the code for the country to/from which the wildlife product is shipped**
+<ul>
+ <li> There are 257 countries to/from which the product is shipped </li>
+ <li> The top 15 represents 75.6% of data </li>
+ <li> The top 50 represents 95.8% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+country_imp_exp <-data %>% group_by(country_imp_exp) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(country_imp_exp) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=country_imp_exp, aes(x=reorder(country_imp_exp, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="country_imp_exp") 
+
+rm(country_imp_exp)
+```
+#### 2.3.3. port ####
+**It representss the port or region of shipment entry**
+<ul>
+ <li> There are 73 ports </li>
+ <li> The top 15 represents 83.8% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+port <-data %>% group_by(port) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(port) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=port, aes(x=reorder(port, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="port") 
+
+rm(port)
+```
+#### 2.3.4. us_co ####
+**It representss the US party of the shipment**
+<ul>
+ <li> There are 126,751 US parties </li>
+ <li> The top 15 just represents 10.2% of data </li>
+ <li> The top 50 just represents 18.9% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+us_co <-data %>% group_by(us_co) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(us_co) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=us_co, aes(x=reorder(us_co, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="us_co") 
+
+rm(us_co)
+```
+#### 2.3.5. foreign_co ####
+**It representss the foreign party of the shipment**
+<ul>
+ <li> There are 237,994 foreign parties </li>
+ <li> The top 15 just represents  5.3% of data </li>
+ <li> The top 50 just represents 12.3% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+foreign_co <-data %>% group_by(foreign_co) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(foreign_co) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=foreign_co, aes(x=reorder(foreign_co, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="foreign_co") 
+
+rm(foreign_co)
+```
+### 2.4.  EXPLORATORY ANALYSIS: disposition ###
+#### 2.4.1. disposition ####
+**It represents the fate of the import**
+<ul>
+ <li> There are 5 categories: C, S, A, R and non-standard value  </li>
+ <li> The C category represents 98.3% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+disposition <-data %>% group_by(disposition) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(disposition) %>%
+  arrange(desc(total)) 
+
+ggplot(data=disposition, aes(x=reorder(disposition, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="disposition") 
+
+rm(disposition)
+```
+#### 2.4.2. disposition_date ####
+**It represents the full date when disposition occurred **
+<ul>
+ <li> While ‘shipment_date’ entries fell completely within the time period of 2000–2014, ‘disposition_date’ ranged more widely  </li></br>
+ <li>Users should be wary of any disposition date values that precede the associated shipment date, as we are unaware how this could represent an accurate accounting of the product disposition process. However, for many potential analyses, diferences in the date felds may not be a signifcant cause for concern
+because ‘shipment_date’ alone provides a sound index for those interested in temporal trends in wildlife trade</li></br>
+</ul>
+
+**It seems that 54% occur  within a month of the shipment date (most of them within a week)**
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+days<- data %>% 
+  mutate(days = as.numeric(disposition_date - shipment_date)) %>%
+  filter(days > 0 & days < 31)
+
+ggplot(days, aes(x=days))+
+  geom_histogram(color="darkblue", fill="lightblue")
+
+rm(days)
+```
+#### 2.4.3. action ####
+**Action taken by USFWS on import ((C)leared/(R)efused)**
+<ul>
+ <li> 98.7% of imports are cleared, just a 1.73% is refused  </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+action <-data %>% group_by(action) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(action) %>%
+  arrange(desc(total)) 
+
+ggplot(data=action, aes(x=reorder(action, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="action") 
+
+rm(action)
+```
+### 2.5.  EXPLORATORY ANALYSIS: wildlife product ###
+#### 2.5.1. description ####
+**It representss the type/form of the wildlife product**
+<ul>
+ <li> There are 93 types/forms </li>
+ <li> Most of them are "LIV" (29.17%), follow by TRO (16.65%) and SPR (9.43%). These three categories cover 74,59% of data</li>
+ <li> The top 50 just represents 55.2% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+description <-data %>% group_by(description) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(description) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=description, aes(x=reorder(description, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="description") 
+
+rm(description)
+
+```
+#### 2.5.2. quantity ####
+**It represents the numeric quantity of the wildlife product**
+
+#### 2.5.3. unit ####
+**It represents the unit for the numeric quantity**
+
+#### 2.5.4. value ####
+**It represents the reported value of the wildlife product in US dollars**
+
+#### 2.5.5. purpose ####
+**It represents the reason the wildlife product is being imported**
+
+#### 2.5.6. source ####
+**It represents the type of source within the origin country (e.g., wild, bred)**
+
+
+
+
