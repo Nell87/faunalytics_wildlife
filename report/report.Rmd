@@ -1,0 +1,232 @@
+---
+title: "Faunalytics Wildlife - Basic descriptives report"
+author: "Sara Marín"
+date: "23/02/2020"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 4
+    toc_float: 
+      collapsed: false
+      smooth_scroll: true
+---
+
+<html>
+  <head>
+  <style type="text/css">
+    * {
+      text-align: justify;
+    }
+    
+    h2 {
+      color: MidnightBlue;    
+      font-weight: bold;
+    }
+    
+    h3 {
+      color: MidnightBlue;    
+    }  
+    
+    h4 {
+       color: SteelBlue;    
+     
+    }
+    
+  </style>
+  </head>
+  <body>
+  
+## INTRODUCTION ##
+**This report is intended to show basic descriptives about a cleaned wildlife trade dataset** accesed with the lemis R package. This package provides access to the United States Fish and Wildlife Service's (USFWS) Law Enforcement Management Information System (LEMIS) data on wildlife and wildlife product imports into the US. This data was obtained via more than 14 years of Freedom of Information Act (FOIA) requests by EcoHealth Alliance.
+
+LEMIS wildlife trade data trends from 2000 through 2014. You can read more about this dataset [Here](https://www.nature.com/articles/s41597-020-0354-5)
+
+```{r eval=TRUE, echo=FALSE, warning=FALSE, include=FALSE} 
+#Load Libraries: p_load can install, load,  and update packages
+pacman::p_load(rstudioapi,dplyr, ggplot2, lubridate, devtools, tidyr,magrittr, 
+               lemis,zoo)
+
+# Set working directory 
+path <- getwd()
+knitr::opts_knit$set(root.dir = normalizePath(path.expand(path), 
+                                              winslash = ("/"), 
+                                              mustWork = TRUE))
+
+# Reading dataset 
+data<-readRDS("../data/data.rds")
+
+# Transform some variables to factor/numeric/datetime
+data %<>% mutate_at(c("control_number", "species_code", "taxa", "class", "genus",
+                      "species", "subspecies", "specific_name", "generic_name",
+                      "description", "country_origin", "country_imp_exp", 
+                      "purpose","source", "action", "disposition", 
+                      "disposition_year", "shipment_year", "import_export",
+                      "port", "us_co", "foreign_co", "unit"), as.factor)
+
+# Remove scientific notation
+options(scipen=999)
+rm(path)
+
+```
+### 1. Data Quality ###
+#### 1.1. Missing values ####
+**Just four variables have more than 30% missing vaues. Most of them are below 10%**
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE} 
+# Are there missing values?
+missing_values <- data %>%
+  gather(key = "key", value = "val") %>%
+  mutate(is.missing = is.na(val)) %>%
+  group_by(key, is.missing) %>%
+  summarise(num.missing = n()/nrow(data) *100) %>%
+  filter(is.missing==T) %>%
+  select(-is.missing) %>%
+  arrange(desc(num.missing)) 
+
+
+ggplot(missing_values, aes(x=reorder(key, -num.missing), y=num.missing, fill=key)) +
+  geom_bar(stat="identity") + 
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="Variable") +
+
+
+rm(missing_values)
+```
+
+### 2.1.  EXPLORATORY ANALYSIS: individual shipments  ###
+#### 2.1.1. control_number ####
+**It represents a unique individual shipment processed by the USFWS.** 
+<ul>
+ <li> There are 2,088,676 unique shiptments </li></br>
+ <li> Diferent wildlife products contained within the same shipment may be represented in the LEMIS data by multiple data rows, all of which share a common ‘control_number’. </li></br>
+ <li> All rows of data sharing the same ‘control_number’ share the same country of shipment and shipment date. </li></br>
+</ul>
+
+Let's summarized the number of unique shipments per month.
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+unique_shipments_year <-data %>% 
+  group_by(year= year(shipment_date),month = month(shipment_date)) %>%
+  summarise(unique_shipments = n_distinct(control_number)) 
+
+unique_shipments_year$date <- as.yearmon(paste(unique_shipments_year$year, 
+                                          unique_shipments_year$month), "%Y %m")
+
+ggplot(unique_shipments_year, aes(x = date, y = unique_shipments)) + 
+  geom_line(color='steelblue') + scale_x_continuous()
+
+```
+
+</br>
+
+Let's see the pattern depending on the week of the year 
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+unique_shipments_week <-data %>% 
+  group_by(year= year(shipment_date), week=week(shipment_date)) %>%
+  summarise(unique_shipments = n_distinct(control_number)) 
+
+ggplot(unique_shipments_week, aes(x = week, y = unique_shipments, color=factor(year))) + 
+  geom_line() 
+
+rm(unique_shipments_year)
+rm(unique_shipments_week)
+```
+</br>
+
+### 2.2.  EXPLORATORY ANALYSIS: identifing the wildlife or wildlife product  ###
+The ‘control_number’ represents a unique individual shipment. The ‘species_code’, ‘taxa’, ‘class’, ‘genus’, ‘species’,‘subspecies’, ‘specifc_name’, and ‘generic_name’ columns all provide information serving to identify the wildlife or wildlife product.
+
+#### 2.2.1. species_code ####
+**It represents the USFWS code for the wildlife product**
+<ul>
+ <li> There are 15,526 unique species codes </li>
+ <li> The top 15 represents 29.7% of data </li>
+ <li> The top 50 represents 50.2% of data </li>
+</ul>
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+species_code <-data %>% group_by(species_code) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+  
+ggplot(data=species_code, aes(x=reorder(species_code, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="Species Code") 
+  
+rm(species_code)
+```
+
+#### 2.2.2. taxa ####
+**It represents the USFWS-derived broad taxonomic categorization**
+<ul>
+ <li> There are 14 taxa levels </li>
+ <li> There is a ‘taxa’ field for the vast majority (>99%) of records </li>
+ <li> Most of them are mammals (28.84%), follow by shells (20.11%), reptiles (13.14%) and corals (12.48%). These four categories cover 74,59% of data</li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+taxa <-data %>% group_by(taxa) %>% 
+  summarise(total=n()/nrow(data)*100) %>%
+  arrange(desc(total)) 
+
+ggplot(data=taxa, aes(x=reorder(taxa, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="taxa") 
+
+rm(taxa)
+```
+#### 2.2.3. class ####
+**It represents the EHA-derived class-level taxonomic designation**
+<ul>
+ <li> There are 63 classes </li>
+ <li> The top 15 represents 91.96% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+class <-data %>% group_by(class) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(class) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+  
+ggplot(data=class, aes(x=reorder(class, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="class") 
+  
+rm(class)
+```
+
+
+#### 2.2.4. genus ####
+**It represents the Genus (or higher-level taxonomic name) of the wildlife product**
+<ul>
+ <li> There are 6506 genus levels </li>
+ <li> The top 15 represents 33.4% of data </li>
+ <li> The top 50 represents 57.0% of data </li>
+</ul>
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+genus <-data %>% group_by(genus) %>%
+  summarise(total=n()/nrow(data) *100) %>%
+  drop_na(genus) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=genus, aes(x=reorder(genus, -total), y=total)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(total,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="genus") 
+
+rm(genus)
+```
+
+#### 2.2.5. species ####
+#### 2.2.6. subspecies ####
+#### 2.2.7. specific_name ####
+#### 2.2.8. generic_name ####
