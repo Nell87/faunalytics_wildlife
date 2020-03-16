@@ -37,13 +37,13 @@ output:
   <body>
   
 ## INTRODUCTION ##
-**This report is intended to explore some ideas about LEMI dataset** accesed with the lemis R package. 
+**This report is intended to explore some ideas about LEMI dataset** accessed with the lemis R package. 
 LEMIS wildlife trade data trends from 2000 through 2014. You can read more about this dataset [Here](https://www.nature.com/articles/s41597-020-0354-5)
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE} 
 #Load Libraries: p_load can install, load,  and update packages
 pacman::p_load(rstudioapi,dplyr, ggplot2, lubridate, devtools, tidyr,magrittr, 
-               lemis,zoo,gdata, knitr)
+               lemis,zoo,gdata, knitr, DT, plotly)
 
 # Set working directory 
 path <- getwd()
@@ -67,13 +67,13 @@ options(scipen=999)
 rm(path)
 
 ```
-### A. Things to start looking at/thinking about ###
+### A. THINGS TO START LOOKING AT/THINKING ABOUT ###
 
 #### 1) Excluding plants and microorganisms based on the kingdom level ####
 
-**We classified 99.23 % of data by kingdoms using the class, taxa, genus, generic name, species and description columns**. This way,  we excluded those elements from fungi, plantae, bacteria, chromista and unspecified kingdoms. 
+**We classified 99.23 % of data by kingdoms using the class, taxa, genus, generic name, species and description columns**. This way,  we excluded those elements belonging to fungi, plantae, bacteria, chromista and unspecified kingdoms. 
 
-**Based on the kingdom designation, we were able to classify 92.67% of data**
+**Based just on the kingdom designation, we were able to classify 92.67% of data**
 
 * **Bacterias**: Gammaproteobacteria
 
@@ -184,8 +184,7 @@ data <- data %>% filter(taxa!="plant")
 ```
 
 #### 2) Distinct species in the dataset? ####
-**It seeems that there are 8,083 different species**. We excluded some elements like "freshwater sp.", "including goldfish", "marine sp", "in trop fish &" and "sp", due to  
-they are not specific species. 
+**It seems that there are 8,083 different species**.  We decided to exclude some elements like "freshwater sp.", "including goldfish", "marine sp", "in trop fish &" and "sp", due to they are not specific species. 
 
 * The top 15 represents 26.53 % of data
 
@@ -197,12 +196,15 @@ data_species<- data %>% filter(species!="(freshwater sp.)" &
                           species!="(marine sp.)" & 
                           species != "sp." & species != "in trop fish &")
                             
-n_distinct(data_species$species, na.rm = TRUE) # <- 8,083
+# n_distinct(data_species$species, na.rm = TRUE) # <- 8,083
 
 species <-data_species %>% group_by(species) %>%
-  summarise(total=n(), percentage= n()/nrow(data) *100) %>%
+  summarise(total=n(), percentage= round(n()/nrow(data) *100,2)) %>%
   drop_na(species) %>%
   arrange(desc(total)) %>% top_n(15, total) 
+
+DT::datatable(species) %>%
+  formatCurrency('total',currency = "", interval = 3, mark = ",")
 
 ggplot(data=species, aes(x=reorder(species, -percentage), y=percentage)) + 
   geom_bar(stat="identity",fill="steelblue") +
@@ -223,15 +225,16 @@ value_wildlifeproduct_dispyear <-data %>%
   group_by(disposition_year) %>%
   summarise(value = sum(as.numeric(value)))
 
-kable(value_wildlifeproduct_dispyear, format.args = list(big.mark = ",", 
-  scientific = FALSE)) 
+DT::datatable(value_wildlifeproduct_dispyear) %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
 
 ggplot(value_wildlifeproduct_dispyear, aes(x = disposition_year, y=value)) + 
   geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
            fill="blue") +
   geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
   scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-  labs(y = "Dollars",  x="Disposition Year") 
+  labs(y = "Dollars",  x="Disposition Year")  +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(value_wildlifeproduct_dispyear)
 ```
@@ -245,69 +248,79 @@ value_wildlifeproduct_shipyear <-data %>%
   group_by(shipment_year) %>%
   summarise(value = sum(as.numeric(value)))
 
-kable(value_wildlifeproduct_shipyear, "markdown", format.args = list(big.mark = ",", 
-  scientific = FALSE), align = "r")
+DT::datatable(value_wildlifeproduct_shipyear) %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
 
 ggplot(value_wildlifeproduct_shipyear, aes(x = shipment_year, y=value)) + 
   geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
            fill="blue") +
   geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
   scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-  labs(y = "Dollars",  x="Shipment Year") 
+  labs(y = "Dollars",  x="Shipment Year") +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(value_wildlifeproduct_shipyear)
 ```
 
 #### 5)  Quantity brought by year ####  
 
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 quantity_year<- data %>% filter(unit=="NO" | unit=="KG") # 5,107,119 -> 5,078,227
 quantity_year_summary<- quantity_year %>% group_by(shipment_year, unit) %>%
   summarise(quantity = sum(quantity)) 
 
 # Number per year
+DT::datatable(quantity_year_summary[quantity_year_summary$unit== "NO", ])  %>%
+  formatCurrency('quantity',currency = "", interval = 3, mark = ",")
+
 ggplot(quantity_year_summary[quantity_year_summary$unit== "NO", ],
        aes(x = shipment_year, y=quantity)) + 
        geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
            fill="blue") +
        geom_text(aes(label = scales::comma(quantity)), vjust=-1, size=2) +
-       labs(y = "Number",  x="Shipment Year") 
+       labs(y = "Number",  x="Shipment Year") +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 # Kilograms per year
+DT::datatable(quantity_year_summary[quantity_year_summary$unit== "KG", ]) %>%
+  formatCurrency('quantity',currency = "", interval = 3, mark = ",")
+
 ggplot(quantity_year_summary[quantity_year_summary$unit== "KG", ], 
        aes(x = shipment_year, y=quantity)) + 
        geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
            fill="blue") +
        geom_text(aes(label = scales::comma(quantity)), vjust=-1, size=2) +
-       labs(y = "Kilograms",  x="Shipment Year") 
+       labs(y = "Kilograms",  x="Shipment Year")  +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(quantity_year, quantity_year_summary)
 ```
 
 #### 6)  Total value of import by taxa ####  
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 value_bytaxa<- data %>% group_by(taxa) %>%
   filter(!is.na(value))  %>%
   summarise(value=sum(as.numeric(value))) %>%
   arrange(desc(value))
 
-kable(value_bytaxa, "markdown", format.args = list(big.mark = ",", 
-  scientific = FALSE), align = "r")
+DT::datatable(value_bytaxa) %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
 
 ggplot(value_bytaxa, aes(x = reorder(taxa, -value), y=value)) + 
        geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
            fill="blue") +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Taxa") 
+       labs(y = "Value",  x="Taxa") +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(value_bytaxa)
 
 ```
 
-#### 7) Total value of import by taxa by year ####  (value, taxa, year)
+#### 7) Total value of import by taxa by year ####  
 
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 value_bytaxayear<- data %>% group_by(taxa, shipment_year) %>%
   filter(!is.na(value))  %>%
   summarise(value=sum(as.numeric(value))) 
@@ -324,24 +337,42 @@ value_bytaxayear02<- value_bytaxayear %>% filter(taxa %in% c("amphibian",
 
 value_bytaxayear03<- value_bytaxayear %>% filter(taxa %in% c("annelid",
                                                              "spider"))
+DT::datatable(value_bytaxayear) %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
+```
 
+**Here you have different graphs with some taxa elements**
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 ggplot(value_bytaxayear01,aes(x = shipment_year, y=value, colour=taxa, group=1)) + 
        geom_line(aes(group = taxa)) +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Taxa") 
+       labs(y = "Value",  x="Taxa") +
+        theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 ggplot(value_bytaxayear02,aes(x = shipment_year, y=value, colour=taxa, group=1)) + 
        geom_line(aes(group = taxa)) +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Taxa") 
+       labs(y = "Value",  x="Taxa") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 ggplot(value_bytaxayear03,aes(x = shipment_year, y=value, colour=taxa, group=1)) + 
        geom_line(aes(group = taxa)) +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Taxa") 
+       labs(y = "Value",  x="Taxa") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+```
+
+**Here you have a dynamic graph, where you can choose the specific taxa elements you want to display**
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_bytaxayear %>%  
+  plot_ly(x = ~ shipment_year) %>% 
+  add_lines(y = ~ value, 
+            color = ~ taxa,
+             visible="legendonly")
 
 rm(value_bytaxa, value_bytaxayear, value_bytaxayear01, value_bytaxayear02, value_bytaxayear03)
 
@@ -349,14 +380,14 @@ rm(value_bytaxa, value_bytaxayear, value_bytaxayear01, value_bytaxayear02, value
  
 #### 8) Total value of import by description ####  
 
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 value_bydescription<- data %>% group_by(description) %>%
   filter(!is.na(value))  %>%
   summarise(value=sum(as.numeric(value))) %>%
   arrange(desc(value))
 
-kable(value_bydescription, "markdown", format.args = list(big.mark = ",", 
-  scientific = FALSE), align = "r")
+DT::datatable(value_bydescription)  %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
 
 value_bydescription %>% top_n(15) %>%
 ggplot(aes(x = reorder(description, -value), y=value)) + 
@@ -364,15 +395,16 @@ ggplot(aes(x = reorder(description, -value), y=value)) +
            fill="blue") +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Description") 
+       labs(y = "Value",  x="Description") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(value_bydescription)
 
 
 ```
-#### 9) Total value of import by description by year ####  (value, description, year)
+#### 9) Total value of import by description by year ####  
 
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 value_bydescriptionyear<- data %>% group_by(description, shipment_year) %>%
   filter(!is.na(value))  %>%
   summarise(value=sum(as.numeric(value))) 
@@ -389,99 +421,163 @@ value_bydescriptionyear03<- value_bydescriptionyear %>%
   filter(description %in% c("TRI", "LPL", "IVP",
                             "SPE", "SHE"))
 
-value_bytaxayear03<- value_bytaxayear %>% filter(taxa %in% c("annelid",
-                                                             "spider"))
+DT::datatable(value_bydescriptionyear)  %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
 
+```
+
+**Here you have different graphs with some descriptions** 
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 ggplot(value_bydescriptionyear01,aes(x = shipment_year, y=value, 
                                      colour=description, group=1)) + 
        geom_line(aes(group = description)) +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Description") 
+       labs(y = "Value",  x="Description") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 ggplot(value_bydescriptionyear02,aes(x = shipment_year, y=value, 
                                      colour=description, group=1)) + 
        geom_line(aes(group = description)) +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Description") 
+       labs(y = "Value",  x="Description") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 ggplot(value_bydescriptionyear03,aes(x = shipment_year, y=value, 
                                      colour=description, group=1)) + 
        geom_line(aes(group = description)) +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Description") 
+       labs(y = "Value",  x="Description") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+```
 
-rm(value_bydescriptionyear, value_bydescriptionyear01, value_bydescriptionyear02,
-   value_bydescriptionyear03)
+**Here you have a dynamic graph, where you can choose the specific descriptions you want to display**
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_bydescriptionyear %>%  
+  plot_ly(x = ~ shipment_year) %>% 
+  add_lines(y = ~ value, 
+            color = ~ description,
+             visible="legendonly")
+
+rm(value_bydescriptionyear, value_bydescriptionyear01, value_bydescriptionyear02, value_bydescriptionyear03)
 ```
 
 
-### C. Average unit values ###
-10)    Average value of import by taxa (“value”/”quantity” for those with “NO” [number] in the “unit” column) by “taxa”
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+### B. AVERAGE UNIT VALUES ###
+#### 10) Average value of import by taxa (for "NO" units) ####  
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 avgimport_bytaxa_no<- data %>% 
   filter(unit=="NO" & quantity != 0) %>%
   mutate(import=value/quantity) %>%
   group_by(taxa) %>%
   filter(!is.na(import))  %>%
-  summarise(import_mean=mean(as.numeric(import)), 
-            import_median = median(as.numeric(import))) %>%
-  arrange(desc(import_mean))
+  summarise(import_mean=round(mean(as.numeric(import)),2), 
+            import_median = round(median(as.numeric(import))),2) %>%
+  arrange(desc(import_median)) 
 
-kable(avgimport_bytaxa_no, "markdown", format.args = list(big.mark = ",", 
-  scientific = FALSE), align = "r")
+DT::datatable(avgimport_bytaxa_no)  %>%
+  formatCurrency('import_median',currency = "", interval = 3, mark = ",")
 
-ggplot(avgimport_bytaxa_no, aes(x = reorder(taxa, -import), y=value)) + 
+ggplot(avgimport_bytaxa_no, aes(x = reorder(taxa, -import_median), y=import_median)) + 
        geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
            fill="blue") +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Import",  x="Taxa") 
+       geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
+       labs(y = "Median Import",  x="Taxa") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(avgimport_bytaxa_no)
 ```
 
-10) Average value of import by description (“value”/”quantity” for those with “NO” [number] “unit” column) by “description”
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+#### 11) Average value of import by description (for "NO" units) #### 
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+avgimport_bydescrip_no<- data %>% 
+  filter(unit=="NO" & quantity != 0) %>%
+  mutate(import=value/quantity) %>%
+  group_by(description) %>%
+  filter(!is.na(import))  %>%
+  summarise(import_mean=round(mean(as.numeric(import)),2), 
+            import_median = round(median(as.numeric(import))),2) %>%
+  arrange(desc(import_median))
 
+DT::datatable(avgimport_bydescrip_no)  %>%
+  formatCurrency('import_median',currency = "", interval = 3, mark = ",")
 
+avgimport_bydescrip_no %>% top_n(15, wt=import_median) %>%
+ggplot(aes(x = reorder(description, -import_median), y=import_median)) + 
+       geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+       geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
+       labs(y = "Median Import",  x="Description") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+rm(avgimport_bydescrip_no)
 
 ```
  
+#### 12) Average value of import by taxa (for "KG" units) #### 
 
-11) Average value of import (value/quantity for those with “KG” [kilogram] “unit” column) by “taxa”
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 avgimport_bytaxa_kg<- data %>% 
   filter(unit=="KG" & quantity != 0) %>%
   mutate(import=value/quantity) %>%
   group_by(taxa) %>%
   filter(!is.na(import))  %>%
-  summarise(import_mean=mean(as.numeric(import)), 
-            import_median = median(as.numeric(import))) %>%
-  arrange(desc(import_mean))
+  summarise(import_mean=round(mean(as.numeric(import)),2), 
+            import_median = round(median(as.numeric(import))),2) %>%
+  arrange(desc(import_median))
 
-kable(avgimport_bytaxa_kg, "markdown", format.args = list(big.mark = ",", 
-  scientific = FALSE), align = "r")
+DT::datatable(avgimport_bytaxa_kg)  %>%
+  formatCurrency('import_median',currency = "", interval = 3, mark = ",")
 
-ggplot(avgimport_bytaxa_kg, aes(x = reorder(taxa, -import), y=value)) + 
+ggplot(avgimport_bytaxa_kg, aes(x = reorder(taxa, -import_median), y=import_median)) + 
        geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
            fill="blue") +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Import",  x="Taxa") 
+       geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
+       labs(y = "Median Import",  x="Taxa") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(avgimport_bytaxa_kg)
 
 
 ```
 
-12) Average value of import (value/quantity for those with “KG” [kilogram] “unit” column) by “description”
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+#### 13) Average value of import by description (for "KG" units) #### 
 
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+avgimport_bydescription_kg<- data %>% 
+  filter(unit=="KG" & quantity != 0) %>%
+  mutate(import=value/quantity) %>%
+  group_by(description) %>%
+  filter(!is.na(import))  %>%
+  summarise(import_mean=round(mean(as.numeric(import)),2), 
+            import_median = round(median(as.numeric(import))),2) %>%
+  arrange(desc(import_median))
+
+DT::datatable(avgimport_bydescription_kg)  %>%
+  formatCurrency('import_median',currency = "", interval = 3, mark = ",")
+
+avgimport_bydescription_kg %>% top_n(15, wt=import_median) %>%
+ggplot(aes(x = reorder(description, -import_median), y=import_median)) + 
+       geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+       geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
+       labs(y = "Median Import",  x="Description") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+rm(avgimport_bytaxa_kg)
 
 
 ```
-Sources: https://www.iucnredlist.org/ , http://www.catalogueoflife.org/ ,
-https://plants.usda.gov/classification.html 
+
+**Sources:** 
+
+* https://www.iucnredlist.org/ 
+* http://www.catalogueoflife.org/ 
+* https://plants.usda.gov/classification.html 
