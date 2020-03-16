@@ -1,0 +1,382 @@
+---
+title: "Faunalytics Wildlife"
+date: "10/03/2020"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 4
+    toc_float: 
+      collapsed: false
+      smooth_scroll: true
+---
+
+<html>
+  <head>
+  <style type="text/css">
+    * {
+      text-align: justify;
+    }
+    
+    h2 {
+      color: MidnightBlue;    
+      font-weight: bold;
+    }
+    
+    h3 {
+      color: MidnightBlue;    
+    }  
+    
+    h4 {
+       color: SteelBlue;    
+     
+    }
+    
+  </style>
+  </head>
+  <body>
+  
+## INTRODUCTION ##
+**This report is intended to explore some ideas about LEMI dataset** accesed with the lemis R package. 
+LEMIS wildlife trade data trends from 2000 through 2014. You can read more about this dataset [Here](https://www.nature.com/articles/s41597-020-0354-5)
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE} 
+#Load Libraries: p_load can install, load,  and update packages
+pacman::p_load(rstudioapi,dplyr, ggplot2, lubridate, devtools, tidyr,magrittr, 
+               lemis,zoo,gdata, knitr)
+
+# Set working directory 
+path <- getwd()
+knitr::opts_knit$set(root.dir = normalizePath(path.expand(path), 
+                                              winslash = ("/"), 
+                                              mustWork = TRUE))
+
+# Reading dataset 
+data<-readRDS("../data/data.rds")
+
+# Transform some variables to factor/numeric/datetime
+data %<>% mutate_at(c("control_number", "species_code", "taxa", "class", "genus",
+                      "species", "subspecies", "specific_name", "generic_name",
+                      "description", "country_origin", "country_imp_exp", 
+                      "purpose","source", "action", "disposition", 
+                      "disposition_year", "shipment_year", "import_export",
+                      "port", "us_co", "foreign_co", "unit"), as.factor)
+
+# Remove scientific notation
+options(scipen=999)
+rm(path)
+
+```
+### A. Things to start looking at/thinking about ###
+
+#### 1) Excluding plants and microorganisms based on the kingdom level ####
+
+**We classified 99.23 % of data by kingdoms using the class, taxa, genus, generic name, species and description columns**. This way,  we excluded those elements from fungi, plantae, bacteria, chromista and unspecified kingdoms. 
+
+**Based on the kingdom designation, we were able to classify 92.67% of data**
+
+* **Bacterias**: Gammaproteobacteria
+
+* **Chromista**: Phaeophyceae
+
+* **Plantae**: Cycadopsida, Liliopsida, Magnoliopsida, Pinopsida, Polypodiopsida
+
+* **Fungi**: Agaricomycetes, Chytridiomycetes	
+
+* **Animalia**: Actinopterygii, Amphibia, Anthozoa, Arachnida, Ascidiacea, 
+Asteroidea, Aves, Bivalvia, Branchiopoda, Calcarea, Cephalaspidomorphi,
+Cephalopoda, Cestoda, Chilopoda, Clitellata, Cubozoa, Demospongiae, Diplopoda,
+Echinoidea, Elasmobranchii, Enteropneusta, Eurotatoria,Gastropoda, Gymnolaemata,
+Hexactinellida, Hexanauplia, Holocephali, Holothuroidea, Hoplonemertea, Hydrozoa,
+Insecta, Leptocardii, Malacostraca, Mammalia, Maxillopoda,Merostomata, Myxini,
+Ophiuroidea, Ostracoda, Pilidiophora, Polychaeta, Polyplacophora, Pycnogonida,
+Reptilia, Sarcopterygii, Scaphopoda, Scyphozoa, Secernentea, Sipunculidea,
+Tentaculata, Thaliacea, Trematoda
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE} 
+# Classifying classes by kingdom 
+classes<-data %>% drop_na(class) %>% group_by(class) %>% summarise(N=n())
+
+animalia_kingdom <- c("Actinopterygii", "Amphibia", "Anthozoa", "Arachnida",
+                      "Ascidiacea", "Asteroidea", "Aves", "Bivalvia",
+                      "Branchiopoda", "Calcarea", "Cephalaspidomorphi",
+                      "Cephalopoda", "Cestoda", "Chilopoda", "Clitellata",
+                      "Crinoidea", "Cubozoa", "Demospongiae", "Diplopoda",
+                      "Echinoidea", "Elasmobranchii", "Enteropneusta",
+                      "Eurotatoria", "Gastropoda", "Gymnolaemata",
+                      "Hexactinellida","Hexanauplia", "Holocephali",
+                      "Holothuroidea", "Hoplonemertea", "Hydrozoa", "Insecta",
+                      "Leptocardii", "Malacostraca", "Mammalia", "Maxillopoda",
+                      "Merostomata", "Myxini", "Ophiuroidea", "Ostracoda",
+                      "Pilidiophora", "Polychaeta", "Polyplacophora",
+                      "Pycnogonida", "Reptilia", "Sarcopterygii", "Scaphopoda",
+                      "Scyphozoa", "Secernentea", "Sipunculidea", "Tentaculata",
+                      "Thaliacea", "Trematoda")
+
+fungi_kingdom <-c("Agaricomycetes", "Chytridiomycetes")
+
+plantae_kingdom<- c("Cycadopsida", "Liliopsida", "Magnoliopsida", "Pinopsida", 
+                    "Polypodiopsida", "Ulvophyceae")
+
+bacterias_kingdom <- c("Gammaproteobacteria")
+
+chromista_kingdom <- c("Phaeophyceae")
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Adding kingdom level based on class
+data$kingdom<- ifelse(data$class %in% animalia_kingdom, "Animalia",
+               ifelse(data$class %in% fungi_kingdom, "Fungi",        
+               ifelse(data$class %in% plantae_kingdom, "Plantae", 
+               ifelse(data$class %in% bacterias_kingdom, "Bacteria",                 
+               ifelse(data$class %in% chromista_kingdom, "Chromista", "Other"                              )))))
+
+rm(classes, animalia_kingdom, bacterias_kingdom, chromista_kingdom,
+   plantae_kingdom, fungi_kingdom)
+
+# Adding kingdom level based on genus
+data$kingdom[which(data$genus=="Other live inverts" | data$genus=="Animals" |
+                   data$genus=="Corals"| data$genus=="Dugesia"|data$genus=="Nemertea" |
+                   data$genus=="Mollusca" | data$genus=="Xenoturbella" |
+                   data$genus=="Chondrichthyes" | data$genus=="Chordata" | 
+                   data$genus=="Paracatenula" |  data$genus=="Porifera")] <- "Animalia"
+                                                         # 403,596  --> 299,674
+
+# Adding kingdom level based on taxa
+data$kingdom[which(data$taxa=="crustacean" | data$taxa=="fish" | data$taxa=="coral"|
+                   data$taxa=="shell")] <- "Animalia"   # 299,673  --> 58,883
+
+data$kingdom[which(data$taxa=="plant")] <- "Plantae"    #  58,883   --> 58,855
+
+# Adding kingdom level based on generic name
+data$kingdom[which(data$generic_name=="OTHER INVERTEBRATE" |   
+                   data$generic_name=="SHELL" |
+                   data$generic_name=="CORAL" | 
+                   data$generic_name=="WORM")] <- "Animalia"  # 58,855 <- 40,277
+
+# Adding kingdom level based on species
+data$kingdom[which(data$species=="freshwater fish" | 
+                   data$species=="invertebrates")] <- "Animalia" # 40,277 <- 40,275
+
+# Adding kingdom level based on description
+data$kingdom[which(data$description=="BOC" | data$description=="BOD" |
+                   data$description=="BON" | data$description=="BOP" |
+                   data$description=="CAP" | data$description=="CAV" | 
+                   data$description=="CLA" | data$description=="CLA" | 
+                   data$description=="MEA" | data$description=="EGG" | 
+                   data$description=="EGL" | data$description=="FEA" | 
+                   data$description=="FIG" | data$description=="IVC" | 
+                   data$description=="LPL" | data$description=="LPS" |
+                   data$description=="PLA" | data$description=="SKE" |
+                   data$description=="SKI" | data$description=="SKP" |
+                   data$description=="SKU" | data$description=="TEE" |
+                   data$description=="TRO")] <- "Animalia" # 40,275 <- 32,048
+
+data$kingdom[which(data$description=="CUT" | data$description=="DPL" |
+                   data$description=="LOG" | data$description=="LVS" |
+                   data$description=="WPR")] <- "Plantae" 
+                                                                # 32,048 <- 32, 020
+
+# Let's exclude those elements from fungi, plantae, bacteria, chromista and unspecified kingdoms. 
+data <- data %>% filter(kingdom=="Animalia") 
+data <- data %>% filter(taxa!="plant") 
+
+```
+
+#### 2) Distinct species in the dataset? ####
+**It seeems that there are 8,083 different species**. We excluded some elements like "freshwater sp.", "including goldfish", "marine sp", "in trop fish &" and "sp", due to  
+they are not specific species. 
+
+* The top 15 represents 26.53 % of data
+
+* The top 50 represents 41.46 % of data
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+data_species<- data %>% filter(species!="(freshwater sp.)" & 
+                          species!= "(including goldfish)" &
+                          species!="(marine sp.)" & 
+                          species != "sp." & species != "in trop fish &")
+                            
+n_distinct(data_species$species, na.rm = TRUE) # <- 8,083
+
+species <-data_species %>% group_by(species) %>%
+  summarise(total=n(), percentage= n()/nrow(data) *100) %>%
+  drop_na(species) %>%
+  arrange(desc(total)) %>% top_n(15, total) 
+
+ggplot(data=species, aes(x=reorder(species, -percentage), y=percentage)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(percentage,2)))+
+  theme(axis.text.x = element_text(hjust=1, angle=60)) +
+  labs(y = "Percentage",  x="species") 
+
+rm(data_species,species)
+```
+
+
+#### 3) Total value of the wildlife product(s) in US dollars, measured by disposition year ####   
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE,out.width='90%'}
+value_wildlifeproduct_dispyear <-data %>% 
+  filter(!is.na(value))  %>%
+  filter(!is.na(disposition_year))  %>%
+  group_by(disposition_year) %>%
+  summarise(value = sum(as.numeric(value)))
+
+kable(value_wildlifeproduct_dispyear, format.args = list(big.mark = ",", 
+  scientific = FALSE)) 
+
+ggplot(value_wildlifeproduct_dispyear, aes(x = disposition_year, y=value)) + 
+  geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+  geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
+  scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+  labs(y = "Dollars",  x="Disposition Year") 
+
+rm(value_wildlifeproduct_dispyear)
+```
+
+#### 4) Total value of the wildlife product(s) in US dollars, measured by shipment year ####  
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%' }
+value_wildlifeproduct_shipyear <-data %>% 
+  filter(!is.na(value))  %>%
+  filter(!is.na(shipment_year))  %>%
+  group_by(shipment_year) %>%
+  summarise(value = sum(as.numeric(value)))
+
+kable(value_wildlifeproduct_shipyear, "markdown", format.args = list(big.mark = ",", 
+  scientific = FALSE), align = "r")
+
+ggplot(value_wildlifeproduct_shipyear, aes(x = shipment_year, y=value)) + 
+  geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+  geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
+  scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+  labs(y = "Dollars",  x="Shipment Year") 
+
+rm(value_wildlifeproduct_shipyear)
+```
+
+#### 5)  Quantity brought by year ####  
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+quantity_year<- data %>% filter(unit=="NO" | unit=="KG") # 5,107,119 -> 5,078,227
+quantity_year_summary<- quantity_year %>% group_by(shipment_year, unit) %>%
+  summarise(quantity = sum(quantity)) 
+
+# Number per year
+ggplot(quantity_year_summary[quantity_year_summary$unit== "NO", ],
+       aes(x = shipment_year, y=quantity)) + 
+       geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+       geom_text(aes(label = scales::comma(quantity)), vjust=-1, size=2) +
+       labs(y = "Number",  x="Shipment Year") 
+
+# Kilograms per year
+ggplot(quantity_year_summary[quantity_year_summary$unit== "KG", ], 
+       aes(x = shipment_year, y=quantity)) + 
+       geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+       geom_text(aes(label = scales::comma(quantity)), vjust=-1, size=2) +
+       labs(y = "Kilograms",  x="Shipment Year") 
+
+rm(quantity_year, quantity_year_summary)
+```
+
+#### 6)  Total value of import by taxa ####  
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+value_bytaxa<- data %>% group_by(taxa) %>%
+  filter(!is.na(value))  %>%
+  summarise(value=sum(as.numeric(value))) %>%
+  arrange(desc(value))
+
+kable(value_bytaxa, "markdown", format.args = list(big.mark = ",", 
+  scientific = FALSE), align = "r")
+
+ggplot(value_bytaxa, aes(x = reorder(taxa, -value), y=value)) + 
+       geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
+       labs(y = "Value",  x="Taxa") 
+
+rm(value_bytaxa)
+
+```
+
+#### 7) Total value of import by taxa by year ####  (value, taxa, year)
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+value_bytaxayear<- data %>% group_by(taxa, shipment_year) %>%
+  filter(!is.na(value))  %>%
+  summarise(value=sum(as.numeric(value))) 
+
+value_bytaxayear01<- value_bytaxayear %>% filter(taxa=="mammal"|taxa== "shell"|
+                                                 taxa=="fish" | taxa=="reptile"|
+                                                 taxa=="bird"| taxa=="insect" )
+
+value_bytaxayear02<- value_bytaxayear %>% filter(!taxa %in% c("mammal", "shell", 
+                                                              "fish", "bird", 
+                                                              "reptile", "insect"))
+
+ggplot(value_bytaxayear01,aes(x = shipment_year, y=value, colour=taxa, group=1)) + 
+       geom_line(aes(group = taxa)) +
+       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
+       labs(y = "Value",  x="Taxa") 
+
+ggplot(value_bytaxayear02,aes(x = shipment_year, y=value, colour=taxa, group=1)) + 
+       geom_line(aes(group = taxa)) +
+       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
+       labs(y = "Value",  x="Taxa") 
+
+```
+ 
+#### 8) Total value of import by description ####  
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+
+
+
+```
+#### 9) Total value of import by description by year ####  (value, description, year)
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+
+
+
+```
+
+
+### C. Average unit values ###
+9)    Average value of import by taxa (“value”/”quantity” for those with “NO” [number] in the “unit” column) by “taxa”
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+
+
+```
+
+10) Average value of import by description (“value”/”quantity” for those with “NO” [number] “unit” column) by “description”
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+
+
+
+```
+ 
+
+11) Average value of import (value/quantity for those with “KG” [kilogram] “unit” column) by “taxa”
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+
+
+
+```
+
+12) Average value of import (value/quantity for those with “KG” [kilogram] “unit” column) by “description”
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+
+
+
+```
+Sources: https://www.iucnredlist.org/ , http://www.catalogueoflife.org/ ,
+https://plants.usda.gov/classification.html 
