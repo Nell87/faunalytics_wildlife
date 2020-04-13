@@ -1,0 +1,15 @@
+--- 
+title: "A Minimal Book Example"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
+---
+
+# Introduction
+**This report is intended to explore some ideas about LEMI dataset** accessed with the lemis R package. 
+LEMIS wildlife trade data trends from 2000 through 2014. You can read more about this dataset [Here](https://www.nature.com/articles/s41597-020-0354-5)
+

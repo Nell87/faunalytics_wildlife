@@ -1,0 +1,153 @@
+# Trends over time
+Let's explore how some trends change over time. 
+
+## Shipments
+**Let's summarized the number of unique shipments per month.**
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+unique_shipments_year <-data %>% 
+  group_by(year= year(shipment_date),month = month(shipment_date)) %>%
+  summarise(unique_shipments = n_distinct(control_number)) 
+
+unique_shipments_year$date <- as.yearmon(paste(unique_shipments_year$year, 
+                                          unique_shipments_year$month), "%Y %m")
+
+ggplot(unique_shipments_year, aes(x = date, y = unique_shipments)) + 
+  geom_line(color='steelblue') + scale_x_continuous()
+```
+
+**Let's see the pattern depending on the week of the year**
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+unique_shipments_week <-data %>% 
+  group_by(year= year(shipment_date), week=week(shipment_date)) %>%
+  summarise(unique_shipments = n_distinct(control_number)) 
+
+ggplot(unique_shipments_week, aes(x = week, y = unique_shipments, color=factor(year))) + 
+  geom_line() 
+
+rm(unique_shipments_year)
+rm(unique_shipments_week)
+```
+
+## Import (US dollars)
+### Measured by disposition year
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE,out.width='90%'}
+value_wildlifeproduct_dispyear <-data %>% 
+  filter(!is.na(value))  %>%
+  filter(!is.na(disposition_year))  %>%
+  group_by(disposition_year) %>%
+  summarise(value = sum(as.numeric(value)))
+
+DT::datatable(value_wildlifeproduct_dispyear) %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
+
+ggplot(value_wildlifeproduct_dispyear, aes(x = disposition_year, y=value)) + 
+  geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+  geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
+  scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+  labs(y = "Dollars",  x="Disposition Year")  +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+rm(value_wildlifeproduct_dispyear)
+```
+
+### Measured by shipment year
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%' }
+value_wildlifeproduct_shipyear <-data %>% 
+  filter(!is.na(value))  %>%
+  filter(!is.na(shipment_year))  %>%
+  group_by(shipment_year) %>%
+  summarise(value = sum(as.numeric(value)))
+
+DT::datatable(value_wildlifeproduct_shipyear) %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
+
+ggplot(value_wildlifeproduct_shipyear, aes(x = shipment_year, y=value)) + 
+  geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
+           fill="blue") +
+  geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
+  scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+  labs(y = "Dollars",  x="Shipment Year") +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+rm(value_wildlifeproduct_shipyear)
+```
+
+### By taxa and shipment year
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_bytaxayear<- data %>% group_by(taxa, shipment_year) %>%
+  filter(!is.na(value))  %>%
+  summarise(value=sum(as.numeric(value))) 
+
+DT::datatable(value_bytaxayear) %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
+```
+
+**Here you have a dynamic graph, where you can choose the specific taxa elements you want to display**
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_bytaxayear %>%  
+  plot_ly(x = ~ shipment_year) %>% 
+  add_lines(y = ~ value, 
+            color = ~ taxa,
+             visible="legendonly")
+
+rm(value_bytaxayear)
+```
+### By description and shipment year
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_bydescriptionyear<- data %>% group_by(description, shipment_year) %>%
+  filter(!is.na(value))  %>%
+  summarise(value=sum(as.numeric(value))) 
+
+DT::datatable(value_bydescriptionyear)  %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
+
+```
+
+**Here you have a dynamic graph, where you can choose the specific descriptions you want to display**
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_bydescriptionyear %>%  
+  plot_ly(x = ~ shipment_year) %>% 
+  add_lines(y = ~ value, 
+            color = ~ description,
+             visible="legendonly")
+
+rm(value_bydescriptionyear)
+```
+
+
+## Quantity (number of items and kg)
+**Let's summarized the quantity brought per year**. We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%' }
+quantity_year<- data %>% filter(unit=="Number"| unit=="Kilograms") 
+                                           # 5,451,832 -> 5,421,730 rows
+
+quantity_year_summary<- quantity_year %>% 
+  group_by(shipment_year, unit) %>%
+  summarise(quantity = sum(quantity)) 
+
+DT::datatable(quantity_year_summary) %>% formatCurrency('quantity',
+                                         currency = "",
+                                         interval = 3, mark = ",")
+
+ggplot(quantity_year_summary[quantity_year_summary$unit== "Number", ],
+       aes(x = shipment_year, y=quantity)) + 
+       geom_bar(stat = "identity", width=0.4, 
+                position = position_dodge(width=0.5), fill="blue") +
+       geom_text(aes(label = scales::comma(quantity)), vjust=-1, size=2) +
+       labs(y = "Number",  x="Shipment Year") +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+ggplot(quantity_year_summary[quantity_year_summary$unit== "Kilograms", ],
+       aes(x = shipment_year, y=quantity)) + 
+       geom_bar(stat = "identity", width=0.4, 
+                position = position_dodge(width=0.5), fill="blue") +
+       geom_text(aes(label = scales::comma(quantity)), vjust=-1, size=2) +
+       labs(y = "Kilograms",  x="Shipment Year") +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+rm(quantity_year, quantity_year_summary)
+```

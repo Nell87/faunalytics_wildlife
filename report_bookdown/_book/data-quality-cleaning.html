@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Data quality &amp; cleaning | A Minimal Book Example</title>
+  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Data quality &amp; cleaning | A Minimal Book Example" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Data quality &amp; cleaning | A Minimal Book Example" />
+  
+  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+
+
+<meta name="date" content="2020-04-13" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="exploratory-analysis.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.3/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.8/datatables.js"></script>
+<link href="libs/dt-core-1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.16/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.16/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html"><i class="fa fa-check"></i><b>2</b> Data quality &amp; cleaning</a><ul>
+<li class="chapter" data-level="2.1" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#missing-values"><i class="fa fa-check"></i><b>2.1</b> Missing values</a></li>
+<li class="chapter" data-level="2.2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#excluding-plants-and-microorganisms"><i class="fa fa-check"></i><b>2.2</b> Excluding plants and microorganisms</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html"><i class="fa fa-check"></i><b>3</b> Exploratory analysis</a><ul>
+<li class="chapter" data-level="3.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-trade-process"><i class="fa fa-check"></i><b>3.1</b> Variables related with the trade process:</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#control_number"><i class="fa fa-check"></i><b>3.1.1</b> control_number</a></li>
+<li class="chapter" data-level="3.1.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#quantity-and-unit"><i class="fa fa-check"></i><b>3.1.2</b> quantity and unit</a></li>
+<li class="chapter" data-level="3.1.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#import_export"><i class="fa fa-check"></i><b>3.1.3</b> import_export</a></li>
+<li class="chapter" data-level="3.1.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#action"><i class="fa fa-check"></i><b>3.1.4</b> action</a></li>
+<li class="chapter" data-level="3.1.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#disposition"><i class="fa fa-check"></i><b>3.1.5</b> disposition</a></li>
+<li class="chapter" data-level="3.1.6" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#shipment_date-and-disposition_date"><i class="fa fa-check"></i><b>3.1.6</b> shipment_date and disposition_date</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-countries"><i class="fa fa-check"></i><b>3.2</b> Variables related with the countries</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#country_origin"><i class="fa fa-check"></i><b>3.2.1</b> country_origin</a></li>
+<li class="chapter" data-level="3.2.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#country_imp_exp"><i class="fa fa-check"></i><b>3.2.2</b> country_imp_exp</a></li>
+<li class="chapter" data-level="3.2.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#port"><i class="fa fa-check"></i><b>3.2.3</b> port</a></li>
+<li class="chapter" data-level="3.2.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#us_co"><i class="fa fa-check"></i><b>3.2.4</b> us_co</a></li>
+<li class="chapter" data-level="3.2.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#foreign_co"><i class="fa fa-check"></i><b>3.2.5</b> foreign_co</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-product"><i class="fa fa-check"></i><b>3.3</b> Variables related with the product</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#description"><i class="fa fa-check"></i><b>3.3.1</b> description</a></li>
+<li class="chapter" data-level="3.3.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#value"><i class="fa fa-check"></i><b>3.3.2</b> value</a></li>
+<li class="chapter" data-level="3.3.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#purpose"><i class="fa fa-check"></i><b>3.3.3</b> purpose</a></li>
+<li class="chapter" data-level="3.3.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#source"><i class="fa fa-check"></i><b>3.3.4</b> source</a></li>
+<li class="chapter" data-level="3.3.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#species_code"><i class="fa fa-check"></i><b>3.3.5</b> species_code</a></li>
+<li class="chapter" data-level="3.3.6" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#taxa"><i class="fa fa-check"></i><b>3.3.6</b> taxa</a></li>
+<li class="chapter" data-level="3.3.7" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#class"><i class="fa fa-check"></i><b>3.3.7</b> class</a></li>
+<li class="chapter" data-level="3.3.8" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#genus"><i class="fa fa-check"></i><b>3.3.8</b> genus</a></li>
+<li class="chapter" data-level="3.3.9" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#species"><i class="fa fa-check"></i><b>3.3.9</b> species</a></li>
+<li class="chapter" data-level="3.3.10" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#subspecies"><i class="fa fa-check"></i><b>3.3.10</b> subspecies</a></li>
+<li class="chapter" data-level="3.3.11" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#generic_name"><i class="fa fa-check"></i><b>3.3.11</b> generic_name</a></li>
+<li class="chapter" data-level="3.3.12" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#specific_name"><i class="fa fa-check"></i><b>3.3.12</b> specific_name</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="trends-over-time.html"><a href="trends-over-time.html"><i class="fa fa-check"></i><b>4</b> Trends over time</a><ul>
+<li class="chapter" data-level="4.1" data-path="trends-over-time.html"><a href="trends-over-time.html#shipments"><i class="fa fa-check"></i><b>4.1</b> Shipments</a></li>
+<li class="chapter" data-level="4.2" data-path="trends-over-time.html"><a href="trends-over-time.html#value-us-dollars"><i class="fa fa-check"></i><b>4.2</b> Value (US dollars)</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-disposition-year"><i class="fa fa-check"></i><b>4.2.1</b> Measured by disposition year</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-shipment-year"><i class="fa fa-check"></i><b>4.3</b> Measured by shipment year</a></li>
+<li class="chapter" data-level="4.4" data-path="trends-over-time.html"><a href="trends-over-time.html#quantity-number-of-items"><i class="fa fa-check"></i><b>4.4</b> Quantity (number of items)</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="explore-by-topics.html"><a href="explore-by-topics.html"><i class="fa fa-check"></i><b>5</b> Explore by topics</a><ul>
+<li class="chapter" data-level="5.1" data-path="explore-by-topics.html"><a href="explore-by-topics.html#total-value-of-import-by-taxa"><i class="fa fa-check"></i><b>5.1</b> Total value of import by taxa</a></li>
+<li class="chapter" data-level="5.2" data-path="explore-by-topics.html"><a href="explore-by-topics.html#total-value-of-import-by-taxa-by-year"><i class="fa fa-check"></i><b>5.2</b> Total value of import by taxa by year</a></li>
+<li class="chapter" data-level="5.3" data-path="explore-by-topics.html"><a href="explore-by-topics.html#total-value-of-import-by-description"><i class="fa fa-check"></i><b>5.3</b> Total value of import by description</a></li>
+<li class="chapter" data-level="5.4" data-path="explore-by-topics.html"><a href="explore-by-topics.html#total-value-of-import-by-description-by-year"><i class="fa fa-check"></i><b>5.4</b> Total value of import by description by year</a></li>
+<li class="chapter" data-level="5.5" data-path="explore-by-topics.html"><a href="explore-by-topics.html#average-value-of-import-by-taxa-for-no-units"><i class="fa fa-check"></i><b>5.5</b> Average value of import by taxa (for “NO” units)</a></li>
+<li class="chapter" data-level="5.6" data-path="explore-by-topics.html"><a href="explore-by-topics.html#average-value-of-import-by-description-for-no-units"><i class="fa fa-check"></i><b>5.6</b> Average value of import by description (for “NO” units)</a></li>
+<li class="chapter" data-level="5.7" data-path="explore-by-topics.html"><a href="explore-by-topics.html#average-value-of-import-by-taxa-for-kg-units"><i class="fa fa-check"></i><b>5.7</b> Average value of import by taxa (for “KG” units)</a></li>
+<li class="chapter" data-level="5.8" data-path="explore-by-topics.html"><a href="explore-by-topics.html#average-value-of-import-by-description-for-kg-units"><i class="fa fa-check"></i><b>5.8</b> Average value of import by description (for “KG” units)</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="working-in-progress.html"><a href="working-in-progress.html"><i class="fa fa-check"></i><b>6</b> Working in progress</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A Minimal Book Example</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="data-quality-cleaning" class="section level1">
+<h1><span class="header-section-number">Chapter 2</span> Data quality &amp; cleaning</h1>
+<div id="missing-values" class="section level2">
+<h2><span class="header-section-number">2.1</span> Missing values</h2>
+<p><strong>Only four variables have more than 30% missing values. Most of them are below 10%</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Are there missing values?</span></a>
+<a class="sourceLine" id="cb1-2" title="2">missing_values &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="st">  </span><span class="kw">gather</span>(<span class="dt">key =</span> <span class="st">&quot;key&quot;</span>, <span class="dt">value =</span> <span class="st">&quot;val&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">is.missing =</span> <span class="kw">is.na</span>(val)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="st">  </span><span class="kw">group_by</span>(key, is.missing) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">num.missing =</span> <span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="st">  </span><span class="kw">filter</span>(is.missing<span class="op">==</span>T) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>is.missing) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(num.missing)) </a>
+<a class="sourceLine" id="cb1-10" title="10"></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="kw">ggplot</span>(missing_values, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(key, <span class="op">-</span>num.missing), <span class="dt">y=</span>num.missing, <span class="dt">fill=</span>key)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;Variable&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1-15" title="15"></a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="kw">rm</span>(missing_values)</a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="excluding-plants-and-microorganisms" class="section level2">
+<h2><span class="header-section-number">2.2</span> Excluding plants and microorganisms</h2>
+<p><strong>We classified 98.93 % of data by kingdoms using the class, taxa and genus columns</strong>. This way, we excluded those elements belonging to fungi, plantae, bacteria, chromista and unspecified kingdoms.</p>
+<ul>
+<li><p><strong>Bacterias</strong>: Gammaproteobacteria</p></li>
+<li><p><strong>Chromista</strong>: Phaeophyceae</p></li>
+<li><p><strong>Plantae</strong>: Cycadopsida, Liliopsida, Magnoliopsida, Pinopsida, Polypodiopsida</p></li>
+<li><p><strong>Fungi</strong>: Agaricomycetes, Chytridiomycetes</p></li>
+<li><p><strong>Animalia</strong>: Actinopterygii, Amphibia, Anthozoa, Arachnida, Ascidiacea,
+Asteroidea, Aves, Bivalvia, Branchiopoda, Calcarea, Cephalaspidomorphi,
+Cephalopoda, Cestoda, Chilopoda, Clitellata, Cubozoa, Demospongiae, Diplopoda,
+Echinoidea, Elasmobranchii, Enteropneusta, Eurotatoria,Gastropoda, Gymnolaemata,
+Hexactinellida, Hexanauplia, Holocephali, Holothuroidea, Hoplonemertea, Hydrozoa,
+Insecta, Leptocardii, Malacostraca, Mammalia, Maxillopoda,Merostomata, Myxini,
+Ophiuroidea, Ostracoda, Pilidiophora, Polychaeta, Polyplacophora, Pycnogonida,
+Reptilia, Sarcopterygii, Scaphopoda, Scyphozoa, Secernentea, Sipunculidea,
+Tentaculata, Thaliacea, Trematoda</p></li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># classifying classes by kingdom </span></a>
+<a class="sourceLine" id="cb2-2" title="2">classes&lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">drop_na</span>(class) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(class) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">N=</span><span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb2-3" title="3"></a>
+<a class="sourceLine" id="cb2-4" title="4">animalia_kingdom &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Actinopterygii&quot;</span>, <span class="st">&quot;Amphibia&quot;</span>, <span class="st">&quot;Anthozoa&quot;</span>, <span class="st">&quot;Arachnida&quot;</span>,</a>
+<a class="sourceLine" id="cb2-5" title="5">                      <span class="st">&quot;Ascidiacea&quot;</span>, <span class="st">&quot;Asteroidea&quot;</span>, <span class="st">&quot;Aves&quot;</span>, <span class="st">&quot;Bivalvia&quot;</span>,</a>
+<a class="sourceLine" id="cb2-6" title="6">                      <span class="st">&quot;Branchiopoda&quot;</span>, <span class="st">&quot;Calcarea&quot;</span>, <span class="st">&quot;Cephalaspidomorphi&quot;</span>,</a>
+<a class="sourceLine" id="cb2-7" title="7">                      <span class="st">&quot;Cephalopoda&quot;</span>, <span class="st">&quot;Cestoda&quot;</span>, <span class="st">&quot;Chilopoda&quot;</span>, <span class="st">&quot;Clitellata&quot;</span>,</a>
+<a class="sourceLine" id="cb2-8" title="8">                      <span class="st">&quot;Crinoidea&quot;</span>, <span class="st">&quot;Cubozoa&quot;</span>, <span class="st">&quot;Demospongiae&quot;</span>, <span class="st">&quot;Diplopoda&quot;</span>,</a>
+<a class="sourceLine" id="cb2-9" title="9">                      <span class="st">&quot;Echinoidea&quot;</span>, <span class="st">&quot;Elasmobranchii&quot;</span>, <span class="st">&quot;Enteropneusta&quot;</span>,</a>
+<a class="sourceLine" id="cb2-10" title="10">                      <span class="st">&quot;Eurotatoria&quot;</span>, <span class="st">&quot;Gastropoda&quot;</span>, <span class="st">&quot;Gymnolaemata&quot;</span>,</a>
+<a class="sourceLine" id="cb2-11" title="11">                      <span class="st">&quot;Hexactinellida&quot;</span>,<span class="st">&quot;Hexanauplia&quot;</span>, <span class="st">&quot;Holocephali&quot;</span>,</a>
+<a class="sourceLine" id="cb2-12" title="12">                      <span class="st">&quot;Holothuroidea&quot;</span>, <span class="st">&quot;Hoplonemertea&quot;</span>, <span class="st">&quot;Hydrozoa&quot;</span>, <span class="st">&quot;Insecta&quot;</span>,</a>
+<a class="sourceLine" id="cb2-13" title="13">                      <span class="st">&quot;Leptocardii&quot;</span>, <span class="st">&quot;Malacostraca&quot;</span>, <span class="st">&quot;Mammalia&quot;</span>, <span class="st">&quot;Maxillopoda&quot;</span>,</a>
+<a class="sourceLine" id="cb2-14" title="14">                      <span class="st">&quot;Merostomata&quot;</span>, <span class="st">&quot;Myxini&quot;</span>, <span class="st">&quot;Ophiuroidea&quot;</span>, <span class="st">&quot;Ostracoda&quot;</span>,</a>
+<a class="sourceLine" id="cb2-15" title="15">                      <span class="st">&quot;Pilidiophora&quot;</span>, <span class="st">&quot;Polychaeta&quot;</span>, <span class="st">&quot;Polyplacophora&quot;</span>,</a>
+<a class="sourceLine" id="cb2-16" title="16">                      <span class="st">&quot;Pycnogonida&quot;</span>, <span class="st">&quot;Reptilia&quot;</span>, <span class="st">&quot;Sarcopterygii&quot;</span>, <span class="st">&quot;Scaphopoda&quot;</span>,</a>
+<a class="sourceLine" id="cb2-17" title="17">                      <span class="st">&quot;Scyphozoa&quot;</span>, <span class="st">&quot;Secernentea&quot;</span>, <span class="st">&quot;Sipunculidea&quot;</span>, <span class="st">&quot;Tentaculata&quot;</span>,</a>
+<a class="sourceLine" id="cb2-18" title="18">                      <span class="st">&quot;Thaliacea&quot;</span>, <span class="st">&quot;Trematoda&quot;</span>)</a>
+<a class="sourceLine" id="cb2-19" title="19"></a>
+<a class="sourceLine" id="cb2-20" title="20">fungi_kingdom &lt;-<span class="kw">c</span>(<span class="st">&quot;Agaricomycetes&quot;</span>, <span class="st">&quot;Chytridiomycetes&quot;</span>)</a>
+<a class="sourceLine" id="cb2-21" title="21"></a>
+<a class="sourceLine" id="cb2-22" title="22">plantae_kingdom&lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Cycadopsida&quot;</span>, <span class="st">&quot;Liliopsida&quot;</span>, <span class="st">&quot;Magnoliopsida&quot;</span>, <span class="st">&quot;Pinopsida&quot;</span>, </a>
+<a class="sourceLine" id="cb2-23" title="23">                    <span class="st">&quot;Polypodiopsida&quot;</span>, <span class="st">&quot;Ulvophyceae&quot;</span>)</a>
+<a class="sourceLine" id="cb2-24" title="24"></a>
+<a class="sourceLine" id="cb2-25" title="25">bacterias_kingdom &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Gammaproteobacteria&quot;</span>)</a>
+<a class="sourceLine" id="cb2-26" title="26"></a>
+<a class="sourceLine" id="cb2-27" title="27">chromista_kingdom &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Phaeophyceae&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Adding kingdom level based on class</span></a>
+<a class="sourceLine" id="cb3-2" title="2">data<span class="op">$</span>kingdom&lt;-<span class="st"> </span><span class="kw">ifelse</span>(data<span class="op">$</span>class <span class="op">%in%</span><span class="st"> </span>animalia_kingdom, <span class="st">&quot;Animalia&quot;</span>,</a>
+<a class="sourceLine" id="cb3-3" title="3">               <span class="kw">ifelse</span>(data<span class="op">$</span>class <span class="op">%in%</span><span class="st"> </span>fungi_kingdom, <span class="st">&quot;Fungi&quot;</span>,        </a>
+<a class="sourceLine" id="cb3-4" title="4">               <span class="kw">ifelse</span>(data<span class="op">$</span>class <span class="op">%in%</span><span class="st"> </span>plantae_kingdom, <span class="st">&quot;Plantae&quot;</span>, </a>
+<a class="sourceLine" id="cb3-5" title="5">               <span class="kw">ifelse</span>(data<span class="op">$</span>class <span class="op">%in%</span><span class="st"> </span>bacterias_kingdom, <span class="st">&quot;Bacteria&quot;</span>,                 </a>
+<a class="sourceLine" id="cb3-6" title="6">               <span class="kw">ifelse</span>(data<span class="op">$</span>class <span class="op">%in%</span><span class="st"> </span>chromista_kingdom, <span class="st">&quot;Chromista&quot;</span>, <span class="st">&quot;Other&quot;</span>                              )))))              <span class="co"># 403,596 unclassified</span></a>
+<a class="sourceLine" id="cb3-7" title="7"></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="co"># Adding kingdom level based on genus</span></a>
+<a class="sourceLine" id="cb3-9" title="9">data<span class="op">$</span>kingdom[<span class="kw">which</span>(data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Other live inverts&quot;</span> <span class="op">|</span><span class="st"> </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Animals&quot;</span> <span class="op">|</span></a>
+<a class="sourceLine" id="cb3-10" title="10"><span class="st">                   </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Corals&quot;</span><span class="op">|</span><span class="st"> </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Dugesia&quot;</span><span class="op">|</span><span class="st">  </span></a>
+<a class="sourceLine" id="cb3-11" title="11"><span class="st">                   </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Nemertea&quot;</span> <span class="op">|</span><span class="st"> </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Mollusca&quot;</span> <span class="op">|</span></a>
+<a class="sourceLine" id="cb3-12" title="12"><span class="st">                   </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Xenoturbella&quot;</span> <span class="op">|</span><span class="st"> </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Chondrichthyes&quot;</span> <span class="op">|</span></a>
+<a class="sourceLine" id="cb3-13" title="13"><span class="st">                   </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Chordata&quot;</span> <span class="op">|</span><span class="st"> </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Paracatenula&quot;</span> <span class="op">|</span></a>
+<a class="sourceLine" id="cb3-14" title="14"><span class="st">                   </span>data<span class="op">$</span>genus<span class="op">==</span><span class="st">&quot;Porifera&quot;</span>)] &lt;-<span class="st"> &quot;Animalia&quot;</span></a>
+<a class="sourceLine" id="cb3-15" title="15">                                                      <span class="co"># 299,674 unclassified</span></a>
+<a class="sourceLine" id="cb3-16" title="16"></a>
+<a class="sourceLine" id="cb3-17" title="17"><span class="co"># Adding kingdom level based on taxa</span></a>
+<a class="sourceLine" id="cb3-18" title="18">data<span class="op">$</span>kingdom[<span class="kw">which</span>(data<span class="op">$</span>taxa<span class="op">==</span><span class="st">&quot;crustacean&quot;</span> <span class="op">|</span><span class="st"> </span>data<span class="op">$</span>taxa<span class="op">==</span><span class="st">&quot;fish&quot;</span> <span class="op">|</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-19" title="19"><span class="st">                     </span>data<span class="op">$</span>taxa<span class="op">==</span><span class="st">&quot;coral&quot;</span><span class="op">|</span><span class="st"> </span>data<span class="op">$</span>taxa<span class="op">==</span><span class="st">&quot;shell&quot;</span>)] &lt;-<span class="st"> &quot;Animalia&quot;</span> </a>
+<a class="sourceLine" id="cb3-20" title="20">                                                      <span class="co">#  58,883 unclassified</span></a>
+<a class="sourceLine" id="cb3-21" title="21"></a>
+<a class="sourceLine" id="cb3-22" title="22">data<span class="op">$</span>kingdom[<span class="kw">which</span>(data<span class="op">$</span>taxa<span class="op">==</span><span class="st">&quot;plant&quot;</span>)] &lt;-<span class="st"> &quot;Plantae&quot;</span>  <span class="co">#  58,855 unclassified</span></a>
+<a class="sourceLine" id="cb3-23" title="23"></a>
+<a class="sourceLine" id="cb3-24" title="24"><span class="co"># Let&#39;s exclude those elements from fungi, plantae, bacteria, chromista and unspecified kingdoms. </span></a>
+<a class="sourceLine" id="cb3-25" title="25">data &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(kingdom<span class="op">==</span><span class="st">&quot;Animalia&quot;</span>) <span class="co"># 5,512,706 --&gt; 5,451,832 rows</span></a>
+<a class="sourceLine" id="cb3-26" title="26"></a>
+<a class="sourceLine" id="cb3-27" title="27"><span class="kw">rm</span>(classes, animalia_kingdom, bacterias_kingdom, chromista_kingdom,</a>
+<a class="sourceLine" id="cb3-28" title="28">   plantae_kingdom, fungi_kingdom)</a></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="exploratory-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["report_bookdown.pdf", "report_bookdown.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

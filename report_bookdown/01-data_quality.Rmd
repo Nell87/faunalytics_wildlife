@@ -1,0 +1,138 @@
+# Data quality & cleaning
+
+## Missing values
+
+**Only four variables have more than 30% missing values. Most of them are below 10%**
+
+```{r eval=TRUE, echo=FALSE, warning=FALSE, include=TRUE} 
+#Load Libraries: p_load can install, load,  and update packages
+pacman::p_load(rstudioapi,dplyr, ggplot2, lubridate, devtools, tidyr,magrittr, 
+               lemis,zoo,gdata, knitr, DT, plotly, countrycode)
+
+# Set working directory 
+path <- getwd()
+knitr::opts_knit$set(root.dir = normalizePath(path.expand(path), 
+                                              winslash = ("/"), 
+                                              mustWork = TRUE))
+
+# Reading dataset 
+data<-readRDS("../data/data.rds")
+
+# Transform some variables to factor/numeric/datetime
+data %<>% mutate_at(c("control_number", "species_code", "taxa", "class", "genus",
+                      "species", "subspecies", "specific_name", "generic_name",
+                      "description", "country_origin", "country_imp_exp", 
+                      "purpose","source", "action", "disposition", 
+                      "disposition_year", "shipment_year", "import_export",
+                      "port", "us_co", "foreign_co", "unit"), as.factor)
+
+# Remove scientific notation
+options(scipen=999)
+rm(path)
+
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE} 
+# Are there missing values?
+missing_values <- data %>%
+  gather(key = "key", value = "val") %>%
+  mutate(is.missing = is.na(val)) %>%
+  group_by(key, is.missing) %>%
+  summarise(num.missing = n()/nrow(data) *100) %>%
+  filter(is.missing==T) %>%
+  select(-is.missing) %>%
+  arrange(desc(num.missing)) 
+
+ggplot(missing_values, aes(x=reorder(key, -num.missing), y=num.missing, fill=key)) +
+  geom_bar(stat="identity") + 
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="Variable") +
+
+rm(missing_values)
+```
+
+## Excluding plants and microorganisms
+
+**We classified 98.93 % of data by kingdoms using the class, taxa and genus columns**. This way,  we excluded those elements belonging to fungi, plantae, bacteria, chromista and unspecified kingdoms. 
+
+* **Bacterias**: Gammaproteobacteria
+
+* **Chromista**: Phaeophyceae
+
+* **Plantae**: Cycadopsida, Liliopsida, Magnoliopsida, Pinopsida, Polypodiopsida
+
+* **Fungi**: Agaricomycetes, Chytridiomycetes	
+
+* **Animalia**: Actinopterygii, Amphibia, Anthozoa, Arachnida, Ascidiacea, 
+Asteroidea, Aves, Bivalvia, Branchiopoda, Calcarea, Cephalaspidomorphi,
+Cephalopoda, Cestoda, Chilopoda, Clitellata, Cubozoa, Demospongiae, Diplopoda,
+Echinoidea, Elasmobranchii, Enteropneusta, Eurotatoria,Gastropoda, Gymnolaemata,
+Hexactinellida, Hexanauplia, Holocephali, Holothuroidea, Hoplonemertea, Hydrozoa,
+Insecta, Leptocardii, Malacostraca, Mammalia, Maxillopoda,Merostomata, Myxini,
+Ophiuroidea, Ostracoda, Pilidiophora, Polychaeta, Polyplacophora, Pycnogonida,
+Reptilia, Sarcopterygii, Scaphopoda, Scyphozoa, Secernentea, Sipunculidea,
+Tentaculata, Thaliacea, Trematoda
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE} 
+# classifying classes by kingdom 
+classes<-data %>% drop_na(class) %>% group_by(class) %>% summarise(N=n())
+
+animalia_kingdom <- c("Actinopterygii", "Amphibia", "Anthozoa", "Arachnida",
+                      "Ascidiacea", "Asteroidea", "Aves", "Bivalvia",
+                      "Branchiopoda", "Calcarea", "Cephalaspidomorphi",
+                      "Cephalopoda", "Cestoda", "Chilopoda", "Clitellata",
+                      "Crinoidea", "Cubozoa", "Demospongiae", "Diplopoda",
+                      "Echinoidea", "Elasmobranchii", "Enteropneusta",
+                      "Eurotatoria", "Gastropoda", "Gymnolaemata",
+                      "Hexactinellida","Hexanauplia", "Holocephali",
+                      "Holothuroidea", "Hoplonemertea", "Hydrozoa", "Insecta",
+                      "Leptocardii", "Malacostraca", "Mammalia", "Maxillopoda",
+                      "Merostomata", "Myxini", "Ophiuroidea", "Ostracoda",
+                      "Pilidiophora", "Polychaeta", "Polyplacophora",
+                      "Pycnogonida", "Reptilia", "Sarcopterygii", "Scaphopoda",
+                      "Scyphozoa", "Secernentea", "Sipunculidea", "Tentaculata",
+                      "Thaliacea", "Trematoda")
+
+fungi_kingdom <-c("Agaricomycetes", "Chytridiomycetes")
+
+plantae_kingdom<- c("Cycadopsida", "Liliopsida", "Magnoliopsida", "Pinopsida", 
+                    "Polypodiopsida", "Ulvophyceae")
+
+bacterias_kingdom <- c("Gammaproteobacteria")
+
+chromista_kingdom <- c("Phaeophyceae")
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Adding kingdom level based on class
+data$kingdom<- ifelse(data$class %in% animalia_kingdom, "Animalia",
+               ifelse(data$class %in% fungi_kingdom, "Fungi",        
+               ifelse(data$class %in% plantae_kingdom, "Plantae", 
+               ifelse(data$class %in% bacterias_kingdom, "Bacteria",                 
+               ifelse(data$class %in% chromista_kingdom, "Chromista", "Other"                              )))))              # 403,596 unclassified
+
+# Adding kingdom level based on genus
+data$kingdom[which(data$genus=="Other live inverts" | data$genus=="Animals" |
+                   data$genus=="Corals"| data$genus=="Dugesia"|  
+                   data$genus=="Nemertea" | data$genus=="Mollusca" |
+                   data$genus=="Xenoturbella" | data$genus=="Chondrichthyes" |
+                   data$genus=="Chordata" | data$genus=="Paracatenula" |
+                   data$genus=="Porifera")] <- "Animalia"
+                                                      # 299,674 unclassified
+
+# Adding kingdom level based on taxa
+data$kingdom[which(data$taxa=="crustacean" | data$taxa=="fish" | 
+                     data$taxa=="coral"| data$taxa=="shell")] <- "Animalia" 
+                                                      #  58,883 unclassified
+
+data$kingdom[which(data$taxa=="plant")] <- "Plantae"  #  58,855 unclassified
+
+# Let's exclude those elements from fungi, plantae, bacteria, chromista and unspecified kingdoms. 
+data <- data %>% filter(kingdom=="Animalia") # 5,512,706 --> 5,451,832 rows
+
+rm(classes, animalia_kingdom, bacterias_kingdom, chromista_kingdom,
+   plantae_kingdom, fungi_kingdom)
+
+```
+
+

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Univariable Analysis | A Minimal Book Example</title>
+  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Univariable Analysis | A Minimal Book Example" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Univariable Analysis | A Minimal Book Example" />
+  
+  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+
+
+<meta name="date" content="2020-04-12" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="data-quality-cleaning.html"/>
+<link rel="next" href="other-analysis.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.3/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.8/datatables.js"></script>
+<link href="libs/dt-core-1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.16/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.16/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+<script src="libs/plotly-binding-4.9.0/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-1.46.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-1.46.1/plotly-latest.min.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html"><i class="fa fa-check"></i><b>2</b> Data quality &amp; cleaning</a><ul>
+<li class="chapter" data-level="2.1" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#missing-values"><i class="fa fa-check"></i><b>2.1</b> Missing values</a></li>
+<li class="chapter" data-level="2.2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#excluding-plants-and-microorganisms"><i class="fa fa-check"></i><b>2.2</b> Excluding plants and microorganisms</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="univariable-analysis.html"><a href="univariable-analysis.html"><i class="fa fa-check"></i><b>3</b> Univariable Analysis</a><ul>
+<li class="chapter" data-level="3.1" data-path="univariable-analysis.html"><a href="univariable-analysis.html#variables-related-with-the-trade-process"><i class="fa fa-check"></i><b>3.1</b> Variables related with the trade process:</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="univariable-analysis.html"><a href="univariable-analysis.html#control_number-shipment_date"><i class="fa fa-check"></i><b>3.1.1</b> control_number &amp; shipment_date</a></li>
+<li class="chapter" data-level="3.1.2" data-path="univariable-analysis.html"><a href="univariable-analysis.html#quantity"><i class="fa fa-check"></i><b>3.1.2</b> quantity</a></li>
+<li class="chapter" data-level="3.1.3" data-path="univariable-analysis.html"><a href="univariable-analysis.html#unit"><i class="fa fa-check"></i><b>3.1.3</b> unit</a></li>
+<li class="chapter" data-level="3.1.4" data-path="univariable-analysis.html"><a href="univariable-analysis.html#import_export"><i class="fa fa-check"></i><b>3.1.4</b> import_export</a></li>
+<li class="chapter" data-level="3.1.5" data-path="univariable-analysis.html"><a href="univariable-analysis.html#disposition"><i class="fa fa-check"></i><b>3.1.5</b> disposition</a></li>
+<li class="chapter" data-level="3.1.6" data-path="univariable-analysis.html"><a href="univariable-analysis.html#disposition_date"><i class="fa fa-check"></i><b>3.1.6</b> disposition_date</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="univariable-analysis.html"><a href="univariable-analysis.html#variables-related-with-the-countries"><i class="fa fa-check"></i><b>3.2</b> Variables related with the countries</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="univariable-analysis.html"><a href="univariable-analysis.html#country_origin"><i class="fa fa-check"></i><b>3.2.1</b> country_origin</a></li>
+<li class="chapter" data-level="3.2.2" data-path="univariable-analysis.html"><a href="univariable-analysis.html#port"><i class="fa fa-check"></i><b>3.2.2</b> port</a></li>
+<li class="chapter" data-level="3.2.3" data-path="univariable-analysis.html"><a href="univariable-analysis.html#us_co"><i class="fa fa-check"></i><b>3.2.3</b> us_co</a></li>
+<li class="chapter" data-level="3.2.4" data-path="univariable-analysis.html"><a href="univariable-analysis.html#foreign_co"><i class="fa fa-check"></i><b>3.2.4</b> foreign_co</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="univariable-analysis.html"><a href="univariable-analysis.html#variables-related-with-the-product"><i class="fa fa-check"></i><b>3.3</b> Variables related with the product</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="univariable-analysis.html"><a href="univariable-analysis.html#description"><i class="fa fa-check"></i><b>3.3.1</b> description</a></li>
+<li class="chapter" data-level="3.3.2" data-path="univariable-analysis.html"><a href="univariable-analysis.html#value"><i class="fa fa-check"></i><b>3.3.2</b> value</a></li>
+<li class="chapter" data-level="3.3.3" data-path="univariable-analysis.html"><a href="univariable-analysis.html#purpose"><i class="fa fa-check"></i><b>3.3.3</b> purpose</a></li>
+<li class="chapter" data-level="3.3.4" data-path="univariable-analysis.html"><a href="univariable-analysis.html#source"><i class="fa fa-check"></i><b>3.3.4</b> source</a></li>
+<li class="chapter" data-level="3.3.5" data-path="univariable-analysis.html"><a href="univariable-analysis.html#species_code"><i class="fa fa-check"></i><b>3.3.5</b> species_code</a></li>
+<li class="chapter" data-level="3.3.6" data-path="univariable-analysis.html"><a href="univariable-analysis.html#taxa"><i class="fa fa-check"></i><b>3.3.6</b> taxa</a></li>
+<li class="chapter" data-level="3.3.7" data-path="univariable-analysis.html"><a href="univariable-analysis.html#class"><i class="fa fa-check"></i><b>3.3.7</b> class</a></li>
+<li class="chapter" data-level="3.3.8" data-path="univariable-analysis.html"><a href="univariable-analysis.html#genus"><i class="fa fa-check"></i><b>3.3.8</b> genus</a></li>
+<li class="chapter" data-level="3.3.9" data-path="univariable-analysis.html"><a href="univariable-analysis.html#species"><i class="fa fa-check"></i><b>3.3.9</b> species</a></li>
+<li class="chapter" data-level="3.3.10" data-path="univariable-analysis.html"><a href="univariable-analysis.html#subspecies"><i class="fa fa-check"></i><b>3.3.10</b> subspecies</a></li>
+<li class="chapter" data-level="3.3.11" data-path="univariable-analysis.html"><a href="univariable-analysis.html#specific_name"><i class="fa fa-check"></i><b>3.3.11</b> specific_name</a></li>
+<li class="chapter" data-level="3.3.12" data-path="univariable-analysis.html"><a href="univariable-analysis.html#generic_name"><i class="fa fa-check"></i><b>3.3.12</b> generic_name</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="other-analysis.html"><a href="other-analysis.html"><i class="fa fa-check"></i><b>4</b> Other analysis</a><ul>
+<li class="chapter" data-level="4.1" data-path="other-analysis.html"><a href="other-analysis.html#total-value-of-the-wildlife-products-in-us-dollars-measured-by-disposition-year"><i class="fa fa-check"></i><b>4.1</b> Total value of the wildlife product(s) in US dollars, measured by disposition year</a></li>
+<li class="chapter" data-level="4.2" data-path="other-analysis.html"><a href="other-analysis.html#total-value-of-the-wildlife-products-in-us-dollars-measured-by-shipment-year"><i class="fa fa-check"></i><b>4.2</b> Total value of the wildlife product(s) in US dollars, measured by shipment year</a></li>
+<li class="chapter" data-level="4.3" data-path="other-analysis.html"><a href="other-analysis.html#quantity-brought-by-year"><i class="fa fa-check"></i><b>4.3</b> Quantity brought by year</a></li>
+<li class="chapter" data-level="4.4" data-path="other-analysis.html"><a href="other-analysis.html#total-value-of-import-by-taxa"><i class="fa fa-check"></i><b>4.4</b> Total value of import by taxa</a></li>
+<li class="chapter" data-level="4.5" data-path="other-analysis.html"><a href="other-analysis.html#total-value-of-import-by-taxa-by-year"><i class="fa fa-check"></i><b>4.5</b> Total value of import by taxa by year</a></li>
+<li class="chapter" data-level="4.6" data-path="other-analysis.html"><a href="other-analysis.html#total-value-of-import-by-description"><i class="fa fa-check"></i><b>4.6</b> Total value of import by description</a></li>
+<li class="chapter" data-level="4.7" data-path="other-analysis.html"><a href="other-analysis.html#total-value-of-import-by-description-by-year"><i class="fa fa-check"></i><b>4.7</b> Total value of import by description by year</a></li>
+<li class="chapter" data-level="4.8" data-path="other-analysis.html"><a href="other-analysis.html#average-value-of-import-by-taxa-for-no-units"><i class="fa fa-check"></i><b>4.8</b> Average value of import by taxa (for “NO” units)</a></li>
+<li class="chapter" data-level="4.9" data-path="other-analysis.html"><a href="other-analysis.html#average-value-of-import-by-description-for-no-units"><i class="fa fa-check"></i><b>4.9</b> Average value of import by description (for “NO” units)</a></li>
+<li class="chapter" data-level="4.10" data-path="other-analysis.html"><a href="other-analysis.html#average-value-of-import-by-taxa-for-kg-units"><i class="fa fa-check"></i><b>4.10</b> Average value of import by taxa (for “KG” units)</a></li>
+<li class="chapter" data-level="4.11" data-path="other-analysis.html"><a href="other-analysis.html#average-value-of-import-by-description-for-kg-units"><i class="fa fa-check"></i><b>4.11</b> Average value of import by description (for “KG” units)</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="applications.html"><a href="applications.html"><i class="fa fa-check"></i><b>5</b> Applications</a><ul>
+<li class="chapter" data-level="5.1" data-path="applications.html"><a href="applications.html#example-one"><i class="fa fa-check"></i><b>5.1</b> Example one</a></li>
+<li class="chapter" data-level="5.2" data-path="applications.html"><a href="applications.html#example-two"><i class="fa fa-check"></i><b>5.2</b> Example two</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>6</b> Final Words</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A Minimal Book Example</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="univariable-analysis" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Univariable Analysis</h1>
+<p>Here you can check data fields and fields descriptions for all variables appearing in the dataset</p>
+<p><strong>Variables related with the trade process:</strong></p>
+<ul>
+<li><strong>control_number</strong>: It represents a unique individual shipment processed by the USFWS.</li>
+<li><strong>quantity</strong>: It represents the numeric quantity of the wildlife produc</li>
+<li><strong>unit</strong>: It represents the unit for the numeric quantity</li>
+<li><strong>import_export</strong>: It represents whether the shipment is an (I)mport or (E)xport</li>
+<li><strong>action</strong>: Action taken by USFWS on import ((C)leared/(R)efused)</li>
+<li><strong>shipment_date</strong>: Full date when shipment arrived</li>
+<li><strong>shipment_year</strong>: Year when the shipment arrived (derived from “shiptment_year”)</li>
+<li><strong>disposition</strong>: Fate of the import</li>
+<li><strong>disposition_date</strong>: Full date when disposition occurred</li>
+<li><strong>disposition_year</strong>: Year when disposition occurred (derived from “disposition_date”)</li>
+</ul>
+<p><strong>Variables related with the countries:</strong></p>
+<ul>
+<li><strong>country_origin</strong>: It represents the code for the country of origin of the wildlife product</li>
+<li><strong>country_imp_exp</strong>: It represents the code for the country to/from which the wildlife product is shipped</li>
+<li><strong>port</strong>: It represents the port or region of shipment entry</li>
+<li><strong>us_co</strong>: It represents the US party of the shipment</li>
+<li><strong>foreign_co</strong>: It represents the foreign party of the shipment</li>
+</ul>
+<p><strong>Variables related with the product:</strong></p>
+<ul>
+<li><strong>description</strong>: It represents the type/form of the wildlife product</li>
+<li><strong>value</strong>: It represents the reported value of the wildlife product in US dollars</li>
+<li><strong>purpose</strong>: It represents the reason the wildlife product is being imported</li>
+<li><strong>source</strong>: It represents the type of source within the origin country (e.g., wild, bred)</li>
+<li><strong>species_code</strong>: It represents the USFWS code for the wildlife product</li>
+<li><strong>taxa</strong>: It represents the USFWS-derived broad taxonomic categorization</li>
+<li><strong>class</strong>: It represents the EHA-derived class-level taxonomic designation</li>
+<li><strong>genus</strong>: It represents the Genus (or higher-level taxonomic name) of the wildlife product</li>
+<li><strong>species</strong>: It represents species of the wildlife product</li>
+<li><strong>subspecies</strong>: It represents subspecies of the wildlife product</li>
+<li><strong>specific_name</strong>: It represents a specific common name for the wildlife product</li>
+<li><strong>generic_name</strong>: It represents a general common name for the wildlife product</li>
+</ul>
+<div id="variables-related-with-the-trade-process" class="section level2">
+<h2><span class="header-section-number">3.1</span> Variables related with the trade process:</h2>
+<div id="control_number-shipment_date" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> control_number &amp; shipment_date</h3>
+<p><strong>It represents a unique individual shipment processed by the USFWS.</strong></p>
+<ul>
+<li>There are 2,088,676 unique shiptments</li>
+<li>Different wildlife products contained within the same shipment may be represented in the LEMIS data by multiple data rows, all of which share a common ‘control_number’.</li>
+<li>All rows of data sharing the same ‘control_number’ share the same country of shipment and shipment date.</li>
+</ul>
+<p><strong>Let’s summarized the number of unique shipments per month.</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">unique_shipments_year &lt;-data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(<span class="dt">year=</span> <span class="kw">year</span>(shipment_date),<span class="dt">month =</span> <span class="kw">month</span>(shipment_date)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">unique_shipments =</span> <span class="kw">n_distinct</span>(control_number)) </a>
+<a class="sourceLine" id="cb4-4" title="4"></a>
+<a class="sourceLine" id="cb4-5" title="5">unique_shipments_year<span class="op">$</span>date &lt;-<span class="st"> </span><span class="kw">as.yearmon</span>(<span class="kw">paste</span>(unique_shipments_year<span class="op">$</span>year, </a>
+<a class="sourceLine" id="cb4-6" title="6">                                          unique_shipments_year<span class="op">$</span>month), <span class="st">&quot;%Y %m&quot;</span>)</a>
+<a class="sourceLine" id="cb4-7" title="7"></a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="kw">ggplot</span>(unique_shipments_year, <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> unique_shipments)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color=</span><span class="st">&#39;steelblue&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_x_continuous</span>()</a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><strong>Let’s see the pattern depending on the week of the year</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">unique_shipments_week &lt;-data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(<span class="dt">year=</span> <span class="kw">year</span>(shipment_date), <span class="dt">week=</span><span class="kw">week</span>(shipment_date)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">unique_shipments =</span> <span class="kw">n_distinct</span>(control_number)) </a>
+<a class="sourceLine" id="cb5-4" title="4"></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="kw">ggplot</span>(unique_shipments_week, <span class="kw">aes</span>(<span class="dt">x =</span> week, <span class="dt">y =</span> unique_shipments, <span class="dt">color=</span><span class="kw">factor</span>(year))) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="st">  </span><span class="kw">geom_line</span>() </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">rm</span>(unique_shipments_year)</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="kw">rm</span>(unique_shipments_week)</a></code></pre></div>
+</div>
+<div id="quantity" class="section level3">
+<h3><span class="header-section-number">3.1.2</span> quantity</h3>
+<p><strong>It represents the numeric quantity of the wildlife product</strong>
+Let’s check the total quantity per month.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">quantity_per_month &lt;-data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(<span class="dt">year=</span> <span class="kw">year</span>(shipment_date),<span class="dt">month =</span> <span class="kw">month</span>(shipment_date)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">quantity =</span> <span class="kw">sum</span>(quantity)) </a>
+<a class="sourceLine" id="cb7-4" title="4"></a>
+<a class="sourceLine" id="cb7-5" title="5">quantity_per_month<span class="op">$</span>date &lt;-<span class="st"> </span><span class="kw">as.yearmon</span>(<span class="kw">paste</span>(quantity_per_month<span class="op">$</span>year, </a>
+<a class="sourceLine" id="cb7-6" title="6">                                          quantity_per_month<span class="op">$</span>month), <span class="st">&quot;%Y %m&quot;</span>)</a>
+<a class="sourceLine" id="cb7-7" title="7"></a>
+<a class="sourceLine" id="cb7-8" title="8"><span class="kw">ggplot</span>(quantity_per_month, <span class="kw">aes</span>(<span class="dt">x =</span> date, <span class="dt">y =</span> quantity)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-9" title="9"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">color=</span><span class="st">&#39;steelblue&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">scale_x_continuous</span>()</a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="unit" class="section level3">
+<h3><span class="header-section-number">3.1.3</span> unit</h3>
+<p><strong>It represents the unit for the numeric quantity</strong></p>
+<ul>
+<li>There are 13 units.</li>
+<li>The NO unit represents 94.5% of data</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">units &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(unit) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(unit) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) </a>
+<a class="sourceLine" id="cb8-5" title="5"></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>units, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(unit, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;units&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">rm</span>(units)</a></code></pre></div>
+</div>
+<div id="import_export" class="section level3">
+<h3><span class="header-section-number">3.1.4</span> import_export</h3>
+<p><strong>It represents Whether the shipment is an (I)mport or (E)xport</strong>. In this dataset, 100% of the data is an import.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(import_export) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data)<span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>import_export, <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb10-6" title="6"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;import_export&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+</br>
+### action
+<strong>Action taken by USFWS on import ((C)leared/(R)efused)</strong></p>
+<ul>
+<li>98.7% of imports are cleared, just 1.73% is refused</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">action &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(action) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(action) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) </a>
+<a class="sourceLine" id="cb11-5" title="5"></a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>action, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(action, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb11-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;action&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">rm</span>(action)</a></code></pre></div>
+</div>
+<div id="disposition" class="section level3">
+<h3><span class="header-section-number">3.1.5</span> disposition</h3>
+<p><strong>It represents the fate of the import</strong></p>
+<ul>
+<li>There are 5 categories: C, S, A, R and non-standard value<br />
+</li>
+<li>The C category represents 98.3% of data</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">disposition &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(disposition) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(disposition) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) </a>
+<a class="sourceLine" id="cb13-5" title="5"></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>disposition, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(disposition, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;disposition&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">rm</span>(disposition)</a></code></pre></div>
+</div>
+<div id="disposition_date" class="section level3">
+<h3><span class="header-section-number">3.1.6</span> disposition_date</h3>
+<p><strong>It represents the full date when disposition occurred </strong></p>
+<ul>
+<li>While ‘shipment_date’ entries fell completely within the time period of 2000–2014, ‘disposition_date’ ranged more widely</li>
+<li>Users should be wary of any disposition date values that precede the associated shipment date, as we are unaware of how this could represent an accurate accounting of the product disposition process. However, for many potential analyses, differences in the date fields may not be a significant cause for concern because ‘shipment_date’ alone provides a sound index for those interested in temporal trends in wildlife trade</li>
+</ul>
+<p><strong>It seems that 54% occur within a month of the shipment date (most of them within a week)</strong></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">days&lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">days =</span> <span class="kw">as.numeric</span>(disposition_date <span class="op">-</span><span class="st"> </span>shipment_date)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="st">  </span><span class="kw">filter</span>(days <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>days <span class="op">&lt;</span><span class="st"> </span><span class="dv">31</span>)</a>
+<a class="sourceLine" id="cb15-4" title="4"></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="kw">ggplot</span>(days, <span class="kw">aes</span>(<span class="dt">x=</span>days))<span class="op">+</span></a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="st">  </span><span class="kw">geom_histogram</span>(<span class="dt">color=</span><span class="st">&quot;darkblue&quot;</span>, <span class="dt">fill=</span><span class="st">&quot;lightblue&quot;</span>)</a></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">rm</span>(days)</a></code></pre></div>
+</div>
+</div>
+<div id="variables-related-with-the-countries" class="section level2">
+<h2><span class="header-section-number">3.2</span> Variables related with the countries</h2>
+<div id="country_origin" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> country_origin</h3>
+<p><strong>It represents the code for the country of origin of the wildlife product</strong></p>
+<ul>
+<li>There are 252 countries of origin</li>
+<li>The top 15 represents 74.2% of data</li>
+<li>The top 50 represents 94.3% of data</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">country_origin &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(country_origin) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb18-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(country_origin) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb18-5" title="5"></a>
+<a class="sourceLine" id="cb18-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>country_origin, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(country_origin, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb18-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb18-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb18-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb18-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;country_origin&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+</br>
+### country_imp_exp
+<strong>It represents the code for the country to/from which the wildlife product is shipped</strong></p>
+<ul>
+<li>There are 257 countries to/from which the product is shipped</li>
+<li>The top 15 represents 75.6% of data</li>
+<li>The top 50 represents 95.8% of data</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">country_imp_exp &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(country_imp_exp) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(country_imp_exp) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb19-5" title="5"></a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>country_imp_exp, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(country_imp_exp, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;country_imp_exp&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><strong>Most problematic countries are on both sides (country of origin &amp; country to/from which the wildlife product is shipped)</strong></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">country_origin &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(country_origin) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(country_origin) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">4</span>, total) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-5" title="5"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">country =</span> country_origin)</a>
+<a class="sourceLine" id="cb20-6" title="6"></a>
+<a class="sourceLine" id="cb20-7" title="7">country_imp_exp &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(country_imp_exp) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-8" title="8"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-9" title="9"><span class="st">  </span><span class="kw">drop_na</span>(country_imp_exp) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-10" title="10"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">4</span>, total) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-11" title="11"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">country =</span> country_imp_exp) </a>
+<a class="sourceLine" id="cb20-12" title="12"></a>
+<a class="sourceLine" id="cb20-13" title="13">countries&lt;-<span class="st"> </span><span class="kw">combine</span>(country_origin, country_imp_exp) </a>
+<a class="sourceLine" id="cb20-14" title="14"></a>
+<a class="sourceLine" id="cb20-15" title="15"><span class="kw">ggplot</span>(<span class="dt">data=</span>countries, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(country, <span class="op">-</span>total), <span class="dt">y=</span>total, <span class="dt">fill=</span>source)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-16" title="16"><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>, <span class="dt">position=</span><span class="kw">position_dodge</span>())<span class="op">+</span></a>
+<a class="sourceLine" id="cb20-17" title="17"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)),<span class="dt">vjust=</span><span class="fl">1.6</span>,<span class="dt">position =</span> <span class="kw">position_dodge</span>(<span class="fl">0.9</span>), <span class="dt">size=</span><span class="fl">3.5</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb20-18" title="18"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-19" title="19"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;country&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">rm</span>(country_origin)</a>
+<a class="sourceLine" id="cb21-2" title="2"><span class="kw">rm</span>(country_imp_exp)</a></code></pre></div>
+</div>
+<div id="port" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> port</h3>
+<p><strong>It represents the port or region of shipment entry</strong></p>
+<ul>
+<li>There are 73 ports</li>
+<li>The top 15 represents 83.8% of data</li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">port &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(port) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(port) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb22-5" title="5"></a>
+<a class="sourceLine" id="cb22-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>port, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(port, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb22-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb22-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb22-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;port&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">rm</span>(port)</a></code></pre></div>
+</div>
+<div id="us_co" class="section level3">
+<h3><span class="header-section-number">3.2.3</span> us_co</h3>
+<p><strong>It represents the US party of the shipment</strong></p>
+<ul>
+<li>There are 126,751 US parties</li>
+<li>The top 15 just represents 10.2% of data</li>
+<li>The top 50 just represents 18.9% of data</li>
+</ul>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">us_co &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(us_co) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(us_co) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb24-5" title="5"></a>
+<a class="sourceLine" id="cb24-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>us_co, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(us_co, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb24-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;us_co&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="kw">rm</span>(us_co)</a></code></pre></div>
+</div>
+<div id="foreign_co" class="section level3">
+<h3><span class="header-section-number">3.2.4</span> foreign_co</h3>
+<p><strong>It represents the foreign party of the shipment</strong></p>
+<ul>
+<li>There are 237,994 foreign parties</li>
+<li>The top 15 just represents 5.3% of data</li>
+<li>The top 50 just represents 12.3% of data</li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">foreign_co &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(foreign_co) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(foreign_co) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb26-5" title="5"></a>
+<a class="sourceLine" id="cb26-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>foreign_co, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(foreign_co, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb26-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb26-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb26-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;foreign_co&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"><span class="kw">rm</span>(foreign_co)</a></code></pre></div>
+</div>
+</div>
+<div id="variables-related-with-the-product" class="section level2">
+<h2><span class="header-section-number">3.3</span> Variables related with the product</h2>
+<div id="description" class="section level3">
+<h3><span class="header-section-number">3.3.1</span> description</h3>
+<p><strong>It represents the type/form of the wildlife product</strong></p>
+<ul>
+<li>There are 93 types/forms</li>
+<li>Most of them are “LIV” (29.17%), follow by TRO (16.65%) and SPR (9.43%).</li>
+<li>These three categories cover 74,59% of data</li>
+<li>The top 50 just represents 55.2% of data</li>
+</ul>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">description &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(description) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(description) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb28-5" title="5"></a>
+<a class="sourceLine" id="cb28-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>description, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(description, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb28-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb28-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb28-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;description&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1"><span class="kw">rm</span>(description)</a></code></pre></div>
+</div>
+<div id="value" class="section level3">
+<h3><span class="header-section-number">3.3.2</span> value</h3>
+<p><strong>It represents the reported value of the wildlife product in US dollars</strong>. Let’s check the value of the most representative taxa levels (mammals, shells, reptiles, corals and fishes)</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1">value_taxa&lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb30-2" title="2"><span class="st">  </span><span class="kw">drop_na</span>(value, taxa) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-3" title="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">value =</span> value<span class="op">/</span>quantity)  <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-4" title="4"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.infinite</span>(value))  <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-5" title="5"><span class="st">  </span><span class="kw">filter</span>(taxa <span class="op">==</span><span class="st"> &quot;mammal&quot;</span> <span class="op">|</span><span class="st"> </span>taxa <span class="op">==</span><span class="st"> &quot;shell&quot;</span> <span class="op">|</span><span class="st"> </span>taxa <span class="op">==</span><span class="st"> &quot;reptile&quot;</span> <span class="op">|</span><span class="st"> </span>taxa <span class="op">==</span><span class="st"> &quot;coral&quot;</span> <span class="op">|</span><span class="st"> </span>taxa <span class="op">==</span><span class="st"> &quot;fish&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-6" title="6"><span class="st">  </span><span class="kw">select</span>(taxa, value) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-7" title="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">grouped_value =</span> <span class="kw">ifelse</span>(value<span class="op">&lt;</span><span class="dv">6</span>, <span class="st">&quot;0&quot;</span>,</a>
+<a class="sourceLine" id="cb30-8" title="8">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">6</span>  <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">10</span>, <span class="st">&quot;6-10&quot;</span>,</a>
+<a class="sourceLine" id="cb30-9" title="9">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">6</span>  <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">10</span>, <span class="st">&quot;6-10&quot;</span>,</a>
+<a class="sourceLine" id="cb30-10" title="10">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">11</span> <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">15</span>, <span class="st">&quot;11-15&quot;</span>,</a>
+<a class="sourceLine" id="cb30-11" title="11">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">16</span> <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">30</span>, <span class="st">&quot;16-30&quot;</span>,       </a>
+<a class="sourceLine" id="cb30-12" title="12">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">31</span> <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">60</span>, <span class="st">&quot;31-60&quot;</span>,</a>
+<a class="sourceLine" id="cb30-13" title="13">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">61</span> <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">90</span>, <span class="st">&quot;61-90&quot;</span>,                                </a>
+<a class="sourceLine" id="cb30-14" title="14">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">91</span> <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">200</span>, <span class="st">&quot;91-200&quot;</span>,</a>
+<a class="sourceLine" id="cb30-15" title="15">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">201</span> <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">300</span>, <span class="st">&quot;201-300&quot;</span>,   </a>
+<a class="sourceLine" id="cb30-16" title="16">                         <span class="kw">ifelse</span>(value<span class="op">&gt;=</span><span class="dv">301</span> <span class="op">&amp;</span><span class="st"> </span>value<span class="op">&lt;=</span><span class="dv">500</span>, <span class="st">&quot;301-500&quot;</span>,                                 </a>
+<a class="sourceLine" id="cb30-17" title="17">                                <span class="st">&quot;More than 500&quot;</span>))))))))))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-18" title="18"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">grouped_value =</span> <span class="kw">as.factor</span>(grouped_value)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-19" title="19"><span class="st">  </span><span class="kw">group_by</span>(taxa, grouped_value) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb30-20" title="20"></a>
+<a class="sourceLine" id="cb30-21" title="21"><span class="kw">ggplot</span>(value_taxa,<span class="kw">aes</span>(<span class="dt">x=</span>grouped_value,<span class="dt">y=</span>total,<span class="dt">fill=</span>taxa))<span class="op">+</span></a>
+<a class="sourceLine" id="cb30-22" title="22"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb30-23" title="23"><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb30-24" title="24"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;Dollars&quot;</span>, <span class="dt">y=</span><span class="st">&quot;Count&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb30-25" title="25"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>taxa,<span class="dt">scales =</span> <span class="st">&quot;free_x&quot;</span> )</a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="purpose" class="section level3">
+<h3><span class="header-section-number">3.3.3</span> purpose</h3>
+<p><strong>It represents the reason the wildlife product is being imported</strong>
+- There are 13 purpose levels
+- The T purpose represents 74.51% of the data.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1">purpose &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(purpose) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(purpose) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) </a>
+<a class="sourceLine" id="cb31-5" title="5"></a>
+<a class="sourceLine" id="cb31-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>purpose, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(purpose, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb31-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb31-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb31-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb31-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;purpose&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="kw">rm</span>(purpose)</a></code></pre></div>
+</div>
+<div id="source" class="section level3">
+<h3><span class="header-section-number">3.3.4</span> source</h3>
+<p><strong>It represents the type of source within the origin country (e.g., wild, bred)</strong>
+- There are 10 source levels
+- The W source represents 78% of the data</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1">source &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(source) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(source) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) </a>
+<a class="sourceLine" id="cb33-5" title="5"></a>
+<a class="sourceLine" id="cb33-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>source, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(source, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb33-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb33-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb33-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;source&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="kw">rm</span>(source)</a></code></pre></div>
+</div>
+<div id="species_code" class="section level3">
+<h3><span class="header-section-number">3.3.5</span> species_code</h3>
+<p><strong>It represents the USFWS code for the wildlife product</strong></p>
+<ul>
+<li>There are 15,526 unique species codes</li>
+<li>The top 15 represents 29.7% of data</li>
+<li>The top 50 represents 50.2% of data</li>
+</ul>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1">species_code &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(species_code) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb35-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb35-3" title="3"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb35-4" title="4">  </a>
+<a class="sourceLine" id="cb35-5" title="5"><span class="kw">ggplot</span>(<span class="dt">data=</span>species_code, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(species_code, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb35-6" title="6"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb35-7" title="7"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb35-8" title="8"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb35-9" title="9"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;Species Code&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1"><span class="kw">rm</span>(species_code)</a></code></pre></div>
+</div>
+<div id="taxa" class="section level3">
+<h3><span class="header-section-number">3.3.6</span> taxa</h3>
+<p><strong>It represents the USFWS-derived broad taxonomic categorization</strong></p>
+<ul>
+<li>There are 14 taxa levels</li>
+<li>There is a ‘taxa’ field for the vast majority (&gt;99%) of records</li>
+<li>Most of them are mammals (28.84%), follow by shells (20.11%), reptiles (13.14%) and corals (12.48%). These four categories represent 74,59% of data</li>
+</ul>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1">taxa &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(taxa) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb37-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data)<span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb37-3" title="3"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) </a>
+<a class="sourceLine" id="cb37-4" title="4"></a>
+<a class="sourceLine" id="cb37-5" title="5"><span class="kw">ggplot</span>(<span class="dt">data=</span>taxa, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(taxa, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb37-6" title="6"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb37-7" title="7"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb37-8" title="8"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb37-9" title="9"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;taxa&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="kw">rm</span>(taxa)</a></code></pre></div>
+</div>
+<div id="class" class="section level3">
+<h3><span class="header-section-number">3.3.7</span> class</h3>
+<p><strong>It represents the EHA-derived class-level taxonomic designation</strong>
+- There are 63 classes
+- The top 15 represents 91.96% of data</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1">class &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(class) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb39-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb39-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(class) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb39-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb39-5" title="5">  </a>
+<a class="sourceLine" id="cb39-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>class, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(class, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb39-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb39-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb39-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb39-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;class&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1"><span class="kw">rm</span>(class)</a></code></pre></div>
+</div>
+<div id="genus" class="section level3">
+<h3><span class="header-section-number">3.3.8</span> genus</h3>
+<p><strong>It represents the Genus (or higher-level taxonomic name) of the wildlife product</strong></p>
+<ul>
+<li>There are 6506 genus levels</li>
+<li>The top 15 represents 33.4% of data</li>
+<li>The top 50 represents 57.0% of data</li>
+</ul>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">genus &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(genus) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb41-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb41-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(genus) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb41-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb41-5" title="5"></a>
+<a class="sourceLine" id="cb41-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>genus, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(genus, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb41-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb41-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb41-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb41-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;genus&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" title="1"><span class="kw">rm</span>(genus)</a></code></pre></div>
+</div>
+<div id="species" class="section level3">
+<h3><span class="header-section-number">3.3.9</span> species</h3>
+<p><strong>It represents species of the wildlife product</strong>. After removing plants and microorganisms:</p>
+<p><strong>It seems that there are 8,083 different species</strong>. We decided to exclude some elements like “freshwater sp.”, “including goldfish”, “marine sp”, “in trop fish &amp;” and “sp”, due to they are not specific species.</p>
+<ul>
+<li><p>The top 15 represents 26.53 % of data</p></li>
+<li><p>The top 50 represents 41.46 % of data</p></li>
+</ul>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1">data_species&lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(species<span class="op">!=</span><span class="st">&quot;(freshwater sp.)&quot;</span> <span class="op">&amp;</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb43-2" title="2"><span class="st">                          </span>species<span class="op">!=</span><span class="st"> &quot;(including goldfish)&quot;</span> <span class="op">&amp;</span></a>
+<a class="sourceLine" id="cb43-3" title="3"><span class="st">                          </span>species<span class="op">!=</span><span class="st">&quot;(marine sp.)&quot;</span> <span class="op">&amp;</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb43-4" title="4"><span class="st">                          </span>species <span class="op">!=</span><span class="st"> &quot;sp.&quot;</span> <span class="op">&amp;</span><span class="st"> </span>species <span class="op">!=</span><span class="st"> &quot;in trop fish &amp;&quot;</span>)</a>
+<a class="sourceLine" id="cb43-5" title="5">                            </a>
+<a class="sourceLine" id="cb43-6" title="6"><span class="co"># n_distinct(data_species$species, na.rm = TRUE) # &lt;- 8,083</span></a>
+<a class="sourceLine" id="cb43-7" title="7"></a>
+<a class="sourceLine" id="cb43-8" title="8">species &lt;-data_species <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(species) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-9" title="9"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>(), <span class="dt">percentage=</span> <span class="kw">round</span>(<span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>,<span class="dv">2</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-10" title="10"><span class="st">  </span><span class="kw">drop_na</span>(species) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-11" title="11"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb43-12" title="12"></a>
+<a class="sourceLine" id="cb43-13" title="13">DT<span class="op">::</span><span class="kw">datatable</span>(species) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-14" title="14"><span class="st">  </span><span class="kw">formatCurrency</span>(<span class="st">&#39;total&#39;</span>,<span class="dt">currency =</span> <span class="st">&quot;&quot;</span>, <span class="dt">interval =</span> <span class="dv">3</span>, <span class="dt">mark =</span> <span class="st">&quot;,&quot;</span>)</a></code></pre></div>
+<div id="htmlwidget-9a843036c6d5607eb7c3" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9a843036c6d5607eb7c3">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],["maxima","mississippiensis","niloticus","americanus","vison","margaritifera","camelus","reticulatus","virginianus","crocodilus","elaphus","canadensis","melampus","strepsiceros","lagopus"],[197073,178288,151331,145161,112240,88219,85469,76000,69894,64385,62985,60128,57509,55521,50240],[3.6,3.26,2.77,2.65,2.05,1.61,1.56,1.39,1.28,1.18,1.15,1.1,1.05,1.01,0.92]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>species<\/th>\n      <th>total<\/th>\n      <th>percentage<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data) {\nDTWidget.formatCurrency(this, row, data, 2, \"\", 2, 3, \",\", \".\", true);\n}"}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data=</span>species, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(species, <span class="op">-</span>percentage), <span class="dt">y=</span>percentage)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb44-2" title="2"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb44-3" title="3"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(percentage,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb44-4" title="4"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">hjust=</span><span class="dv">1</span>, <span class="dt">angle=</span><span class="dv">60</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb44-5" title="5"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;species&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-27-2.png" width="672" /></p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1"><span class="kw">rm</span>(data_species,species)</a></code></pre></div>
+</div>
+<div id="subspecies" class="section level3">
+<h3><span class="header-section-number">3.3.10</span> subspecies</h3>
+<p><strong>It represents subspecies of the wildlife product</strong></p>
+<ul>
+<li>There are 451 subspecies levels</li>
+<li>The top 15 just represents 2.4% of data</li>
+<li>The top 50 just represents 2.5% of data</li>
+</ul>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1">subspecies &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(subspecies) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-3" title="3"><span class="st">  </span><span class="kw">filter</span>(subspecies<span class="op">!=</span><span class="st">&quot;other shipments&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb46-5" title="5"></a>
+<a class="sourceLine" id="cb46-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>subspecies, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(subspecies, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb46-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb46-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb46-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb46-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;subspecies&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1"><span class="kw">rm</span>(subspecies)</a></code></pre></div>
+</div>
+<div id="specific_name" class="section level3">
+<h3><span class="header-section-number">3.3.11</span> specific_name</h3>
+<p><strong>It represents a specific common name for the wildlife product</strong></p>
+<ul>
+<li>There are 6734 specific names levels</li>
+<li>The top 15 represents 29.5% of data</li>
+<li>The top 50 represents 45.6% of data</li>
+</ul>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1">specific_name &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(specific_name) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(specific_name) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb48-5" title="5"></a>
+<a class="sourceLine" id="cb48-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>specific_name, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(specific_name, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb48-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb48-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb48-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb48-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;specific_name&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" title="1"><span class="kw">rm</span>(specific_name)</a></code></pre></div>
+</div>
+<div id="generic_name" class="section level3">
+<h3><span class="header-section-number">3.3.12</span> generic_name</h3>
+<p><strong>It represents a general common name for the wildlife product</strong></p>
+<ul>
+<li>There are 2099 generic names levels</li>
+<li>The top 15 represents 48.7% of data</li>
+<li>The top 50 represents 70.8% of data</li>
+</ul>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1">generic_name &lt;-data <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(generic_name) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb50-2" title="2"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">total=</span><span class="kw">n</span>()<span class="op">/</span><span class="kw">nrow</span>(data) <span class="op">*</span><span class="dv">100</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb50-3" title="3"><span class="st">  </span><span class="kw">drop_na</span>(generic_name) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb50-4" title="4"><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(total)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">top_n</span>(<span class="dv">15</span>, total) </a>
+<a class="sourceLine" id="cb50-5" title="5"></a>
+<a class="sourceLine" id="cb50-6" title="6"><span class="kw">ggplot</span>(<span class="dt">data=</span>generic_name, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(generic_name, <span class="op">-</span>total), <span class="dt">y=</span>total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb50-7" title="7"><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">fill=</span><span class="st">&quot;steelblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb50-8" title="8"><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">round</span>(total,<span class="dv">2</span>)))<span class="op">+</span></a>
+<a class="sourceLine" id="cb50-9" title="9"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle=</span><span class="dv">60</span>, <span class="dt">hjust=</span><span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb50-10" title="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Percentage&quot;</span>,  <span class="dt">x=</span><span class="st">&quot;generic_name&quot;</span>) </a></code></pre></div>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" title="1"><span class="kw">rm</span>(generic_name)</a></code></pre></div>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="data-quality-cleaning.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="other-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["report_bookdown.pdf", "report_bookdown.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
