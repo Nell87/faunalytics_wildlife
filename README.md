@@ -16,6 +16,6 @@ In this project, we will be working with an existing dataset to produce estimate
  - **Install Rtools from [here](https://cran.r-project.org/bin/windows/Rtools/)**
   
  - **Run the project_setup file for installing some packages**
- - **Everything is ready!** Open the report file for taking a look to the dataset
+ - **Everything is ready!** Open the index.html file for taking a look to the dataset (./report_bookdown/book/index.html)
 
 
