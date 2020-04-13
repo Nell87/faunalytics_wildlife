@@ -57,6 +57,10 @@
 <script src="libs/dt-core-1.10.16/js/jquery.dataTables.min.js"></script>
 <link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
 <script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+<script src="libs/plotly-binding-4.9.0/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-1.46.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-1.46.1/plotly-latest.min.js"></script>
 
 
 <style type="text/css">
@@ -173,24 +177,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3.11" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#generic_name"><i class="fa fa-check"></i><b>3.3.11</b> generic_name</a></li>
 <li class="chapter" data-level="3.3.12" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#specific_name"><i class="fa fa-check"></i><b>3.3.12</b> specific_name</a></li>
 </ul></li>
+<li class="chapter" data-level="3.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#more-data-cleaning-after-exploratory-analysis"><i class="fa fa-check"></i><b>3.4</b> More data cleaning after exploratory analysis</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="trends-over-time.html"><a href="trends-over-time.html"><i class="fa fa-check"></i><b>4</b> Trends over time</a><ul>
 <li class="chapter" data-level="4.1" data-path="trends-over-time.html"><a href="trends-over-time.html#shipments"><i class="fa fa-check"></i><b>4.1</b> Shipments</a></li>
-<li class="chapter" data-level="4.2" data-path="trends-over-time.html"><a href="trends-over-time.html#value-us-dollars"><i class="fa fa-check"></i><b>4.2</b> Value (US dollars)</a><ul>
+<li class="chapter" data-level="4.2" data-path="trends-over-time.html"><a href="trends-over-time.html#import-us-dollars"><i class="fa fa-check"></i><b>4.2</b> Import (US dollars)</a><ul>
 <li class="chapter" data-level="4.2.1" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-disposition-year"><i class="fa fa-check"></i><b>4.2.1</b> Measured by disposition year</a></li>
+<li class="chapter" data-level="4.2.2" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-shipment-year"><i class="fa fa-check"></i><b>4.2.2</b> Measured by shipment year</a></li>
+<li class="chapter" data-level="4.2.3" data-path="trends-over-time.html"><a href="trends-over-time.html#by-taxa-and-shipment-year"><i class="fa fa-check"></i><b>4.2.3</b> By taxa and shipment year</a></li>
+<li class="chapter" data-level="4.2.4" data-path="trends-over-time.html"><a href="trends-over-time.html#by-description-and-shipment-year"><i class="fa fa-check"></i><b>4.2.4</b> By description and shipment year</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-shipment-year"><i class="fa fa-check"></i><b>4.3</b> Measured by shipment year</a></li>
-<li class="chapter" data-level="4.4" data-path="trends-over-time.html"><a href="trends-over-time.html#quantity-number-of-items"><i class="fa fa-check"></i><b>4.4</b> Quantity (number of items)</a></li>
+<li class="chapter" data-level="4.3" data-path="trends-over-time.html"><a href="trends-over-time.html#quantity-number-of-items-and-kg"><i class="fa fa-check"></i><b>4.3</b> Quantity (number of items and kg)</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="explore-by-topics.html"><a href="explore-by-topics.html"><i class="fa fa-check"></i><b>5</b> Explore by topics</a><ul>
-<li class="chapter" data-level="5.1" data-path="explore-by-topics.html"><a href="explore-by-topics.html#total-value-of-import-by-taxa"><i class="fa fa-check"></i><b>5.1</b> Total value of import by taxa</a></li>
-<li class="chapter" data-level="5.2" data-path="explore-by-topics.html"><a href="explore-by-topics.html#total-value-of-import-by-taxa-by-year"><i class="fa fa-check"></i><b>5.2</b> Total value of import by taxa by year</a></li>
-<li class="chapter" data-level="5.3" data-path="explore-by-topics.html"><a href="explore-by-topics.html#total-value-of-import-by-description"><i class="fa fa-check"></i><b>5.3</b> Total value of import by description</a></li>
-<li class="chapter" data-level="5.4" data-path="explore-by-topics.html"><a href="explore-by-topics.html#total-value-of-import-by-description-by-year"><i class="fa fa-check"></i><b>5.4</b> Total value of import by description by year</a></li>
-<li class="chapter" data-level="5.5" data-path="explore-by-topics.html"><a href="explore-by-topics.html#average-value-of-import-by-taxa-for-no-units"><i class="fa fa-check"></i><b>5.5</b> Average value of import by taxa (for “NO” units)</a></li>
-<li class="chapter" data-level="5.6" data-path="explore-by-topics.html"><a href="explore-by-topics.html#average-value-of-import-by-description-for-no-units"><i class="fa fa-check"></i><b>5.6</b> Average value of import by description (for “NO” units)</a></li>
-<li class="chapter" data-level="5.7" data-path="explore-by-topics.html"><a href="explore-by-topics.html#average-value-of-import-by-taxa-for-kg-units"><i class="fa fa-check"></i><b>5.7</b> Average value of import by taxa (for “KG” units)</a></li>
-<li class="chapter" data-level="5.8" data-path="explore-by-topics.html"><a href="explore-by-topics.html#average-value-of-import-by-description-for-kg-units"><i class="fa fa-check"></i><b>5.8</b> Average value of import by description (for “KG” units)</a></li>
+<li class="chapter" data-level="5" data-path="explore-other-topics.html"><a href="explore-other-topics.html"><i class="fa fa-check"></i><b>5</b> Explore other topics</a><ul>
+<li class="chapter" data-level="5.1" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-taxa"><i class="fa fa-check"></i><b>5.1</b> Total import (US dollars) by taxa</a></li>
+<li class="chapter" data-level="5.2" data-path="explore-other-topics.html"><a href="explore-other-topics.html#average-import-by-taxa-for-those-with-number-and-kg-units"><i class="fa fa-check"></i><b>5.2</b> Average import by taxa (for those with number and kg units)</a></li>
+<li class="chapter" data-level="5.3" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-description"><i class="fa fa-check"></i><b>5.3</b> Total import (US dollars) by description</a></li>
+<li class="chapter" data-level="5.4" data-path="explore-other-topics.html"><a href="explore-other-topics.html#average-import-by-description-for-those-with-number-and-kg-units"><i class="fa fa-check"></i><b>5.4</b> Average import by description (for those with number and kg units)</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="working-in-progress.html"><a href="working-in-progress.html"><i class="fa fa-check"></i><b>6</b> Working in progress</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
