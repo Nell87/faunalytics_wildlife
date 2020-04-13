@@ -92,25 +92,29 @@ average_bydescription<- data %>%
 DT::datatable(average_bydescription) %>%
   formatCurrency('import_median',currency = "", interval = 3, mark = ",")
 
-ggplot(average_bydescription[average_bydescription$unit== "Number", ], 
-       aes(x = reorder(description, -import_median), y=import_median)) + 
+average_bydescription[average_bydescription$unit== "Number", ]%>% 
+  ungroup() %>%
+  top_n(15, wt=import_median) %>%
+  ggplot(aes(x = reorder(description, -import_median), y=import_median)) + 
        geom_bar(stat = "identity", width=0.4, 
                 position = position_dodge(width=0.5),  fill="blue") +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
        labs(y = "Average import",  x="description") + 
-  ggtitle("Average import by description (Items measured by numbers)") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+       ggtitle("Average import by description (Items measured by numbers)") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
-ggplot(average_bydescription[average_bydescription$unit== "Kilograms", ], 
-       aes(x = reorder(description, -import_median), y=import_median)) + 
+average_bydescription[average_bydescription$unit== "Kilograms", ]%>% 
+  ungroup() %>%
+  top_n(15) %>%
+  ggplot(aes(x = reorder(description, -import_median), y=import_median)) + 
        geom_bar(stat = "identity", width=0.4, 
                 position = position_dodge(width=0.5),  fill="blue") +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
        geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
        labs(y = "Average import",  x="description") + 
-  ggtitle("Average import by description (Items measured by Kilograms)") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+       ggtitle("Average import by description (Items measured by Kilograms)") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(average_bydescription)
 ```
