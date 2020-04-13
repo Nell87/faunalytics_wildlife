@@ -1,4 +1,4 @@
-# Working in progress
+# Work in progress
 
 - Add a summary section 
 
