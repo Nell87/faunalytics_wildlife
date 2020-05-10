@@ -31,13 +31,15 @@ rm(unique_shipments_week)
 ```
 
 ## Import (US dollars)
+**It's important to take into account that since year 2008, this variable has a lot of missing values (check the 2.1. section). So, we can just calculate the total import for the period between 2000-2007, and also for the year 2012.**
+
 ### Measured by disposition year
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE,out.width='90%'}
 value_wildlifeproduct_dispyear <-data %>% 
   filter(!is.na(value))  %>%
-  filter(!is.na(disposition_year))  %>%
+  filter(!disposition_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014))) %>%
   group_by(disposition_year) %>%
-  summarise(value = sum(as.numeric(value)))
+  summarise(value = sum(as.numeric(value))) 
 
 DT::datatable(value_wildlifeproduct_dispyear) %>%
   formatCurrency('value',currency = "", interval = 3, mark = ",")
@@ -58,6 +60,7 @@ rm(value_wildlifeproduct_dispyear)
 value_wildlifeproduct_shipyear <-data %>% 
   filter(!is.na(value))  %>%
   filter(!is.na(shipment_year))  %>%
+  filter(!shipment_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014))) %>%
   group_by(shipment_year) %>%
   summarise(value = sum(as.numeric(value)))
 

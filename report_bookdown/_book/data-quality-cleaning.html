@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Data quality &amp; cleaning | Faunalytics - Wildlife trade dataset</title>
-  <meta name="description" content="Chapter 2 Data quality &amp; cleaning | Faunalytics - Wildlife trade dataset" />
+  <title>Chapter 3 Data quality &amp; cleaning | Faunalytics - Wildlife trade dataset</title>
+  <meta name="description" content="Chapter 3 Data quality &amp; cleaning | Faunalytics - Wildlife trade dataset" />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Data quality &amp; cleaning | Faunalytics - Wildlife trade dataset" />
+  <meta property="og:title" content="Chapter 3 Data quality &amp; cleaning | Faunalytics - Wildlife trade dataset" />
   <meta property="og:type" content="book" />
   
   
@@ -16,21 +16,21 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Data quality &amp; cleaning | Faunalytics - Wildlife trade dataset" />
+  <meta name="twitter:title" content="Chapter 3 Data quality &amp; cleaning | Faunalytics - Wildlife trade dataset" />
   
   
   
 
 
 
-<meta name="date" content="2020-04-13" />
+<meta name="date" content="2020-05-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
+<link rel="prev" href="summary.html"/>
 <link rel="next" href="exploratory-analysis.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -49,18 +49,6 @@
 
 
 
-<script src="libs/htmlwidgets-1.3/htmlwidgets.js"></script>
-<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="libs/datatables-binding-0.8/datatables.js"></script>
-<link href="libs/dt-core-1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="libs/dt-core-1.10.16/css/jquery.dataTables.extra.css" rel="stylesheet" />
-<script src="libs/dt-core-1.10.16/js/jquery.dataTables.min.js"></script>
-<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
-<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
-<script src="libs/plotly-binding-4.9.0/plotly.js"></script>
-<script src="libs/typedarray-0.1/typedarray.min.js"></script>
-<link href="libs/plotly-htmlwidgets-css-1.46.1/plotly-htmlwidgets.css" rel="stylesheet" />
-<script src="libs/plotly-main-1.46.1/plotly-latest.min.js"></script>
 
 
 <style type="text/css">
@@ -143,59 +131,62 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html"><i class="fa fa-check"></i><b>2</b> Data quality &amp; cleaning</a><ul>
-<li class="chapter" data-level="2.1" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#missing-values"><i class="fa fa-check"></i><b>2.1</b> Missing values</a></li>
-<li class="chapter" data-level="2.2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#excluding-plants-and-microorganisms"><i class="fa fa-check"></i><b>2.2</b> Excluding plants and microorganisms</a></li>
+<li class="chapter" data-level="2" data-path="summary.html"><a href="summary.html"><i class="fa fa-check"></i><b>2</b> Summary</a></li>
+<li class="chapter" data-level="3" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html"><i class="fa fa-check"></i><b>3</b> Data quality &amp; cleaning</a><ul>
+<li class="chapter" data-level="3.1" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#missing-values"><i class="fa fa-check"></i><b>3.1</b> Missing values</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#missing-values-in-value-year-over-year"><i class="fa fa-check"></i><b>3.1.1</b> Missing values in “value” year over year</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html"><i class="fa fa-check"></i><b>3</b> Exploratory analysis</a><ul>
-<li class="chapter" data-level="3.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-trade-process"><i class="fa fa-check"></i><b>3.1</b> Variables related with the trade process:</a><ul>
-<li class="chapter" data-level="3.1.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#control_number"><i class="fa fa-check"></i><b>3.1.1</b> control_number</a></li>
-<li class="chapter" data-level="3.1.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#quantity-and-unit"><i class="fa fa-check"></i><b>3.1.2</b> quantity and unit</a></li>
-<li class="chapter" data-level="3.1.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#import_export"><i class="fa fa-check"></i><b>3.1.3</b> import_export</a></li>
-<li class="chapter" data-level="3.1.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#action"><i class="fa fa-check"></i><b>3.1.4</b> action</a></li>
-<li class="chapter" data-level="3.1.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#disposition"><i class="fa fa-check"></i><b>3.1.5</b> disposition</a></li>
-<li class="chapter" data-level="3.1.6" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#shipment_date-and-disposition_date"><i class="fa fa-check"></i><b>3.1.6</b> shipment_date and disposition_date</a></li>
+<li class="chapter" data-level="3.2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#excluding-generic-elements"><i class="fa fa-check"></i><b>3.2</b> Excluding generic elements</a></li>
 </ul></li>
-<li class="chapter" data-level="3.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-countries"><i class="fa fa-check"></i><b>3.2</b> Variables related with the countries</a><ul>
-<li class="chapter" data-level="3.2.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#country_origin"><i class="fa fa-check"></i><b>3.2.1</b> country_origin</a></li>
-<li class="chapter" data-level="3.2.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#country_imp_exp"><i class="fa fa-check"></i><b>3.2.2</b> country_imp_exp</a></li>
-<li class="chapter" data-level="3.2.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#port"><i class="fa fa-check"></i><b>3.2.3</b> port</a></li>
-<li class="chapter" data-level="3.2.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#us_co"><i class="fa fa-check"></i><b>3.2.4</b> us_co</a></li>
-<li class="chapter" data-level="3.2.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#foreign_co"><i class="fa fa-check"></i><b>3.2.5</b> foreign_co</a></li>
+<li class="chapter" data-level="4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html"><i class="fa fa-check"></i><b>4</b> Exploratory analysis</a><ul>
+<li class="chapter" data-level="4.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-trade-process"><i class="fa fa-check"></i><b>4.1</b> Variables related with the trade process:</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#control_number"><i class="fa fa-check"></i><b>4.1.1</b> control_number</a></li>
+<li class="chapter" data-level="4.1.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#quantity-and-unit"><i class="fa fa-check"></i><b>4.1.2</b> quantity and unit</a></li>
+<li class="chapter" data-level="4.1.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#import_export"><i class="fa fa-check"></i><b>4.1.3</b> import_export</a></li>
+<li class="chapter" data-level="4.1.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#action"><i class="fa fa-check"></i><b>4.1.4</b> action</a></li>
+<li class="chapter" data-level="4.1.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#disposition"><i class="fa fa-check"></i><b>4.1.5</b> disposition</a></li>
+<li class="chapter" data-level="4.1.6" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#shipment_date-and-disposition_date"><i class="fa fa-check"></i><b>4.1.6</b> shipment_date and disposition_date</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-product"><i class="fa fa-check"></i><b>3.3</b> Variables related with the product</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#description"><i class="fa fa-check"></i><b>3.3.1</b> description</a></li>
-<li class="chapter" data-level="3.3.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#value"><i class="fa fa-check"></i><b>3.3.2</b> value</a></li>
-<li class="chapter" data-level="3.3.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#purpose"><i class="fa fa-check"></i><b>3.3.3</b> purpose</a></li>
-<li class="chapter" data-level="3.3.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#source"><i class="fa fa-check"></i><b>3.3.4</b> source</a></li>
-<li class="chapter" data-level="3.3.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#species_code"><i class="fa fa-check"></i><b>3.3.5</b> species_code</a></li>
-<li class="chapter" data-level="3.3.6" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#taxa"><i class="fa fa-check"></i><b>3.3.6</b> taxa</a></li>
-<li class="chapter" data-level="3.3.7" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#class"><i class="fa fa-check"></i><b>3.3.7</b> class</a></li>
-<li class="chapter" data-level="3.3.8" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#genus"><i class="fa fa-check"></i><b>3.3.8</b> genus</a></li>
-<li class="chapter" data-level="3.3.9" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#species"><i class="fa fa-check"></i><b>3.3.9</b> species</a></li>
-<li class="chapter" data-level="3.3.10" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#subspecies"><i class="fa fa-check"></i><b>3.3.10</b> subspecies</a></li>
-<li class="chapter" data-level="3.3.11" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#generic_name"><i class="fa fa-check"></i><b>3.3.11</b> generic_name</a></li>
-<li class="chapter" data-level="3.3.12" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#specific_name"><i class="fa fa-check"></i><b>3.3.12</b> specific_name</a></li>
+<li class="chapter" data-level="4.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-countries"><i class="fa fa-check"></i><b>4.2</b> Variables related with the countries</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#country_origin"><i class="fa fa-check"></i><b>4.2.1</b> country_origin</a></li>
+<li class="chapter" data-level="4.2.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#country_imp_exp"><i class="fa fa-check"></i><b>4.2.2</b> country_imp_exp</a></li>
+<li class="chapter" data-level="4.2.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#port"><i class="fa fa-check"></i><b>4.2.3</b> port</a></li>
+<li class="chapter" data-level="4.2.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#us_co"><i class="fa fa-check"></i><b>4.2.4</b> us_co</a></li>
+<li class="chapter" data-level="4.2.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#foreign_co"><i class="fa fa-check"></i><b>4.2.5</b> foreign_co</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#more-data-cleaning-after-exploratory-analysis"><i class="fa fa-check"></i><b>3.4</b> More data cleaning after exploratory analysis</a></li>
+<li class="chapter" data-level="4.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-product"><i class="fa fa-check"></i><b>4.3</b> Variables related with the product</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#description"><i class="fa fa-check"></i><b>4.3.1</b> description</a></li>
+<li class="chapter" data-level="4.3.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#value"><i class="fa fa-check"></i><b>4.3.2</b> value</a></li>
+<li class="chapter" data-level="4.3.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#purpose"><i class="fa fa-check"></i><b>4.3.3</b> purpose</a></li>
+<li class="chapter" data-level="4.3.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#source"><i class="fa fa-check"></i><b>4.3.4</b> source</a></li>
+<li class="chapter" data-level="4.3.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#species_code"><i class="fa fa-check"></i><b>4.3.5</b> species_code</a></li>
+<li class="chapter" data-level="4.3.6" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#taxa"><i class="fa fa-check"></i><b>4.3.6</b> taxa</a></li>
+<li class="chapter" data-level="4.3.7" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#class"><i class="fa fa-check"></i><b>4.3.7</b> class</a></li>
+<li class="chapter" data-level="4.3.8" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#genus"><i class="fa fa-check"></i><b>4.3.8</b> genus</a></li>
+<li class="chapter" data-level="4.3.9" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#species"><i class="fa fa-check"></i><b>4.3.9</b> species</a></li>
+<li class="chapter" data-level="4.3.10" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#subspecies"><i class="fa fa-check"></i><b>4.3.10</b> subspecies</a></li>
+<li class="chapter" data-level="4.3.11" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#generic_name"><i class="fa fa-check"></i><b>4.3.11</b> generic_name</a></li>
+<li class="chapter" data-level="4.3.12" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#specific_name"><i class="fa fa-check"></i><b>4.3.12</b> specific_name</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="trends-over-time.html"><a href="trends-over-time.html"><i class="fa fa-check"></i><b>4</b> Trends over time</a><ul>
-<li class="chapter" data-level="4.1" data-path="trends-over-time.html"><a href="trends-over-time.html#shipments"><i class="fa fa-check"></i><b>4.1</b> Shipments</a></li>
-<li class="chapter" data-level="4.2" data-path="trends-over-time.html"><a href="trends-over-time.html#import-us-dollars"><i class="fa fa-check"></i><b>4.2</b> Import (US dollars)</a><ul>
-<li class="chapter" data-level="4.2.1" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-disposition-year"><i class="fa fa-check"></i><b>4.2.1</b> Measured by disposition year</a></li>
-<li class="chapter" data-level="4.2.2" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-shipment-year"><i class="fa fa-check"></i><b>4.2.2</b> Measured by shipment year</a></li>
-<li class="chapter" data-level="4.2.3" data-path="trends-over-time.html"><a href="trends-over-time.html#by-taxa-and-shipment-year"><i class="fa fa-check"></i><b>4.2.3</b> By taxa and shipment year</a></li>
-<li class="chapter" data-level="4.2.4" data-path="trends-over-time.html"><a href="trends-over-time.html#by-description-and-shipment-year"><i class="fa fa-check"></i><b>4.2.4</b> By description and shipment year</a></li>
+<li class="chapter" data-level="4.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#more-data-cleaning-after-exploratory-analysis"><i class="fa fa-check"></i><b>4.4</b> More data cleaning after exploratory analysis</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="trends-over-time.html"><a href="trends-over-time.html#quantity-number-of-items-and-kg"><i class="fa fa-check"></i><b>4.3</b> Quantity (number of items and kg)</a></li>
+<li class="chapter" data-level="5" data-path="trends-over-time.html"><a href="trends-over-time.html"><i class="fa fa-check"></i><b>5</b> Trends over time</a><ul>
+<li class="chapter" data-level="5.1" data-path="trends-over-time.html"><a href="trends-over-time.html#shipments"><i class="fa fa-check"></i><b>5.1</b> Shipments</a></li>
+<li class="chapter" data-level="5.2" data-path="trends-over-time.html"><a href="trends-over-time.html#import-us-dollars"><i class="fa fa-check"></i><b>5.2</b> Import (US dollars)</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-disposition-year"><i class="fa fa-check"></i><b>5.2.1</b> Measured by disposition year</a></li>
+<li class="chapter" data-level="5.2.2" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-shipment-year"><i class="fa fa-check"></i><b>5.2.2</b> Measured by shipment year</a></li>
+<li class="chapter" data-level="5.2.3" data-path="trends-over-time.html"><a href="trends-over-time.html#by-taxa-and-shipment-year"><i class="fa fa-check"></i><b>5.2.3</b> By taxa and shipment year</a></li>
+<li class="chapter" data-level="5.2.4" data-path="trends-over-time.html"><a href="trends-over-time.html#by-description-and-shipment-year"><i class="fa fa-check"></i><b>5.2.4</b> By description and shipment year</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="explore-other-topics.html"><a href="explore-other-topics.html"><i class="fa fa-check"></i><b>5</b> Explore other topics</a><ul>
-<li class="chapter" data-level="5.1" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-taxa"><i class="fa fa-check"></i><b>5.1</b> Total import (US dollars) by taxa</a></li>
-<li class="chapter" data-level="5.2" data-path="explore-other-topics.html"><a href="explore-other-topics.html#average-import-by-taxa-for-those-with-number-and-kg-units"><i class="fa fa-check"></i><b>5.2</b> Average import by taxa (for those with number and kg units)</a></li>
-<li class="chapter" data-level="5.3" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-description"><i class="fa fa-check"></i><b>5.3</b> Total import (US dollars) by description</a></li>
-<li class="chapter" data-level="5.4" data-path="explore-other-topics.html"><a href="explore-other-topics.html#average-import-by-description-for-those-with-number-and-kg-units"><i class="fa fa-check"></i><b>5.4</b> Average import by description (for those with number and kg units)</a></li>
+<li class="chapter" data-level="5.3" data-path="trends-over-time.html"><a href="trends-over-time.html#quantity-number-of-items-and-kg"><i class="fa fa-check"></i><b>5.3</b> Quantity (number of items and kg)</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="work-in-progress.html"><a href="work-in-progress.html"><i class="fa fa-check"></i><b>6</b> Work in progress</a></li>
+<li class="chapter" data-level="6" data-path="explore-other-topics.html"><a href="explore-other-topics.html"><i class="fa fa-check"></i><b>6</b> Explore other topics</a><ul>
+<li class="chapter" data-level="6.1" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-taxa"><i class="fa fa-check"></i><b>6.1</b> Total import (US dollars) by taxa</a></li>
+<li class="chapter" data-level="6.2" data-path="explore-other-topics.html"><a href="explore-other-topics.html#average-import-by-taxa-for-those-with-number-and-kg-units"><i class="fa fa-check"></i><b>6.2</b> Average import by taxa (for those with number and kg units)</a></li>
+<li class="chapter" data-level="6.3" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-description"><i class="fa fa-check"></i><b>6.3</b> Total import (US dollars) by description</a></li>
+<li class="chapter" data-level="6.4" data-path="explore-other-topics.html"><a href="explore-other-topics.html#average-import-by-description-for-those-with-number-and-kg-units"><i class="fa fa-check"></i><b>6.4</b> Average import by description (for those with number and kg units)</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="work-in-progress.html"><a href="work-in-progress.html"><i class="fa fa-check"></i><b>7</b> Work in progress</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -218,9 +209,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="data-quality-cleaning" class="section level1">
-<h1><span class="header-section-number">Chapter 2</span> Data quality &amp; cleaning</h1>
+<h1><span class="header-section-number">Chapter 3</span> Data quality &amp; cleaning</h1>
 <div id="missing-values" class="section level2">
-<h2><span class="header-section-number">2.1</span> Missing values</h2>
+<h2><span class="header-section-number">3.1</span> Missing values</h2>
 <p><strong>Only four variables have more than 30% missing values. Most of them are below 10%</strong></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Are there missing values?</span></a>
 <a class="sourceLine" id="cb1-2" title="2">missing_values &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></a>
@@ -239,9 +230,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1-15" title="15"></a>
 <a class="sourceLine" id="cb1-16" title="16"><span class="kw">rm</span>(missing_values)</a></code></pre></div>
 <p><img src="report_bookdown_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-</div>
-<div id="excluding-plants-and-microorganisms" class="section level2">
-<h2><span class="header-section-number">2.2</span> Excluding plants and microorganisms</h2>
+<div id="missing-values-in-value-year-over-year" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> Missing values in “value” year over year</h3>
+<p><strong>If we have a look at the “value” variable, we can notice that the years 2008, 2009, 2010 and 2014 only contain missing values</strong></p>
+<p><img src="report_bookdown_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+## Excluding plants and microorganisms</p>
 <p><strong>We classified 98.93 % of data by kingdoms using the class, taxa and genus columns</strong>. This way, we excluded those elements belonging to fungi, plantae, bacteria, chromista and unspecified kingdoms.</p>
 <ul>
 <li><p><strong>Bacterias</strong>: Gammaproteobacteria</p></li>
@@ -313,6 +306,10 @@ Tentaculata, Thaliacea, Trematoda</p></li>
 <a class="sourceLine" id="cb3-26" title="26"></a>
 <a class="sourceLine" id="cb3-27" title="27"><span class="kw">rm</span>(classes, animalia_kingdom, bacterias_kingdom, chromista_kingdom,</a>
 <a class="sourceLine" id="cb3-28" title="28">   plantae_kingdom, fungi_kingdom)</a></code></pre></div>
+</div>
+</div>
+<div id="excluding-generic-elements" class="section level2">
+<h2><span class="header-section-number">3.2</span> Excluding generic elements</h2>
 
 </div>
 </div>
@@ -321,7 +318,7 @@ Tentaculata, Thaliacea, Trematoda</p></li>
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="summary.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="exploratory-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
