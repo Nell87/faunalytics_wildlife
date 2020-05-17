@@ -21,7 +21,7 @@ ggplot(total_bytaxa, aes(x = reorder(taxa, -value), y=value)) +
 rm(total_bytaxa)
 ```
 
-## Average import by taxa (for those with number and kg units)
+## Average import (US dollars) by taxa (for those with number and kg units)
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 average_bytaxa<- data %>% 
   filter(unit=="Number"| unit=="Kilograms") %>%
@@ -79,7 +79,7 @@ ggplot(aes(x = reorder(description, -value), y=value)) +
 rm(value_bydescription)
 ```
 
-## Average import by description (for those with number and kg units)
+## Average import (US dollars) by description (for those with number and kg units)
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 average_bydescription<- data %>% 
   filter(unit=="Number"| unit=="Kilograms") %>%
@@ -118,3 +118,28 @@ average_bydescription[average_bydescription$unit== "Kilograms", ]%>%
 
 rm(average_bydescription)
 ```
+
+## Total import (US dollars) by name
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+total_byname<- data %>% 
+  group_by(specific_name) %>%
+  filter(!is.na(value))%>%
+  summarise(value=sum(as.numeric(value))) %>%
+  arrange(desc(value))
+
+DT::datatable(total_byname) %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
+
+total_byname %>%
+  top_n(15) %>%
+  ggplot(aes(x = reorder(specific_name, -value), y=value)) + 
+       geom_bar(stat = "identity", width=0.4, 
+                position = position_dodge(width=0.5), fill="blue") +
+       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
+       labs(y = "Value",  x="Name") + ggtitle("Total import by name") +
+  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+rm(total_byname)
+```
+

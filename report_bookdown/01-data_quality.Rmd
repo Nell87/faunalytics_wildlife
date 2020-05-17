@@ -54,7 +54,7 @@ rm(missing_values)
 ### Missing values in "value" year over year
 **If we have a look at the "value" variable, we can notice that the years 2008, 2009, 2010 and 2014 only contain missing values**
 
-```{r eval=TRUE, echo=FALSE, warning=FALSE, include=TRUE} 
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE} 
 missing_value<- data %>%
   select(shipment_year, value) %>%
   group_by(shipment_year) %>%

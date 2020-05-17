@@ -31,7 +31,9 @@ rm(unique_shipments_week)
 ```
 
 ## Import (US dollars)
-**It's important to take into account that since year 2008, this variable has a lot of missing values (check the 2.1. section). So, we can just calculate the total import for the period between 2000-2007, and also for the year 2012.**
+**It's important to take into account that since year 2008, this variable has a lot of missing values (check the 2.1. section)** So, we can just calculate the total import for the period between 2000-2007, and also for the year 2012.
+
+It seems there has been an upward trend in the amount of spent US dollars from 2000 to 2012. 
 
 ### Measured by disposition year
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE,out.width='90%'}
@@ -80,9 +82,13 @@ rm(value_wildlifeproduct_shipyear)
 
 ### By taxa and shipment year
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
-value_bytaxayear<- data %>% group_by(taxa, shipment_year) %>%
+value_bytaxayear<- data %>% 
+  group_by(taxa, shipment_year) %>%
   filter(!is.na(value))  %>%
-  summarise(value=sum(as.numeric(value))) 
+  summarise(value=sum(as.numeric(value))) %>%
+  dplyr::ungroup() %>%
+  filter(!shipment_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014)))
+
 
 DT::datatable(value_bytaxayear) %>%
   formatCurrency('value',currency = "", interval = 3, mark = ",")
@@ -90,6 +96,8 @@ DT::datatable(value_bytaxayear) %>%
 
 **Here you have a dynamic graph, where you can choose the specific taxa elements you want to display**
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_bytaxayear$shipment_year<- as.factor(as.character(value_bytaxayear$shipment_year))
+
 value_bytaxayear %>%  
   plot_ly(x = ~ shipment_year) %>% 
   add_lines(y = ~ value, 
@@ -102,7 +110,9 @@ rm(value_bytaxayear)
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 value_bydescriptionyear<- data %>% group_by(description, shipment_year) %>%
   filter(!is.na(value))  %>%
-  summarise(value=sum(as.numeric(value))) 
+  summarise(value=sum(as.numeric(value)))  %>%
+  dplyr::ungroup() %>%
+  filter(!shipment_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014)))
 
 DT::datatable(value_bydescriptionyear)  %>%
   formatCurrency('value',currency = "", interval = 3, mark = ",")
@@ -111,6 +121,8 @@ DT::datatable(value_bydescriptionyear)  %>%
 
 **Here you have a dynamic graph, where you can choose the specific descriptions you want to display**
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_bydescriptionyear$shipment_year<- as.factor(as.character(value_bydescriptionyear$shipment_year))
+
 value_bydescriptionyear %>%  
   plot_ly(x = ~ shipment_year) %>% 
   add_lines(y = ~ value, 
@@ -120,14 +132,49 @@ value_bydescriptionyear %>%
 rm(value_bydescriptionyear)
 ```
 
+### By name (generic + specific) and shipment year
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+value_byname<- data %>% 
+  group_by(specific_name, shipment_year) %>%
+  filter(!is.na(value))  %>%
+  summarise(value=sum(as.numeric(value)))  %>%
+  dplyr::ungroup() %>%
+  filter(!shipment_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014)))
+
+DT::datatable(value_byname)  %>%
+  formatCurrency('value',currency = "", interval = 3, mark = ",")
+
+```
+**Here you have a dynamic graph, where you can choose the specific names you want to display**. We have selected the top 100 based on the total spent US dollars. 
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+total_byname<- data %>% 
+  group_by(specific_name) %>%
+  filter(!is.na(value))%>%
+  summarise(value=sum(as.numeric(value))) %>%
+  arrange(desc(value)) %>%
+  top_n(100)
+
+value_byname$shipment_year<- as.factor(as.character(value_byname$shipment_year))
+
+
+value_byname %>%
+filter(specific_name %in% total_byname$specific_name) %>%  
+  plot_ly(x = ~ shipment_year) %>% 
+  add_lines(y = ~ value, 
+            color = ~ specific_name,
+             visible="legendonly")
+
+rm(value_byname)
+```
+
 
 ## Quantity (number of items and kg)
 **Let's summarized the quantity brought per year**. We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%' }
 quantity_year<- data %>% filter(unit=="Number"| unit=="Kilograms") 
-                                           # 5,451,832 -> 5,421,730 rows
-
+                                 
 quantity_year_summary<- quantity_year %>% 
   group_by(shipment_year, unit) %>%
   summarise(quantity = sum(quantity)) 
@@ -154,3 +201,30 @@ ggplot(quantity_year_summary[quantity_year_summary$unit== "Kilograms", ],
 
 rm(quantity_year, quantity_year_summary)
 ```
+
+## Refused shipments
+As we found in section 4.1.4., just 1.73% of shipments were refused. 
+This would be the trend over time 
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%' }
+refused_shipments<- data %>% 
+  filter(!is.na(action))  %>%
+  group_by(shipment_year, action) %>%
+  summarise(total = n()) %>%
+  mutate(percentage = total / sum(total)*100) %>%
+  filter(action=="Refused")
+
+DT::datatable(refused_shipments) %>% formatCurrency('percentage',
+                                         currency = "",
+                                         interval = 3, mark = ",")
+
+ggplot(data=refused_shipments, aes(x=shipment_year, y=percentage)) + 
+  geom_bar(stat="identity",fill="steelblue") +
+  geom_text(aes(label=round(percentage,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="disposition") 
+
+rm(refused_shipments)
+```
+
+

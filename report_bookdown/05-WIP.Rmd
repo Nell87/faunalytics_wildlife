@@ -6,18 +6,4 @@
 
 - Remove any generic like “sp”, "freshwater sp.", "including goldfish", "marine sp." or "in trop fish &"
 
-- What’s happening with “value” year over year.  It drops out significantly between 2008 and 2011 
-
-- Subset of shipments that got refused.  Is there a trend over time in number, proportion or value of shipments that were refused?
-
-- Total import (US dollars) by generic_name + specific_name 
-
-- Total import (US dollars) by generic_name + specific_name and year
-
-- Which American companies are importing the most. Group the major corporation
-
-- Deeper cleaning 
-
-- Add more notes 
-
 - Add colored maps 

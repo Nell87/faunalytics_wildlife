@@ -252,6 +252,7 @@ geom_bar(stat="identity", position=position_dodge())+
 
 rm(country_origin)
 rm(country_imp_exp)
+rm(countries)
 ```
 
 ### port
@@ -301,17 +302,212 @@ rm(port)
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 us_co <-data %>% group_by(us_co) %>%
-  summarise(total=n()/nrow(data) *100) %>%
+  summarise(total=n()/nrow(data)) %>%
   drop_na(us_co) %>%
-  arrange(desc(total)) %>% top_n(15, total) 
+  arrange(desc(total)) 
 
-ggplot(data=us_co, aes(x=reorder(us_co, -total), y=total)) + 
+DT::datatable(us_co) %>%
+  formatPercentage('total',3)
+
+us_co %>% 
+  mutate(total=total*100) %>%
+  top_n(15, total)%>%
+  ggplot(aes(x=reorder(us_co, -total), y=total)) + 
   geom_bar(stat="identity",fill="steelblue") +
   geom_text(aes(label=round(total,2)))+
   theme(axis.text.x = element_text(angle=60, hjust=1)) +
   labs(y = "Percentage",  x="us_co") 
 
 rm(us_co)
+```
+
+We want to analyze which American corporations are importing the most. So, we have grouped the mayor corporations based on the company names. 
+
+We’ve grouped most of those companies that represent at least 0.15% of the data, covering approximately 1.000.000 observations.
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+data$corporation<- # Fashion/Luxury/Design products 
+                   ifelse(grepl("prada", data$us_co, ignore.case = TRUE), "Prada", 
+                   ifelse(grepl("ralph lauren", data$us_co, ignore.case = TRUE), 
+                          "Ralph Lauren", 
+                   ifelse(grepl("LOUIS VUITTON", data$us_co, ignore.case = TRUE), 
+                          "Louis Vuitton",
+                   ifelse(grepl("MONCLER", data$us_co, ignore.case = TRUE), 
+                          "Moncler",
+                   ifelse(grepl("BOTTEGA VENETA", data$us_co, ignore.case = TRUE), 
+                          "Bottega Veneta",                         
+                   ifelse(grepl("RICHEMONT", data$us_co, ignore.case = TRUE), 
+                          "Richemont",   
+                   ifelse(grepl("FENDI", data$us_co, ignore.case = TRUE), 
+                          "Fendi", 
+                   ifelse(grepl("HERMES", data$us_co, ignore.case = TRUE), 
+                          "Hermès",
+                   ifelse(grepl("GUCCI", data$us_co, ignore.case = TRUE), 
+                          "Gucci",
+                   ifelse(grepl("Beeline", data$us_co, ignore.case = TRUE), 
+                          "Beeline Group",    
+                   ifelse(grepl("fossil partner", data$us_co, ignore.case = TRUE), 
+                          "Fossil Partners, L.P.",         
+                   ifelse(grepl("dfs", data$us_co, ignore.case = TRUE), 
+                          "DFS Group",      
+                   ifelse(grepl("gluck", data$us_co, ignore.case = TRUE), 
+                          "E. Gluck Corporation",     
+                   ifelse(grepl("ferragamo", data$us_co, ignore.case = TRUE), 
+                          "Salvatore Ferragamo",                               
+                   ifelse(grepl("jacadi", data$us_co, ignore.case = TRUE), 
+                          "Jacadi",    
+                   ifelse(grepl("bomac", data$us_co, ignore.case = TRUE), 
+                          "Bomac International Corp",                           
+                   ifelse(data$us_co %in% c("PIER I IMPORTS, INC.", 
+                                            "PIER 1 IMPORTS, INC.	"), 
+                          "Pier 1",  
+                          
+                   # Museums
+                   ifelse(grepl("museum", data$us_co, ignore.case = TRUE), 
+                          "Museums", 
+                   ifelse(grepl("smithsonian", data$us_co, ignore.case = TRUE), 
+                          "Museums",                           
+                          
+                   # Animals or animal products providers   
+                   ifelse(grepl("SEA DWELLING", data$us_co, ignore.case = TRUE), 
+                          "Sea Dwelling creatures",   
+                   ifelse(grepl("HIPPOCAMPE", data$us_co, ignore.case = TRUE), 
+                          "Hippocampe USA", 
+                   ifelse(grepl("AQUA-NAUTIC", data$us_co, ignore.case = TRUE), 
+                          "Aqua Nautic Specialist", 
+                   ifelse(grepl("UNDERWATER WORLD", data$us_co, ignore.case = TRUE), 
+                          "Underwater World",
+                   ifelse(grepl("GOLDEN INA", data$us_co, ignore.case = TRUE), 
+                          "Golden Ina",
+                   ifelse(grepl("QUALITY MARINE", data$us_co, ignore.case = TRUE), 
+                          "Quality Marine",
+                   ifelse(grepl("Arsian", data$us_co, ignore.case = TRUE), 
+                          "Arsian Imports",      
+                   ifelse(grepl("aquarium arts", data$us_co, ignore.case = TRUE), 
+                          "Aquarium Arts", 
+                   ifelse(grepl("WALT SMITH", data$us_co, ignore.case = TRUE), 
+                          "Walt Smith International", 
+                   ifelse(grepl("all seas fisheries", data$us_co, ignore.case = TRUE), 
+                          "Allseas Fisheries",        
+                   ifelse(grepl("sun pet ltd", data$us_co, ignore.case = TRUE), 
+                          "Sun Pet LTD",         
+                   ifelse(grepl("pacific aqua farms", data$us_co, ignore.case = TRUE), 
+                          "Pacific Aquafarms",  
+                   ifelse(grepl("INTINENTAL", data$us_co, ignore.case = TRUE), 
+                          "Intinental Pri",                    
+                   ifelse(grepl("AQUACO", data$us_co, ignore.case = TRUE), 
+                          "Aquaco",                       
+                   ifelse(grepl("all seas marine", data$us_co, ignore.case = TRUE), 
+                          "Allseas Marine",                    
+                   ifelse(grepl("transship discounts", data$us_co, ignore.case = TRUE), 
+                          "Transship Discounts LTD",     
+                   ifelse(grepl("SEGREST FARMS", data$us_co, ignore.case = TRUE), 
+                          "Segrest Farms",  
+                   ifelse(grepl("fish head", data$us_co, ignore.case = TRUE), 
+                          "Fish Heads Inc",     
+                   ifelse(grepl("holiday coral", data$us_co, ignore.case = TRUE), 
+                          "Holiday Coral Inc",                           
+                   ifelse(grepl("pacific island imp", data$us_co, ignore.case = TRUE), 
+                          "Pacific Island Imports",     
+                   ifelse(grepl("PAN OCEAN AQUARIUM", data$us_co, ignore.case = TRUE), 
+                          "Pan Ocean Aquarium, Inc",   
+                   ifelse(grepl("SALTWATER INC.", data$us_co, ignore.case = TRUE), 
+                          "Saltwater Inc",      
+                   ifelse(grepl("saltwaterfish", data$us_co, ignore.case = TRUE), 
+                          "Saltwaterfish",         
+                   ifelse(grepl("golden sea int", data$us_co, ignore.case = TRUE), 
+                          "Golden Sea Inc",                           
+                   ifelse(grepl("strictly reptiles", data$us_co, ignore.case = TRUE), 
+                          "Strictly Reptiles Inc",                            
+                   ifelse(grepl("emark tropical", data$us_co, ignore.case = TRUE), 
+                          "Emark Tropical Imports, Inc",                              
+                          	
+                   ifelse(data$us_co %in% c("DOLPHIN INTERNATIONAL", "DOLPHIN INT'L",
+                                            "DOLPHIN INTERNAITONAL"), 
+                          "Dolphin International", 
+                   ifelse(data$us_co %in% c("a & m aquatics", "A&M AQUATICS"), 
+                          "A&M Aquatics",           
+                   ifelse(data$us_co %in% c("LPS LLC", "LPS, LLC", "LPS"), 
+                          "LPS LLC",    
+                   ifelse(data$us_co %in% c("APET, INC", "APET INC"), 
+                          "Apet Inc",   
+
+                          "Other")))))))))))))))))))))))))))))))))))))))))))))))))
+
+data_corporations <- data %>%
+  mutate(corporation = as.factor(corporation)) %>%
+  filter(corporation!="Other") # 1,004,219
+
+# Let's classify these corporations
+corp_fashion<- c("Beeline Group", "Bomac International Corp", "Bottega Veneta", 
+                 "DFS Group","E. Gluck Corporation", "Fendi", 
+                 "Fossil Partners, L.P.", "Gucci", "Hermès", "Jacadi", 
+                 "Louis Vuitton","Moncler", "Pier 1","Prada", "Ralph Lauren",
+                 "Richemont", "Salvatore Ferragamo")
+
+corp_animalproviders<-c("A&M Aquatics", "Aqua Nautic Specialist", "Aquaco",
+                        "Aquarium Arts", "Allseas Fisheries", "Allseas Marine",
+                        "Apet Inc", "Arsian Imports", "Dolphin International",
+                        "Emark Tropical Imports, Inc", "Fish Heads Inc",
+                        "Golden Ina", "Golden Sea Inc", "Hippocampe USA",
+                        "Holiday Coral Inc", "Intinental Pri", "LPS LLC",
+                        "Pacific Aquafarms", "Pacific Island Imports",
+                        "Pan Ocean Aquarium, Inc", "Quality Marine",
+                        "Saltwater Inc", "Saltwaterfish", "Sea Dwelling creatures",
+                        "Segrest Farms", "Strictly Reptiles Inc", "Sun Pet LTD",
+                        "Transship Discounts LTD", "Underwater World",
+                        "Walt Smith International")
+
+data$corp_classif<- ifelse(data$corporation %in% corp_fashion, "Fashion/Luxury/Design",
+                    ifelse(data$corporation %in% corp_animalproviders, 
+                           "Animal/animal prod. providers", 
+                    ifelse(data$corporation %in% "Museums", "Museums", "Others"))) 
+
+data$corporation<-as.factor(data$corporation)
+data$corp_classif<- as.factor(data$corp_classif)
+
+# Let's summarize and graph these corporations
+data_corporations<- data %>% 
+  group_by(corp_classif, corporation) %>%
+  dplyr::summarise(total=n(), percentage=n()/nrow(data)) %>%
+  arrange(desc(total)) 
+
+DT::datatable(data_corporations) %>%
+  formatPercentage('percentage',3) %>%
+  formatCurrency('total',currency = "", interval = 3, mark = ",")
+
+data_corporations %>% 
+  mutate(percentage=percentage*100) %>%
+  filter(corp_classif != "Others") %>%
+  ungroup() %>%
+  top_n(15, percentage) %>%
+  ggplot(aes(x=reorder(corporation, -percentage), y=percentage,fill=corp_classif)) + 
+  geom_bar(stat="identity") +
+  geom_text(aes(label=round(percentage,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="US corporations") 
+
+## Graph by classification
+data_corporations %>% 
+  mutate(percentage=percentage*100) %>%
+  filter(corp_classif == "Fashion/Luxury/Design") %>%
+  ggplot(aes(x=reorder(corporation, -percentage), y=percentage)) + 
+  geom_bar(stat="identity", fill="darkgreen") +
+  geom_text(aes(label=round(percentage,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="Fashion/Luxury/Design Corporations") 
+
+data_corporations %>% 
+  mutate(percentage=percentage*100) %>%
+  filter(corp_classif == "Animal/animal prod. providers") %>%
+  ggplot(aes(x=reorder(corporation, -percentage), y=percentage,fill=corp_classif)) + 
+  geom_bar(stat="identity") +
+  geom_text(aes(label=round(percentage,2)))+
+  theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  labs(y = "Percentage",  x="Animal/animal prod. providers Corporations") 
+
+rm(corp_animalproviders, corp_fashion, data_corporations)
+
 ```
 
 ### foreign_co
@@ -323,11 +519,17 @@ rm(us_co)
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 foreign_co <-data %>% group_by(foreign_co) %>%
-  summarise(total=n()/nrow(data) *100) %>%
+  summarise(total=n()/nrow(data)) %>%
   drop_na(foreign_co) %>%
   arrange(desc(total)) %>% top_n(15, total) 
 
-ggplot(data=foreign_co, aes(x=reorder(foreign_co, -total), y=total)) + 
+DT::datatable(foreign_co) %>%
+  formatPercentage('total',3)
+
+foreign_co %>% 
+  mutate(total=total*100) %>%
+  top_n(15, total)%>%
+  ggplot(aes(x=reorder(foreign_co, -total), y=total)) + 
   geom_bar(stat="identity",fill="steelblue") +
   geom_text(aes(label=round(total,2)))+
   theme(axis.text.x = element_text(angle=60, hjust=1)) +
