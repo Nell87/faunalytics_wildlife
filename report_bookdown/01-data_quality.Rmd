@@ -52,7 +52,7 @@ rm(missing_values)
 ```
 
 ### Missing values in "value" year over year
-**If we have a look at the "value" variable, we can notice that the years 2008, 2009, 2010 and 2014 only contain missing values**
+**If we have a look at the "value" variable (dollars), we can notice that there isn't enough information about it in the data produced between 2008-2011 and 2013-2014. Specifically, the years 2008, 2009, 2010 and 2014 only contain missing values**
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE} 
 missing_value<- data %>%

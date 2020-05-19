@@ -1,9 +1,7 @@
 # Work in progress
 
-- Add a summary section 
+- Complete the summary section 
 
 - Find out a library to automatize the classification process ("taxadb package)
-
-- Remove any generic like “sp”, "freshwater sp.", "including goldfish", "marine sp." or "in trop fish &"
 
 - Add colored maps 

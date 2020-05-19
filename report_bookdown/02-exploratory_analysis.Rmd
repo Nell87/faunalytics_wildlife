@@ -94,7 +94,7 @@ data %>% group_by(import_export) %>%
 ```
 
 ### action
-**Action taken by USFWS on import ((C)leared/(R)efused)**
+**Action taken by the USFWS on import ((C)leared/(R)efused)**
 
 - 98.28% of imports are cleared, just 1.73% is refused  
 
@@ -500,6 +500,7 @@ data_corporations %>%
 data_corporations %>% 
   mutate(percentage=percentage*100) %>%
   filter(corp_classif == "Animal/animal prod. providers") %>%
+  top_n(15, percentage) %>%
   ggplot(aes(x=reorder(corporation, -percentage), y=percentage,fill=corp_classif)) + 
   geom_bar(stat="identity") +
   geom_text(aes(label=round(percentage,2)))+
@@ -543,7 +544,7 @@ rm(foreign_co)
 **It represents the type/form of the wildlife product**
 
 - There are 88 types/forms 
-- Most of them are "Live specimens" (29.1%), follow by trophies (16.83%) and "Shell products" (9.49%). 
+- Most of them are "Live specimens" (29.1%), followed by trophies (16.83%) and "Shell products" (9.49%). 
 - The top 15 represents 94.19% of data 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
@@ -703,7 +704,7 @@ rm(species_code)
 
 - There are 13 taxa levels
 - There is a ‘taxa’ field for the vast majority (>99%) of records
-- Most of them are mammals (29.16%), follow by shells (20.34%), reptiles (13.29%) and corals (12.63%). These four categories represent 75,42% of data
+- Most of them are mammals (29.16%), followed by shells (20.34%), reptiles (13.29%) and corals (12.63%). These four categories represent 75,42% of data
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 # Dropping unused levels
@@ -785,21 +786,29 @@ rm(genus)
 ### species
 **It represents species of the wildlife product**. For getting a more ilustrative name, we'll combine genus and species. 
 
-- There are 8,088 different species
-- The top 15 represents 32.66 % of data
-- The top 50 represents 52.6  % of data
+- After removing generics, there are 8,082 different species
+- The top 15 represents 23.8 % of data
+- The top 50 represents 38.3 % of data
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 # Dropping unused levels
 data$species <- droplevels(data$species)
 
-# Combine genus + species
-data <- data %>% mutate(species = as.factor(paste(genus, "-",species)))
+# Removing generics
+species<- data %>%
+  filter(!species %in% c("maxima", "sp.", "in trop fish &", "(marine sp.)",
+                        "(freshwater sp.)", "(including goldfish)")) %>%
+  drop_na(species)
 
-species <-data %>% group_by(species) %>%
+  
+# Combine genus + species
+species <- species %>% mutate(species = as.factor(paste(genus, "-",species)))
+
+species <-species %>% group_by(species) %>%
   summarise(total=n()/nrow(data)) %>%
   drop_na(species) %>%
-  arrange(desc(total)) 
+  arrange(desc(total)) %>%
+  ungroup() 
 
 DT::datatable(species) %>%
   formatPercentage('total',2)
@@ -812,6 +821,10 @@ species %>%
   geom_text(aes(label=round(total,2)))+
   theme(axis.text.x = element_text(angle=60, hjust=1)) +
   labs(y = "Percentage",  x="species") 
+
+
+# Combine genus + species in the dataset
+data <- data %>% mutate(species = as.factor(paste(genus, "-",species)))
 
 rm(species)
 ```
