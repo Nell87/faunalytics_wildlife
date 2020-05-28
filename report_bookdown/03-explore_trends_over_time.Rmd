@@ -17,11 +17,14 @@ ggplot(unique_shipments_year, aes(x = date, y = unique_shipments)) +
 ```
 
 **Let's see the pattern depending on the week of the year**
+We have excluded from the figure the 1st, 52nd and 53rd week of the year.  
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 unique_shipments_week <-data %>% 
   group_by(year= year(shipment_date), week=week(shipment_date)) %>%
-  summarise(unique_shipments = n_distinct(control_number)) 
+  summarise(unique_shipments = n_distinct(control_number)) %>%
+  ungroup() %>%
+  filter(!week %in% c(1, 52, 53))
 
 ggplot(unique_shipments_week, aes(x = week, y = unique_shipments, color=factor(year))) + 
   geom_line() 

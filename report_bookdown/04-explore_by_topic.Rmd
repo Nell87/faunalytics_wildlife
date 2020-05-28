@@ -85,35 +85,65 @@ average_bydescription<- data %>%
   filter(unit=="Number"| unit=="Kilograms") %>%
   group_by(description, unit) %>%
   filter(!is.na(value))  %>%
-  summarise(import_mean=round(mean(as.numeric(value)),2), 
-            import_median = round(median(as.numeric(value)),2)) %>%
-  arrange(desc(import_median))
+  summarise(import_median_per_shipment = round(median(as.numeric(value)),2),
+            import_median_per_unit = round(median(as.numeric(value)/quantity, 
+                                                  na.rm = TRUE),2)) %>%
+  arrange(desc(import_median_per_shipment))
 
 DT::datatable(average_bydescription) %>%
-  formatCurrency('import_median',currency = "", interval = 3, mark = ",")
+  formatCurrency('import_median_per_shipment',currency = "$", interval = 3, mark = ",") %>%
+  formatCurrency('import_median_per_unit',currency = "$", interval = 3, mark = ",") 
 
+# import_median_per_shipment (Number)
 average_bydescription[average_bydescription$unit== "Number", ]%>% 
   ungroup() %>%
-  top_n(15, wt=import_median) %>%
-  ggplot(aes(x = reorder(description, -import_median), y=import_median)) + 
+  top_n(15, wt=import_median_per_shipment) %>%
+  ggplot(aes(x = reorder(description, -import_median_per_shipment), y=import_median_per_shipment)) + 
        geom_bar(stat = "identity", width=0.4, 
                 position = position_dodge(width=0.5),  fill="blue") +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
+       geom_text(aes(label = scales::comma(import_median_per_shipment)), vjust=-1, size=2) +
        labs(y = "Average import",  x="description") + 
-       ggtitle("Average import by description (Items measured by numbers)") +
+       ggtitle("Average import per shipment by description (Items measured by numbers)") +
        theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
+# import_median_per_shipment (Kg)
 average_bydescription[average_bydescription$unit== "Kilograms", ]%>% 
   ungroup() %>%
-  top_n(15) %>%
-  ggplot(aes(x = reorder(description, -import_median), y=import_median)) + 
+  top_n(15, wt=import_median_per_shipment) %>%
+  ggplot(aes(x = reorder(description, -import_median_per_shipment), y=import_median_per_shipment)) + 
        geom_bar(stat = "identity", width=0.4, 
                 position = position_dodge(width=0.5),  fill="blue") +
        scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
+       geom_text(aes(label = scales::comma(import_median_per_shipment)), vjust=-1, size=2) +
        labs(y = "Average import",  x="description") + 
-       ggtitle("Average import by description (Items measured by Kilograms)") +
+       ggtitle("Average import per shipment by description (Items measured by Kilograms)") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+#import_median_per_unit (Number)
+average_bydescription[average_bydescription$unit== "Number", ]%>% 
+  ungroup() %>%
+  top_n(15, wt=import_median_per_unit) %>%
+  ggplot(aes(x = reorder(description, -import_median_per_unit), y=import_median_per_unit)) + 
+       geom_bar(stat = "identity", width=0.4, 
+                position = position_dodge(width=0.5),  fill="blue") +
+       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+       geom_text(aes(label = scales::comma(import_median_per_unit)), vjust=-1, size=2) +
+       labs(y = "Average import",  x="description") + 
+       ggtitle("Average import per unit by description (Items measured by Kilograms)") +
+       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+
+#import_median_per_unit (Kg)
+average_bydescription[average_bydescription$unit== "Kilograms", ]%>% 
+  ungroup() %>%
+  top_n(15, wt= import_median_per_unit) %>%
+  ggplot(aes(x = reorder(description, -import_median_per_unit), y=import_median_per_unit)) + 
+       geom_bar(stat = "identity", width=0.4, 
+                position = position_dodge(width=0.5),  fill="blue") +
+       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
+       geom_text(aes(label = scales::comma(import_median_per_unit)), vjust=-1, size=2) +
+       labs(y = "Average import",  x="description") + 
+       ggtitle("Average import per unit by description (Items measured by Kilograms)") +
        theme(axis.text.x = element_text(hjust=1, angle=60)) 
 
 rm(average_bydescription)

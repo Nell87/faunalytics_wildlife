@@ -296,12 +296,15 @@ rm(port)
 ### us_co
 **It represents the US party of the shipment**
 
-- There are 126,751 US parties 
+- We have excluded the "EXEMPTIONS 6 AND 7(C)" from the analysis. 
+- There are 126,052 US parties 
 - The top 15 just represents 10.3% of data 
 - The top 50 just represents 19 % of data 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-us_co <-data %>% group_by(us_co) %>%
+us_co <-data %>% 
+  filter(!us_co == "EXEMPTIONS 6 AND 7(C)") %>%
+  group_by(us_co) %>%
   summarise(total=n()/nrow(data)) %>%
   drop_na(us_co) %>%
   arrange(desc(total)) 
