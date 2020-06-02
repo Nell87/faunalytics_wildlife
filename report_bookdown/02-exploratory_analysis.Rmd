@@ -64,15 +64,24 @@ data <- data %>%
                        "MG"="Miligrams", "M3"="Cubic_meters"))
 
 units <-data %>% group_by(unit) %>%
-  summarise(total=n()/nrow(data) *100) %>%
+  summarise(total = n(),percentage=n()/nrow(data)) %>%
   drop_na(unit) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-ggplot(data=units, aes(x=reorder(unit, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="units") 
+DT::datatable(units, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 1: ', 
+                htmltools::em('Units of measure'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+units %>% mutate(percentage=percentage*100) %>%
+plot_ly(x=~reorder(unit, desc(percentage)), y=~percentage, color=~unit) %>% 
+  add_bars() %>%
+  layout(title = "<b>Units of measure</b>",
+         xaxis= list(title= "<b>Units</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(units)
 ```
@@ -83,14 +92,27 @@ rm(units)
 # Renaming levels
 data <- data %>% 
   mutate(import_export = recode(import_export, "I" = "Import"))
+
+imports <-data %>% group_by(import_export) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
+  arrange(desc(percentage)) 
+
+DT::datatable(imports, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 2: ', 
+                htmltools::em('Shipments: Imports and exports'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+imports %>% mutate(percentage=percentage*100) %>%
+plot_ly(x=~reorder(import_export, desc(percentage)), y=~percentage, color=~import_export) %>% 
+  add_bars() %>%
+  layout(title = "<b>Shipments: Imports and exports</b>",
+         xaxis= list(title= "<b>Imports and exports</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
                        
-data %>% group_by(import_export) %>% 
-  summarise(total=n()/nrow(data)*100) %>% 
-  ggplot(aes(x=import_export, y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="import_export") 
+rm(imports)
 ```
 
 ### action
@@ -104,17 +126,27 @@ data <- data %>%
   mutate(action = recode(action, "C" = "Cleared", "R"= "Refused"))
 
 action <-data %>% group_by(action) %>%
-  summarise(total=n()/nrow(data) *100) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(action) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-ggplot(data=action, aes(x=reorder(action, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="action") 
-
+DT::datatable(action, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 3: ', 
+                htmltools::em('Action taken by the USFWS on imports'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+action %>% mutate(percentage=percentage*100) %>%
+plot_ly(x=~reorder(action, desc(percentage)), y=~percentage, color=~action) %>% 
+  add_bars() %>%
+  layout(title = "<b>Action taken by the USFWS on imports</b>",
+         xaxis= list(title= "<b>Actions</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+                       
 rm(action)
+
 ```
 
 ### disposition
@@ -125,17 +157,27 @@ rm(action)
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 disposition <-data %>% group_by(disposition) %>%
-  summarise(total=n()/nrow(data) *100) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(disposition) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-ggplot(data=disposition, aes(x=reorder(disposition, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="disposition") 
+DT::datatable(disposition, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 4: ', 
+                htmltools::em('Fate of the import'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+disposition %>% mutate(percentage=percentage*100) %>%
+plot_ly(x=~reorder(disposition, desc(percentage)), y=~percentage, color=~disposition) %>% 
+  add_bars() %>%
+  layout(title = "<b>Fate of the import</b>",
+         xaxis= list(title= "<b>Dispositions</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(disposition)
+                       
 ```
 ### shipment_date and disposition_date
 **Shipment_date** represents the date when shipment arrived, while **disposition_date** represents the date when disposition occurred. 
@@ -147,11 +189,27 @@ rm(disposition)
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 days<- data %>% 
-  mutate(days = as.numeric(disposition_date - shipment_date)) %>%
-  filter(days > 0 & days < 31)
+  mutate(days = as.factor(as.numeric(disposition_date - shipment_date))) %>%
+  group_by(days) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>% 
+  filter(days %in% c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                     "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                     "21", "22", "23", "24", "25", "26", "27", "28", "29", "30")) 
 
-ggplot(days, aes(x=days))+
-  geom_histogram(color="darkblue", fill="lightblue", bins=30)
+DT::datatable(days, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 5: ', 
+                htmltools::em('Days between shipment and disposition date'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+days %>% mutate(percentage=percentage*100) %>%
+plot_ly(x=~reorder(days, percentage), y=~percentage) %>% 
+  add_bars() %>%
+  layout(title = "<b>Days between shipment and disposition date</b>",
+         xaxis= list(title= "<b>Days</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(days)
 ```
@@ -173,21 +231,26 @@ data <- data %>%
                                 "XX" = "Unknown","ZZ" = "High Seas"))
 
 country_origin <-data %>% group_by(country_origin) %>%
-  summarise(total=n()/nrow(data)) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(country_origin) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(country_origin) %>%
-  formatPercentage('total',2)
-
-country_origin %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(country_origin, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="country_origin") 
+DT::datatable(country_origin, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 6: ', 
+                htmltools::em('Country of origin of the wildlife product'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+country_origin %>% mutate(percentage=percentage*100) %>%
+  top_n(30, percentage) %>%
+  plot_ly(x=~reorder(country_origin, desc(percentage)), y=~percentage, 
+        color=~country_origin) %>% 
+  add_bars() %>%
+  layout(title = "<b>Country of origin of the wildlife product</b>",
+         xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(country_origin)
 

@@ -7,7 +7,7 @@
 ```{r eval=TRUE, echo=FALSE, warning=FALSE, include=TRUE} 
 #Load Libraries: p_load can install, load,  and update packages
 pacman::p_load(rstudioapi,dplyr, ggplot2, lubridate, devtools, tidyr,magrittr, 
-               lemis,zoo,gdata, knitr, DT, plotly, countrycode)
+               lemis,zoo,gdata, knitr, DT, plotly, countrycode,htmltools)
 
 # Set working directory 
 path <- getwd()
@@ -36,17 +36,19 @@ rm(path)
 # Are there missing values?
 missing_values <- data %>%
   gather(key = "key", value = "val") %>%
-  mutate(is.missing = is.na(val)) %>%
-  group_by(key, is.missing) %>%
-  summarise(num.missing = n()/nrow(data) *100) %>%
-  filter(is.missing==T) %>%
-  select(-is.missing) %>%
-  arrange(desc(num.missing)) 
+  mutate(is_missing = is.na(val)) %>%
+  group_by(key, is_missing) %>%
+  summarise(num_missing = n()/nrow(data) *100) %>%
+  filter(is_missing==T) %>%
+  select(-is_missing) %>%
+  arrange(desc(num_missing)) 
 
-ggplot(missing_values, aes(x=reorder(key, -num.missing), y=num.missing, fill=key)) +
-  geom_bar(stat="identity") + 
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="Variable") +
+plot_ly(missing_values, x=~reorder(key, desc(num_missing)), y=~num_missing, color=~key) %>% 
+  add_bars() %>%
+  add_text(text=~round(num_missing),textposition = 'top') %>%
+  layout(title = "<b>Missing values per variable</b>",
+         xaxis= list(title= "<b>Variable</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Number of missing values</b>"))
 
 rm(missing_values)
 ```
