@@ -7,16 +7,20 @@ total_bytaxa<- data %>% group_by(taxa) %>%
   summarise(value=sum(as.numeric(value))) %>%
   arrange(desc(value))
 
-DT::datatable(total_bytaxa) %>%
-  formatCurrency('value',currency = "", interval = 3, mark = ",")
+DT::datatable(total_bytaxa, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 30: ', 
+                htmltools::em('Import (US dollars) by taxa'
+              ))) %>%
+  formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
-ggplot(total_bytaxa, aes(x = reorder(taxa, -value), y=value)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5), fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Taxa") + ggtitle("Total import by taxa") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+total_bytaxa %>% 
+  plot_ly(x=~reorder(taxa, desc(value)), y=~value, 
+        color=~taxa) %>% 
+  add_bars() %>%
+  layout(title = "<b>Import (US dollars) by taxa</b>",
+         xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>US dollars</b>"))
 
 rm(total_bytaxa)
 ```
@@ -27,32 +31,31 @@ average_bytaxa<- data %>%
   filter(unit=="Number"| unit=="Kilograms") %>%
   group_by(taxa, unit) %>%
   filter(!is.na(value))  %>%
-  summarise(import_mean=round(mean(as.numeric(value)),2), 
-            import_median = round(median(as.numeric(value)),2)) %>%
-  arrange(desc(import_median))
+  summarise(import_median_per_shipment=round(median(as.numeric(value)),2), 
+            import_median_per_unit = round(median(as.numeric(value)/quantity, na.rm=TRUE),2)) %>%
+  arrange(desc(import_median_per_shipment))
 
-DT::datatable(average_bytaxa) %>%
-  formatCurrency('import_median',currency = "", interval = 3, mark = ",")
+DT::datatable(average_bytaxa, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 31: ', 
+                htmltools::em('Average import by taxa'
+              ))) %>%
+  formatCurrency('import_median_per_shipment',currency = "$", interval = 3, mark = ",") %>%
+  formatCurrency('import_median_per_unit', currency = "$",interval = 3, mark = ",") 
 
-ggplot(average_bytaxa[average_bytaxa$unit== "Number", ], 
-       aes(x = reorder(taxa, -import_median), y=import_median)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5),  fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
-       labs(y = "Average import",  x="Taxa") + 
-  ggtitle("Average import by taxa (Items measured by numbers)") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+average_bytaxa[average_bytaxa$unit== "Number", ] %>%
+  plot_ly(x=~reorder(taxa, desc(import_median_per_unit)), y=~import_median_per_unit) %>% 
+  add_bars() %>%
+  layout(title = "<b>Average import per unit by taxa (items measured by numbers)</b>",
+         xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Average import (US dollars)</b>"))
 
-ggplot(average_bytaxa[average_bytaxa$unit== "Kilograms", ], 
-       aes(x = reorder(taxa, -import_median), y=import_median)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5),  fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(import_median)), vjust=-1, size=2) +
-       labs(y = "Average import",  x="Taxa") + 
-  ggtitle("Average import by taxa (Items measured by Kilograms)") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+average_bytaxa[average_bytaxa$unit== "Kilograms", ] %>%
+  plot_ly(x=~reorder(taxa, desc(import_median_per_unit)), y=~import_median_per_unit) %>% 
+  add_bars() %>%
+  layout(title = "<b>Average import per unit by taxa (items measured by Kilograms)</b>",
+         xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Average import (US dollars)</b>"))  
 
 rm(average_bytaxa)
 ```
@@ -64,17 +67,21 @@ value_bydescription<- data %>% group_by(description) %>%
   summarise(value=sum(as.numeric(value))) %>%
   arrange(desc(value))
 
-DT::datatable(value_bydescription)  %>%
-  formatCurrency('value',currency = "", interval = 3, mark = ",")
+DT::datatable(value_bydescription, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 32: ', 
+                htmltools::em('Import (US dollars) by description'
+              ))) %>%
+  formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
-value_bydescription %>% top_n(15) %>%
-ggplot(aes(x = reorder(description, -value), y=value)) + 
-       geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
-           fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Description") +
-       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+value_bydescription %>% 
+  top_n(20) %>%
+  plot_ly(x=~reorder(description, desc(value)), y=~value, 
+        color=~description) %>% 
+  add_bars() %>%
+  layout(title = "<b>Import (US dollars) by description (Top 20)</b>",
+         xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>US dollars</b>"))
 
 rm(value_bydescription)
 ```
@@ -90,61 +97,31 @@ average_bydescription<- data %>%
                                                   na.rm = TRUE),2)) %>%
   arrange(desc(import_median_per_shipment))
 
-DT::datatable(average_bydescription) %>%
+DT::datatable(average_bydescription, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 33: ', 
+                htmltools::em('Average import by description (for those with number and kg units)'
+              ))) %>%
   formatCurrency('import_median_per_shipment',currency = "$", interval = 3, mark = ",") %>%
-  formatCurrency('import_median_per_unit',currency = "$", interval = 3, mark = ",") 
+  formatCurrency('import_median_per_unit', currency = "$",interval = 3, mark = ",") 
 
-# import_median_per_shipment (Number)
-average_bydescription[average_bydescription$unit== "Number", ]%>% 
-  ungroup() %>%
-  top_n(15, wt=import_median_per_shipment) %>%
-  ggplot(aes(x = reorder(description, -import_median_per_shipment), y=import_median_per_shipment)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5),  fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(import_median_per_shipment)), vjust=-1, size=2) +
-       labs(y = "Average import",  x="description") + 
-       ggtitle("Average import per shipment by description (Items measured by numbers)") +
-       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+average_bydescription[average_bydescription$unit== "Number", ] %>%
+  ungroup()%>%
+  top_n(15, import_median_per_unit) %>%
+  plot_ly(x=~reorder(description, desc(import_median_per_unit)), y=~import_median_per_unit) %>% 
+  add_bars() %>%
+  layout(title = "<b>Average import per unit by description (items measured by numbers)</b>",
+         xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Average import (US dollars)</b>"))
 
-# import_median_per_shipment (Kg)
-average_bydescription[average_bydescription$unit== "Kilograms", ]%>% 
-  ungroup() %>%
-  top_n(15, wt=import_median_per_shipment) %>%
-  ggplot(aes(x = reorder(description, -import_median_per_shipment), y=import_median_per_shipment)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5),  fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(import_median_per_shipment)), vjust=-1, size=2) +
-       labs(y = "Average import",  x="description") + 
-       ggtitle("Average import per shipment by description (Items measured by Kilograms)") +
-       theme(axis.text.x = element_text(hjust=1, angle=60)) 
-
-#import_median_per_unit (Number)
-average_bydescription[average_bydescription$unit== "Number", ]%>% 
-  ungroup() %>%
-  top_n(15, wt=import_median_per_unit) %>%
-  ggplot(aes(x = reorder(description, -import_median_per_unit), y=import_median_per_unit)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5),  fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(import_median_per_unit)), vjust=-1, size=2) +
-       labs(y = "Average import",  x="description") + 
-       ggtitle("Average import per unit by description (Items measured by Kilograms)") +
-       theme(axis.text.x = element_text(hjust=1, angle=60)) 
-
-#import_median_per_unit (Kg)
-average_bydescription[average_bydescription$unit== "Kilograms", ]%>% 
-  ungroup() %>%
-  top_n(15, wt= import_median_per_unit) %>%
-  ggplot(aes(x = reorder(description, -import_median_per_unit), y=import_median_per_unit)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5),  fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(import_median_per_unit)), vjust=-1, size=2) +
-       labs(y = "Average import",  x="description") + 
-       ggtitle("Average import per unit by description (Items measured by Kilograms)") +
-       theme(axis.text.x = element_text(hjust=1, angle=60)) 
+average_bydescription[average_bydescription$unit== "Kilograms", ] %>%
+  ungroup()%>%
+  top_n(15, import_median_per_unit) %>%
+  plot_ly(x=~reorder(description, desc(import_median_per_unit)), y=~import_median_per_unit) %>% 
+  add_bars() %>%
+  layout(title = "<b>Average import per unit by description (items measured by Kilograms)</b>",
+         xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Average import (US dollars)</b>"))  
 
 rm(average_bydescription)
 ```
@@ -157,18 +134,21 @@ total_byname<- data %>%
   summarise(value=sum(as.numeric(value))) %>%
   arrange(desc(value))
 
-DT::datatable(total_byname) %>%
-  formatCurrency('value',currency = "", interval = 3, mark = ",")
+DT::datatable(total_byname, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 34: ', 
+                htmltools::em('Import (US dollars) by name'
+              ))) %>%
+  formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
-total_byname %>%
-  top_n(15) %>%
-  ggplot(aes(x = reorder(specific_name, -value), y=value)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5), fill="blue") +
-       scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-       geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-       labs(y = "Value",  x="Name") + ggtitle("Total import by name") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+total_byname %>% 
+  top_n(20) %>%
+  plot_ly(x=~reorder(specific_name, desc(value)), y=~value, 
+        color=~specific_name) %>% 
+  add_bars() %>%
+  layout(title = "<b>Import (US dollars) by name (Top 20)</b>",
+         xaxis= list(title= "<b>Name</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>US dollars</b>"))
 
 rm(total_byname)
 ```
