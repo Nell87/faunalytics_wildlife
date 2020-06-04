@@ -2,6 +2,4 @@
 
 - Complete the summary section 
 
-- Find out a library to automatize the classification process ("taxadb package)
-
 - Add colored maps 

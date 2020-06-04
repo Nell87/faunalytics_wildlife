@@ -12,8 +12,12 @@ unique_shipments_year <-data %>%
 unique_shipments_year$date <- as.yearmon(paste(unique_shipments_year$year, 
                                           unique_shipments_year$month), "%Y %m")
 
-ggplot(unique_shipments_year, aes(x = date, y = unique_shipments)) + 
-  geom_line(color='steelblue') + scale_x_continuous()
+highchart()%>%
+  hc_add_series(unique_shipments_year, "line", hcaes(x = date, y = unique_shipments)) %>%
+  hc_xAxis(title=list(text="Date")) %>%
+  hc_yAxis(title=list(text="Unique shipments")) %>%
+  hc_title(text="Number of unique shipments per month")
+
 ```
 
 **Let's see the pattern depending on the week of the year**
@@ -26,8 +30,12 @@ unique_shipments_week <-data %>%
   ungroup() %>%
   filter(!week %in% c(1, 52, 53))
 
-ggplot(unique_shipments_week, aes(x = week, y = unique_shipments, color=factor(year))) + 
-  geom_line() 
+highchart()%>%
+  hc_add_series(unique_shipments_week, "line", hcaes(x = week, y = unique_shipments,
+                                                     group=year)) %>%
+  hc_xAxis(title=list(text="Date")) %>%
+  hc_yAxis(title=list(text="Unique shipments")) %>%
+  hc_title(text="Number of unique shipments depending on the week of the year")
 
 rm(unique_shipments_year)
 rm(unique_shipments_week)
@@ -41,21 +49,27 @@ It seems there has been an upward trend in the amount of spent US dollars from 2
 ### Measured by disposition year
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE,out.width='90%'}
 value_wildlifeproduct_dispyear <-data %>% 
-  filter(!is.na(value))  %>%
-  filter(!disposition_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014))) %>%
+  dplyr::filter(!is.na(value))  %>%
+  dplyr::filter(!disposition_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014))) %>%
   group_by(disposition_year) %>%
   summarise(value = sum(as.numeric(value))) 
 
-DT::datatable(value_wildlifeproduct_dispyear) %>%
-  formatCurrency('value',currency = "", interval = 3, mark = ",")
+value_wildlifeproduct_dispyear$disposition_year <- droplevels(value_wildlifeproduct_dispyear$disposition_year)
 
-ggplot(value_wildlifeproduct_dispyear, aes(x = disposition_year, y=value)) + 
-  geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
-           fill="blue") +
-  geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-  scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-  labs(y = "Dollars",  x="Disposition Year")  +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+DT::datatable(value_wildlifeproduct_dispyear, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 23: ', 
+                htmltools::em('Import (US dollars) by disposition year'
+              ))) %>%
+  formatCurrency('value', currency = "$") 
+  
+value_wildlifeproduct_dispyear %>% 
+  plot_ly(x=~disposition_year, y=~value, 
+        color=~disposition_year) %>% 
+  add_bars() %>%
+  layout(title = "<b>Import (US dollars) by disposition year</b>",
+         xaxis= list(title= "<b>Disposition Year</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>US dollars</b>"))
 
 rm(value_wildlifeproduct_dispyear)
 ```
@@ -69,16 +83,22 @@ value_wildlifeproduct_shipyear <-data %>%
   group_by(shipment_year) %>%
   summarise(value = sum(as.numeric(value)))
 
-DT::datatable(value_wildlifeproduct_shipyear) %>%
-  formatCurrency('value',currency = "", interval = 3, mark = ",")
+value_wildlifeproduct_shipyear$shipment_year <- droplevels(value_wildlifeproduct_shipyear$shipment_year)
 
-ggplot(value_wildlifeproduct_shipyear, aes(x = shipment_year, y=value)) + 
-  geom_bar(stat = "identity", width=0.4, position = position_dodge(width=0.5), 
-           fill="blue") +
-  geom_text(aes(label = scales::comma(value)), vjust=-1, size=2) +
-  scale_y_continuous(labels = scales::dollar_format(prefix="$")) +
-  labs(y = "Dollars",  x="Shipment Year") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+DT::datatable(value_wildlifeproduct_shipyear, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 24: ', 
+                htmltools::em('Import (US dollars) by shipment year'
+              ))) %>%
+  formatCurrency('value', currency = "$") 
+  
+value_wildlifeproduct_shipyear %>% 
+  plot_ly(x=~shipment_year, y=~value, 
+        color=~shipment_year) %>% 
+  add_bars() %>%
+  layout(title = "<b>Import (US dollars) by shipment year</b>",
+         xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>US dollars</b>"))
 
 rm(value_wildlifeproduct_shipyear)
 ```
@@ -92,22 +112,37 @@ value_bytaxayear<- data %>%
   dplyr::ungroup() %>%
   filter(!shipment_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014)))
 
+DT::datatable(value_bytaxayear, filter = 'top',
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 25: ', 
+                htmltools::em('Import (US dollars) by shipment year & taxa'
+              ))) %>%
+  formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
-DT::datatable(value_bytaxayear) %>%
-  formatCurrency('value',currency = "", interval = 3, mark = ",")
 ```
 
 **Here you have a dynamic graph, where you can choose the specific taxa elements you want to display**
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
-value_bytaxayear$shipment_year<- as.factor(as.character(value_bytaxayear$shipment_year))
+value_bytaxayear$shipment_year<- as.numeric(as.character(value_bytaxayear$shipment_year))
 
-value_bytaxayear %>%  
-  plot_ly(x = ~ shipment_year) %>% 
-  add_lines(y = ~ value, 
-            color = ~ taxa,
-             visible="legendonly")
+value_bytaxayear <- highlight_key(value_bytaxayear)
 
-rm(value_bytaxayear)
+widgets <- bscols(
+  widths = c(12, 12, 12),
+  filter_select("taxa","taxa", value_bytaxayear, ~taxa),
+  filter_slider("Shipment Year", "Years", value_bytaxayear, ~shipment_year)
+)
+bscols(
+  widths = c(4, 8), widgets, 
+  plot_ly(value_bytaxayear, x = ~shipment_year, y = ~value) %>% 
+    add_lines(color = ~taxa, colors = "Dark2") %>%
+  layout(title = "<b>Import (US dollars) by shipment year & taxa</b>",
+         xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>US dollars</b>"))
+)
+
+rm(widgets,value_bytaxayear)
+
 ```
 ### By description and shipment year
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
@@ -117,22 +152,37 @@ value_bydescriptionyear<- data %>% group_by(description, shipment_year) %>%
   dplyr::ungroup() %>%
   filter(!shipment_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014)))
 
-DT::datatable(value_bydescriptionyear)  %>%
-  formatCurrency('value',currency = "", interval = 3, mark = ",")
+DT::datatable(value_bydescriptionyear, filter = 'top',
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 26: ', 
+                htmltools::em('Import (US dollars) by shipment year & description'
+              ))) %>%
+  formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
 ```
 
 **Here you have a dynamic graph, where you can choose the specific descriptions you want to display**
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
-value_bydescriptionyear$shipment_year<- as.factor(as.character(value_bydescriptionyear$shipment_year))
+value_bydescriptionyear$shipment_year<- as.numeric(as.character(value_bydescriptionyear$shipment_year))
 
-value_bydescriptionyear %>%  
-  plot_ly(x = ~ shipment_year) %>% 
-  add_lines(y = ~ value, 
-            color = ~ description,
-             visible="legendonly")
+value_bydescriptionyear <- highlight_key(value_bydescriptionyear)
 
-rm(value_bydescriptionyear)
+widgets <- bscols(
+  widths = c(12, 12, 12),
+  filter_select("description","description", value_bydescriptionyear, ~description),
+  filter_slider("Shipment Year", "Years", value_bydescriptionyear, ~shipment_year)
+)
+
+bscols(
+  widths = c(4, 8), widgets, 
+  plot_ly(value_bydescriptionyear, x = ~shipment_year, y = ~value) %>% 
+    add_lines(color = ~description, colors = "Dark2") %>%
+  layout(title = "<b>Import (US dollars) by shipment year & description</b>",
+         xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>US dollars</b>"))
+)
+
+rm(widgets, value_bydescriptionyear)
 ```
 
 ### By name (generic + specific) and shipment year
@@ -144,8 +194,12 @@ value_byname<- data %>%
   dplyr::ungroup() %>%
   filter(!shipment_year %in% (c(2008, 2009, 2010, 2011, 2013, 2014)))
 
-DT::datatable(value_byname)  %>%
-  formatCurrency('value',currency = "", interval = 3, mark = ",")
+DT::datatable(value_byname, filter = 'top',
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 27: ', 
+                htmltools::em('Import (US dollars) by shipment year & specific name'
+              ))) %>%
+  formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
 ```
 **Here you have a dynamic graph, where you can choose the specific names you want to display**. We have selected the top 100 based on the total spent US dollars. 
@@ -158,19 +212,30 @@ total_byname<- data %>%
   arrange(desc(value)) %>%
   top_n(100)
 
-value_byname$shipment_year<- as.factor(as.character(value_byname$shipment_year))
+value_byname<- value_byname %>%
+  mutate(shipment_year=as.numeric(as.character(shipment_year))) %>%
+  dplyr::filter(specific_name %in% total_byname$specific_name)
 
+value_byname <- highlight_key(value_byname)
 
-value_byname %>%
-filter(specific_name %in% total_byname$specific_name) %>%  
-  plot_ly(x = ~ shipment_year) %>% 
-  add_lines(y = ~ value, 
-            color = ~ specific_name,
-             visible="legendonly")
+widgets <- bscols(
+  widths = c(12, 12, 12),
+  filter_select("specific name","specific name", value_byname, ~specific_name),
+  filter_slider("Shipment Year", "Years", value_byname, ~shipment_year)
+)
 
-rm(value_byname)
+bscols(
+  widths = c(4, 8), widgets, 
+  plot_ly(value_byname, x = ~shipment_year, y = ~value) %>% 
+    add_lines(color = ~specific_name, colors = "Dark2") %>%
+  layout(title = "<b>Import (US dollars) by shipment year & specific name</b>",
+         xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>US dollars</b>"))
+)
+
+rm(widgets, total_byname, value_byname)
+
 ```
-
 
 ## Quantity (number of items and kg)
 **Let's summarized the quantity brought per year**. We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
@@ -182,25 +247,26 @@ quantity_year_summary<- quantity_year %>%
   group_by(shipment_year, unit) %>%
   summarise(quantity = sum(quantity)) 
 
-DT::datatable(quantity_year_summary) %>% formatCurrency('quantity',
-                                         currency = "",
-                                         interval = 3, mark = ",")
+DT::datatable(quantity_year_summary, filter = 'top',
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 28: ', 
+                htmltools::em('Quantity by shipment year'
+              ))) %>%
+  formatCurrency('quantity', currency = "",interval = 3, mark = ",")
 
-ggplot(quantity_year_summary[quantity_year_summary$unit== "Number", ],
-       aes(x = shipment_year, y=quantity)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5), fill="blue") +
-       geom_text(aes(label = scales::comma(quantity)), vjust=-1, size=2) +
-       labs(y = "Number",  x="Shipment Year") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+quantity_year_summary[quantity_year_summary$unit== "Number", ] %>% 
+  plot_ly(x=~shipment_year, y=~quantity) %>% 
+  add_bars() %>%
+  layout(title = "<b>Quantity (number of items) by shipment year</b>",
+         xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Quantity (number of items)</b>"))
 
-ggplot(quantity_year_summary[quantity_year_summary$unit== "Kilograms", ],
-       aes(x = shipment_year, y=quantity)) + 
-       geom_bar(stat = "identity", width=0.4, 
-                position = position_dodge(width=0.5), fill="blue") +
-       geom_text(aes(label = scales::comma(quantity)), vjust=-1, size=2) +
-       labs(y = "Kilograms",  x="Shipment Year") +
-  theme(axis.text.x = element_text(hjust=1, angle=60)) 
+quantity_year_summary[quantity_year_summary$unit== "Kilograms", ] %>% 
+  plot_ly(x=~shipment_year, y=~quantity) %>% 
+  add_bars() %>%
+  layout(title = "<b>Quantity (Kilograms) by shipment year</b>",
+         xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Quantity (Kilograms)</b>"))
 
 rm(quantity_year, quantity_year_summary)
 ```
@@ -214,18 +280,23 @@ refused_shipments<- data %>%
   filter(!is.na(action))  %>%
   group_by(shipment_year, action) %>%
   summarise(total = n()) %>%
-  mutate(percentage = total / sum(total)*100) %>%
-  filter(action=="Refused")
+  mutate(percentage = total/sum(total)) %>%
+  dplyr::filter(action=="Refused")
 
-DT::datatable(refused_shipments) %>% formatCurrency('percentage',
-                                         currency = "",
-                                         interval = 3, mark = ",")
+DT::datatable(refused_shipments, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 29: ', 
+                htmltools::em('Refused shipments by shipment year'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
 
-ggplot(data=refused_shipments, aes(x=shipment_year, y=percentage)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(percentage,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="disposition") 
+refused_shipments%>% mutate(percentage=percentage*100) %>%
+  plot_ly(x=~shipment_year, y=~percentage) %>% 
+  add_bars() %>%
+  layout(title = "<b>Refused shipments by shipment year</b>",
+         xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage of refused shipments</b>"))
 
 rm(refused_shipments)
 ```

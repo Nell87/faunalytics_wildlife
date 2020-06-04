@@ -199,7 +199,7 @@ days<- data %>%
 DT::datatable(days, 
               caption = htmltools::tags$caption(
                 style='caption-side: bottom; text-align: center;','Table 5: ', 
-                htmltools::em('Days between shipment and disposition date'
+                htmltools::em('Number of dispositions within a month of the shipment date'
               ))) %>%
   formatRound('total',1) %>%
   formatPercentage('percentage',2)
@@ -207,7 +207,7 @@ DT::datatable(days,
 days %>% mutate(percentage=percentage*100) %>%
 plot_ly(x=~reorder(days, percentage), y=~percentage) %>% 
   add_bars() %>%
-  layout(title = "<b>Days between shipment and disposition date</b>",
+  layout(title = "<b>Percentage of dispositions within a month of the shipment date</b>",
          xaxis= list(title= "<b>Days</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
@@ -248,11 +248,10 @@ country_origin %>% mutate(percentage=percentage*100) %>%
   plot_ly(x=~reorder(country_origin, desc(percentage)), y=~percentage, 
         color=~country_origin) %>% 
   add_bars() %>%
-  layout(title = "<b>Country of origin of the wildlife product</b>",
+  layout(title = "<b>Country of origin of the wildlife product (Top 30)</b>",
          xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
-rm(country_origin)
 
 ```
 
@@ -272,46 +271,49 @@ data <- data %>%
                                 "XX" = "Unknown","ZZ" = "High Seas"))
 
 country_imp_exp <-data %>% group_by(country_imp_exp) %>%
-  summarise(total=n()/nrow(data)) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(country_imp_exp) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(country_imp_exp) %>%
-  formatPercentage('total',2)
+DT::datatable(country_imp_exp, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 7: ', 
+                htmltools::em('Country to/from which the wildlife product is shipped'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+country_imp_exp %>% mutate(percentage=percentage*100) %>%
+  top_n(30, percentage) %>%
+  plot_ly(x=~reorder(country_imp_exp, desc(percentage)), y=~percentage, 
+        color=~country_imp_exp) %>% 
+  add_bars() %>%
+  layout(title = "<b>Country to/from which the wildlife product is shipped (Top 30)</b>",
+         xaxis= list(title= "<b>country_imp_exp</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
-country_imp_exp %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(country_imp_exp, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="country_imp_exp") 
-
-rm(country_imp_exp)
 ```
 
 **Most problematic countries are on both sides (country of origin & country to/from which the wildlife product is shipped)**
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-country_origin <-data %>% group_by(country_origin) %>%
-  summarise(total=n()/nrow(data) *100) %>%
-  drop_na(country_origin) %>%
-  arrange(desc(total)) %>% top_n(4, total) %>%
+
+country_origin <- country_origin %>%
+  mutate(percentage=percentage*100) %>% top_n(4, percentage) %>%
   rename(country = country_origin)
 
-country_imp_exp <-data %>% group_by(country_imp_exp) %>%
-  summarise(total=n()/nrow(data) *100) %>%
-  drop_na(country_imp_exp) %>%
-  arrange(desc(total)) %>% top_n(4, total) %>%
-  rename(country = country_imp_exp) 
+country_imp_exp <- country_imp_exp %>%
+  mutate(percentage=percentage*100) %>% top_n(4, percentage) %>%
+  rename(country = country_imp_exp)
 
 countries<- combine(country_origin, country_imp_exp) 
 
-ggplot(data=countries, aes(x=reorder(country, -total), y=total, fill=source)) + 
-geom_bar(stat="identity", position=position_dodge())+
-  geom_text(aes(label=round(total,2)),vjust=1.6,position = position_dodge(0.9), size=3.5)+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="country") 
+countries %>%
+  plot_ly(x=~reorder(country, desc(percentage)), y=~percentage, 
+        color=~source) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most problematic countries</b>",
+         xaxis= list(title= "<b>Country</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(country_origin)
 rm(country_imp_exp)
@@ -337,21 +339,26 @@ data <- data %>%
                               "SE" = "Seattle, WA", "PB" = "Pembina, ND"))
 
 port <-data %>% group_by(port) %>%
-  summarise(total=n()/nrow(data)) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(port) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(port) %>%
-  formatPercentage('total',2)
-
-port %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(port, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="port") 
+DT::datatable(port, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 8: ', 
+                htmltools::em('Port or region of shipment entry'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+port %>% mutate(percentage=percentage*100) %>%
+  top_n(15, percentage) %>%
+  plot_ly(x=~reorder(port, desc(percentage)), y=~percentage, 
+        color=~port) %>% 
+  add_bars() %>%
+  layout(title = "<b>Port or region of shipment entry (Top 15)</b>",
+         xaxis= list(title= "<b>Port</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(port)
 ```
@@ -368,28 +375,33 @@ rm(port)
 us_co <-data %>% 
   filter(!us_co == "EXEMPTIONS 6 AND 7(C)") %>%
   group_by(us_co) %>%
-  summarise(total=n()/nrow(data)) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(us_co) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(us_co) %>%
-  formatPercentage('total',3)
-
-us_co %>% 
-  mutate(total=total*100) %>%
-  top_n(15, total)%>%
-  ggplot(aes(x=reorder(us_co, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="us_co") 
+DT::datatable(us_co, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 9: ', 
+                htmltools::em('US party of the shipment'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+us_co %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(us_co, desc(percentage)), y=~percentage, 
+        color=~us_co) %>% 
+  add_bars() %>%
+  layout(title = "<b>US party of the shipment (Top 20)</b>",
+         xaxis= list(title= "<b>US party</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(us_co)
 ```
 
 We want to analyze which American corporations are importing the most. So, we have grouped the mayor corporations based on the company names. 
 
-We’ve grouped most of those companies that represent at least 0.15% of the data, covering approximately 1.000.000 observations.
+We’ve grouped most of those companies that represent at least 19% of the data, covering approximately 1.000.000 observations.
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 data$corporation<- # Fashion/Luxury/Design products 
@@ -501,8 +513,7 @@ data$corporation<- # Fashion/Luxury/Design products
                           "Other")))))))))))))))))))))))))))))))))))))))))))))))))
 
 data_corporations <- data %>%
-  mutate(corporation = as.factor(corporation)) %>%
-  filter(corporation!="Other") # 1,004,219
+  mutate(corporation = as.factor(corporation)) 
 
 # Let's classify these corporations
 corp_fashion<- c("Beeline Group", "Bomac International Corp", "Bottega Veneta", 
@@ -536,42 +547,44 @@ data$corp_classif<- as.factor(data$corp_classif)
 data_corporations<- data %>% 
   group_by(corp_classif, corporation) %>%
   dplyr::summarise(total=n(), percentage=n()/nrow(data)) %>%
-  arrange(desc(total)) 
+  arrange(desc(total)) %>%
+  filter(corporation!="Other") 
 
-DT::datatable(data_corporations) %>%
-  formatPercentage('percentage',3) %>%
-  formatCurrency('total',currency = "", interval = 3, mark = ",")
-
-data_corporations %>% 
-  mutate(percentage=percentage*100) %>%
-  filter(corp_classif != "Others") %>%
-  ungroup() %>%
+DT::datatable(data_corporations, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 10: ', 
+                htmltools::em('Which American corporations are importing the most'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+data_corporations %>% mutate(percentage=percentage*100) %>%
   top_n(15, percentage) %>%
-  ggplot(aes(x=reorder(corporation, -percentage), y=percentage,fill=corp_classif)) + 
-  geom_bar(stat="identity") +
-  geom_text(aes(label=round(percentage,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="US corporations") 
+  plot_ly(x=~reorder(corporation, desc(percentage)), y=~percentage, 
+        color=~corp_classif) %>% 
+  add_bars() %>%
+  layout(title = "<b>Which American corporations are importing the most (Top 15)</b>",
+         xaxis= list(title= "<b>American corporation</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 ## Graph by classification
-data_corporations %>% 
-  mutate(percentage=percentage*100) %>%
+data_corporations %>% mutate(percentage=percentage*100) %>%
   filter(corp_classif == "Fashion/Luxury/Design") %>%
-  ggplot(aes(x=reorder(corporation, -percentage), y=percentage)) + 
-  geom_bar(stat="identity", fill="darkgreen") +
-  geom_text(aes(label=round(percentage,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="Fashion/Luxury/Design Corporations") 
+  plot_ly(x=~reorder(corporation, desc(percentage)), y=~percentage, 
+         marker = list(color = "coral")) %>% 
+  add_bars() %>%
+  layout(title = "<b>Fashion/Luxury/Design Corporations</b>",
+         xaxis= list(title= "<b>American corporation</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
-data_corporations %>% 
-  mutate(percentage=percentage*100) %>%
+data_corporations %>% mutate(percentage=percentage*100) %>%
   filter(corp_classif == "Animal/animal prod. providers") %>%
-  top_n(15, percentage) %>%
-  ggplot(aes(x=reorder(corporation, -percentage), y=percentage,fill=corp_classif)) + 
-  geom_bar(stat="identity") +
-  geom_text(aes(label=round(percentage,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="Animal/animal prod. providers Corporations") 
+  plot_ly(x=~reorder(corporation, desc(percentage)), y=~percentage, 
+         marker = list(color = "green")) %>% 
+  add_bars() %>%
+  layout(title = "<b>Animal/animal prod. providers Corporations</b>",
+         xaxis= list(title= "<b>American corporation</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(corp_animalproviders, corp_fashion, data_corporations)
 
@@ -585,22 +598,29 @@ rm(corp_animalproviders, corp_fashion, data_corporations)
 - The top 50 just represents 12.4% of data 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-foreign_co <-data %>% group_by(foreign_co) %>%
-  summarise(total=n()/nrow(data)) %>%
+foreign_co <-data %>% 
+  filter(!foreign_co == "EXEMPTIONS 6 AND 7(C)") %>%
+  group_by(foreign_co) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(foreign_co) %>%
-  arrange(desc(total)) %>% top_n(15, total) 
+  arrange(desc(percentage)) 
 
-DT::datatable(foreign_co) %>%
-  formatPercentage('total',3)
-
-foreign_co %>% 
-  mutate(total=total*100) %>%
-  top_n(15, total)%>%
-  ggplot(aes(x=reorder(foreign_co, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="foreign_co") 
+DT::datatable(foreign_co, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 11: ', 
+                htmltools::em('Foreign party of the shipment'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+foreign_co %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(foreign_co, desc(percentage)), y=~percentage, 
+        color=~foreign_co) %>% 
+  add_bars() %>%
+  layout(title = "<b>Foreign party of the shipment (Top 20)</b>",
+         xaxis= list(title= "<b>Foreign party of the shipment</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(foreign_co)
 ```
@@ -630,36 +650,51 @@ data <- data %>%
                               "HOR" = "Horn", "IVC" ="Ivory carving", 
                               "IVP" = "Ivory piece", "UNS" = "Unspecified"))
                        
-description <-data %>% group_by(description) %>%
-  summarise(total=n()/nrow(data)) %>%
+description <-data %>% 
+  group_by(description) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(description) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(description) %>%
-  formatPercentage('total',2)
-
-description %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(description, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="description") 
+DT::datatable(description, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 12: ', 
+                htmltools::em('Type/form of the wildlife product'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+description %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(description, desc(percentage)), y=~percentage, 
+        color=~description) %>% 
+  add_bars() %>%
+  layout(title = "<b>Type/form of the wildlife product (Top 20)</b>",
+         xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(description)
 ```
 
 ### value
-**It represents the reported value of the wildlife product in US dollars**. 
+**It represents the reported value of every shipment in US dollars**. 
+- Lower values are more common than higher values
+- The min value is 0 dollars while the max value is 118,000,000 dollars   
+- The halway point, the median, is 187$ 
+- 50% of shipments are between 30 dollars (1st quartile) and 1260 dollars (3rd quartile)
+
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 summary(data$value)
 
 # Data between the minimum value and the 3rd quartile
-ggplot(data, aes(x=value))+
-  geom_histogram(color="darkblue", fill="lightblue", bins=30)  + 
-  xlim(c(0, 1260))
+data %>% 
+  filter(value>=0 & value<=1260) %>%
+  plot_ly(x=~value, type='histogram', nbinsx = 40) %>%
+  layout(title = "<b>Number of shipments with a value between 0 and 1260 US dollars.</b>",
+         xaxis= list(title= "<b>Value</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Count</b>"))
+
 ```
 
 ### purpose
@@ -679,21 +714,27 @@ data <- data %>%
                    "Y" = "Reintroduction/introduction into the wild",
                    "Z" = "Zoos"))
                               
-purpose <-data %>% group_by(purpose) %>%
-  summarise(total=n()/nrow(data)) %>%
+purpose <-data %>% 
+  group_by(purpose) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(purpose) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(purpose) %>%
-  formatPercentage('total',2)
-
-purpose %>%
-  mutate(total=total*100) %>%
-  ggplot(aes(x=reorder(purpose, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="purpose") 
+DT::datatable(purpose, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 13: ', 
+                htmltools::em('Reasons the wildlife products are being imported'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+purpose %>% mutate(percentage=percentage*100) %>%
+  plot_ly(x=~reorder(purpose, desc(percentage)), y=~percentage, 
+        color=~purpose) %>% 
+  add_bars() %>%
+  layout(title = "<b>Reasons the wildlife products are being imported</b>",
+         xaxis= list(title= "<b>Purposes</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(purpose)
 ```
@@ -716,21 +757,27 @@ data <- data %>%
                          "I" = "Confiscated or seized specimens", 
                          "A" = "Plants artificially propagated, parts and derivates"))
                               
-source <-data %>% group_by(source) %>%
-  summarise(total=n()/nrow(data)) %>%
+source <-data %>% 
+  group_by(source) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(source) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(source) %>%
-  formatPercentage('total',2)
-
-source %>%
-  mutate(total=total*100) %>%
-  ggplot(aes(x=reorder(source, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="source") 
+DT::datatable(source, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 14: ', 
+                htmltools::em('Types of source within the origin country'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+source %>% mutate(percentage=percentage*100) %>%
+  plot_ly(x=~reorder(source, desc(percentage)), y=~percentage, 
+        color=~source) %>% 
+  add_bars() %>%
+  layout(title = "<b>Types of source within the origin country</b>",
+         xaxis= list(title= "<b>Sources</b>" ,tickangle=-65, tickfont = list(size = 10)),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(source)
 ```
@@ -746,22 +793,29 @@ rm(source)
 # Dropping unused levels
 data$species_code <- droplevels(data$species_code)
 
-species_code <-data %>% group_by(species_code) %>%
-  summarise(total=n()/nrow(data)) %>%
-  arrange(desc(total)) 
+species_code <-data %>% 
+  group_by(species_code) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
+  drop_na(species_code) %>%
+  arrange(desc(percentage)) 
 
-DT::datatable(species_code) %>%
-  formatPercentage('total',2)
-
-species_code %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(species_code, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="Species Code") 
+DT::datatable(species_code, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 15: ', 
+                htmltools::em('USFWS code for the wildlife product'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
   
+species_code %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(species_code, desc(percentage)), y=~percentage, 
+        color=~species_code) %>% 
+  add_bars() %>%
+  layout(title = "<b>USFWS code for the wildlife product (Top 20)</b>",
+         xaxis= list(title= "<b>USFWS code</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
 rm(species_code)
 ```
 
@@ -776,15 +830,27 @@ rm(species_code)
 # Dropping unused levels
 data$taxa <- droplevels(data$taxa)
 
-taxa <-data %>% group_by(taxa) %>% 
-  summarise(total=n()/nrow(data)*100) %>%
-  arrange(desc(total)) 
+taxa <-data %>% 
+  group_by(taxa) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
+  drop_na(taxa) %>%
+  arrange(desc(percentage)) 
 
-ggplot(data=taxa, aes(x=reorder(taxa, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="taxa") 
+DT::datatable(taxa, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 16: ', 
+                htmltools::em('USFWS-derived broad taxonomic categorization'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+taxa %>% mutate(percentage=percentage*100) %>%
+  plot_ly(x=~reorder(taxa, desc(percentage)), y=~percentage, 
+        color=~taxa) %>% 
+  add_bars() %>%
+  layout(title = "<b>USFWS-derived broad taxonomic categorization</b>",
+         xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(taxa)
 ```
@@ -798,23 +864,29 @@ rm(taxa)
 # Dropping unused levels
 data$class <- droplevels(data$class)
 
-class <-data %>% group_by(class) %>%
-  summarise(total=n()/nrow(data)) %>%
+class <-data %>% 
+  group_by(class) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(class) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(class) %>%
-  formatPercentage('total',2)
-
-class %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(class, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="class") 
+DT::datatable(class, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 17: ', 
+                htmltools::em(' EHA-derived class-level taxonomic designation'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
   
+class %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(class, desc(percentage)), y=~percentage, 
+        color=~class) %>% 
+  add_bars() %>%
+  layout(title = "<b>EHA-derived class-level taxonomic designation (Top 20)</b>",
+         xaxis= list(title= "<b>Class</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
 rm(class)
 ```
 
@@ -829,28 +901,34 @@ rm(class)
 # Dropping unused levels
 data$genus <- droplevels(data$genus)
 
-genus <-data %>% group_by(genus) %>%
-  summarise(total=n()/nrow(data)) %>%
+genus <-data %>% 
+  group_by(genus) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(genus) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage)) 
 
-DT::datatable(genus) %>%
-  formatPercentage('total',2)
-
-genus %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(genus, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="genus") 
+DT::datatable(genus, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 18: ', 
+                htmltools::em('Genus (or higher-level taxonomic name) of the wildlife product'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+genus %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(genus, desc(percentage)), y=~percentage, 
+        color=~genus) %>% 
+  add_bars() %>%
+  layout(title = "<b>Genus (or higher-level taxonomic name) of the wildlife product (Top 20)</b>",
+         xaxis= list(title= "<b>Genus</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(genus)
 ```
 
 ### species
-**It represents species of the wildlife product**. For getting a more ilustrative name, we'll combine genus and species. 
+**It represents species of the wildlife product**. To get a more ilustrative name, we'll combine genus and species. 
 
 - After removing generics, there are 8,082 different species
 - The top 15 represents 23.8 % of data
@@ -865,29 +943,32 @@ species<- data %>%
   filter(!species %in% c("maxima", "sp.", "in trop fish &", "(marine sp.)",
                         "(freshwater sp.)", "(including goldfish)")) %>%
   drop_na(species)
-
   
 # Combine genus + species
 species <- species %>% mutate(species = as.factor(paste(genus, "-",species)))
 
-species <-species %>% group_by(species) %>%
-  summarise(total=n()/nrow(data)) %>%
+species <-species %>% 
+  group_by(species) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(species) %>%
-  arrange(desc(total)) %>%
-  ungroup() 
+  arrange(desc(percentage)) 
 
-DT::datatable(species) %>%
-  formatPercentage('total',2)
-
-species %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(species, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="species") 
-
+DT::datatable(species, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 19: ', 
+                htmltools::em('Species of the wildlife product'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+species %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(species, desc(percentage)), y=~percentage, 
+        color=~species) %>% 
+  add_bars() %>%
+  layout(title = "<b>Species of the wildlife product (Top 20)</b>",
+         xaxis= list(title= "<b>Species</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 # Combine genus + species in the dataset
 data <- data %>% mutate(species = as.factor(paste(genus, "-",species)))
@@ -906,22 +987,29 @@ rm(species)
 # Dropping unused levels
 data$subspecies <- droplevels(data$subspecies)
 
-subspecies <-data %>% group_by(subspecies) %>%
-  summarise(total=n()/nrow(data)) %>%
+subspecies <-data %>% 
+  group_by(subspecies) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   filter(subspecies!="other shipments") %>%
-  arrange(desc(total)) 
+  drop_na(subspecies) %>%
+  arrange(desc(percentage))
 
-DT::datatable(subspecies) %>%
-  formatPercentage('total',2)
-
-subspecies %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(subspecies, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="subspecies") 
+DT::datatable(subspecies, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 20: ', 
+                htmltools::em('Subespecies of the wildlife product'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+subspecies %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(subspecies, desc(percentage)), y=~percentage, 
+        color=~subspecies) %>% 
+  add_bars() %>%
+  layout(title = "<b>Subespecies of the wildlife product (Top 20)</b>",
+         xaxis= list(title= "<b>Subespecies</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(subspecies)
 
@@ -937,22 +1025,28 @@ rm(subspecies)
 # Dropping unused levels
 data$generic_name <- droplevels(data$generic_name)
 
-generic_name <-data %>% group_by(generic_name) %>%
-  summarise(total=n()/nrow(data)) %>%
+generic_name <-data %>% 
+  group_by(generic_name) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(generic_name) %>%
-  arrange(desc(total)) 
+  arrange(desc(percentage))
 
-DT::datatable(generic_name) %>%
-  formatPercentage('total',2)
-
-generic_name %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(generic_name, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="generic_name") 
+DT::datatable(generic_name, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 21: ', 
+                htmltools::em('General common names for the wildlife product'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+generic_name %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(generic_name, desc(percentage)), y=~percentage, 
+        color=~generic_name) %>% 
+  add_bars() %>%
+  layout(title = "<b>General common names for the wildlife product (Top 20)</b>",
+         xaxis= list(title= "<b>Generic Name</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 rm(generic_name)
 ```
@@ -960,36 +1054,50 @@ rm(generic_name)
 ### specific_name
 **It represents a specific common name for the wildlife product**. For getting a more ilustrative name, we'll combine generic_name and specific_name 
 
-- There are 6,669 specific names levels 
-- The top 15 represents 36.3% of data 
-- The top 50 represents 58.7% of data 
+- After removing empty values, there are 10,435 combinations of generic_name and specific_name
+- The top 15 represents 25.3% of data 
+- The top 50 represents 41.3.6% of data 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 # Dropping unused levels
 data$specific_name <- droplevels(data$specific_name)
 
-# Combine generic_name and specific_name
+# Removing generics
+specific_name<- data %>%
+  drop_na(specific_name)
+  
+# Combine genus + species
+specific_name <- specific_name %>% 
+  mutate(specific_name = paste(generic_name, "-",specific_name))
+
+specific_name <-specific_name %>% 
+  group_by(specific_name) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
+  drop_na(specific_name) %>%
+  arrange(desc(percentage)) 
+
+DT::datatable(specific_name, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 22: ', 
+                htmltools::em('Specific common names for the wildlife product'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+specific_name %>% mutate(percentage=percentage*100) %>%
+  top_n(20, percentage) %>%
+  plot_ly(x=~reorder(specific_name, desc(percentage)), y=~percentage, 
+        color=~specific_name) %>% 
+  add_bars() %>%
+  layout(title = "<b>Specific common names for the wildlife product (Top 20)</b>",
+         xaxis= list(title= "<b>Specific Name</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
+# Combine generic_name and specific_name in the dataset
 data <- data %>% mutate(specific_name = paste(generic_name, "-",specific_name))
 
-specific_name <-data %>% group_by(specific_name) %>%
-  summarise(total=n()/nrow(data)) %>%
-  drop_na(specific_name) %>%
-  arrange(desc(total))
-
-DT::datatable(specific_name) %>%
-  formatPercentage('total',2)
-
-specific_name %>%
-  mutate(total=total*100) %>%
-  top_n(15, total) %>%
-  ggplot(aes(x=reorder(specific_name, -total), y=total)) + 
-  geom_bar(stat="identity",fill="steelblue") +
-  geom_text(aes(label=round(total,2)))+
-  theme(axis.text.x = element_text(angle=60, hjust=1)) +
-  labs(y = "Percentage",  x="specific_name") 
-
 rm(specific_name)
-```
+``` 
 
 ## More data cleaning after exploratory analysis 
 **Let's exclude from the analysis those descriptions with less than 10 instances**. We reduce the number of descriptions from 88 to 78
