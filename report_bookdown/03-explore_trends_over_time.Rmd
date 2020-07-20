@@ -1,22 +1,37 @@
 # Trends over time
-Let's explore how some trends change over time. 
+The trends analysis will focus on the number of seized shipments, the import (US dollars), the contents and the capacity of deter ilegal shipments (refused shipments). 
 
-## Shipments
-**Let's summarized the number of unique shipments per month.**
+## Number of seized shipments
+**In the 15 years analyzed, there are 2,079,637 unique shipments containing 5,451,832 segments**. We can see a clear upward trend in the number of cases from 2000 to 2006. Then, the curve reached its peak with around 162,000 unique shipments, decreased a bit, and started leveling off. 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-unique_shipments_year <-data %>% 
+unique_shipments_yearmonth <-data %>% 
   group_by(year= year(shipment_date),month = month(shipment_date)) %>%
   summarise(unique_shipments = n_distinct(control_number)) 
 
-unique_shipments_year$date <- as.yearmon(paste(unique_shipments_year$year, 
-                                          unique_shipments_year$month), "%Y %m")
+unique_shipments_yearmonth$date <- as.yearmon(paste(unique_shipments_yearmonth$year, 
+                                          unique_shipments_yearmonth$month), "%Y %m")
 
-highchart()%>%
-  hc_add_series(unique_shipments_year, "line", hcaes(x = date, y = unique_shipments)) %>%
-  hc_xAxis(title=list(text="Date")) %>%
-  hc_yAxis(title=list(text="Unique shipments")) %>%
-  hc_title(text="Number of unique shipments per month")
+unique_shipments_year <- unique_shipments_yearmonth %>%
+  ungroup() %>%
+  group_by(year) %>%
+  summarise(unique_shipments = sum(unique_shipments))
+
+# Plotly by year
+unique_shipments_year %>%
+plot_ly(x=~year, y=~unique_shipments,type = 'scatter', mode = 'lines') %>%
+    layout(title = "<b>Unique seized shipments per year</b>",
+         xaxis= list(title= "<b>Year</b>"),
+         yaxis = list(title = "<b>Total of unique shipments</b>"))
+
+
+# Plotly by year and month
+unique_shipments_yearmonth %>%
+  plot_ly(x = ~date, y=~unique_shipments, type = 'scatter', mode = 'lines') %>%
+    layout(title = "<b>Unique seized shipments per year and month</b>",
+         xaxis= list(title= "<b>Date</b>"),
+         yaxis = list(title = "<b>Total of unique shipments</b>"))
+
 
 ```
 
@@ -28,18 +43,20 @@ unique_shipments_week <-data %>%
   group_by(year= year(shipment_date), week=week(shipment_date)) %>%
   summarise(unique_shipments = n_distinct(control_number)) %>%
   ungroup() %>%
-  filter(!week %in% c(1, 52, 53))
+  filter(!week %in% c(1, 52, 53)) %>%
+  mutate(year=as.factor(year))
 
-highchart()%>%
-  hc_add_series(unique_shipments_week, "line", hcaes(x = week, y = unique_shipments,
-                                                     group=year)) %>%
-  hc_xAxis(title=list(text="Date")) %>%
-  hc_yAxis(title=list(text="Unique shipments")) %>%
-  hc_title(text="Number of unique shipments depending on the week of the year")
+plot_ly(unique_shipments_week,x = ~week, y = ~unique_shipments) %>%
+  add_lines(color=~year, colors="Dark2") %>%
+  layout(title = "<b>Number of unique shipments depending on the week of the year</b>",
+         xaxis= list(title= "<b>Week</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Unique shipments</b>"))
 
-rm(unique_shipments_year)
-rm(unique_shipments_week)
+rm(unique_shipments_year,unique_shipments_yearmonth,unique_shipments_week)
 ```
+## Number of segments
+
+
 
 ## Import (US dollars)
 **It's important to take into account that since year 2008, this variable has a lot of missing values (check the 2.1. section)** So, we can just calculate the total import for the period between 2000-2007, and also for the year 2012.
@@ -237,8 +254,10 @@ rm(widgets, total_byname, value_byname)
 
 ```
 
-## Quantity (number of items and kg)
+## Content (number of items and kg)
 **Let's summarized the quantity brought per year**. We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
+
+- It includes around 11,5 billions and 1,1 billion kg of wildlife items. 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%' }
 quantity_year<- data %>% filter(unit=="Number"| unit=="Kilograms") 

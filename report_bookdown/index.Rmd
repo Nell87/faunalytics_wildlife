@@ -9,41 +9,13 @@ biblio-style: apalike
 ---
 
 # Introduction
-**This report is intended to explore some ideas about LEMI dataset** accessed with the lemis R package. 
-LEMIS wildlife trade data trends from 2000 through 2014. You can read more about this dataset [Here](https://www.nature.com/articles/s41597-020-0354-5)
+The aim of this study is to analyze United States wildlife and wildlife product imports. For this purpose, we'll review 15 years (2000-2014) of data from the Law Enforcement Managment Information System (LEMIS), originally collected by the United States Fish and Wildlife Service (USFWS), cleaned and stored into a R package called lemis by EcoHealth Alliance. You can find more information more about this dataset [Here](https://www.nature.com/articles/s41597-020-0354-5)
 
-## Summary
-- **All the shipments are imports. Only a very small percentage of them was refused by the USFWS (1.73%)**
+The data collected by EcoHealth Alliance include includes records of plants, microorganisms and animals, among others. For this analysis, we'll exclude those elements belonging to fungi, plantae, bacteria, chromista and unspecified kingdoms, considering only those organisms of the Kingdom Animalia. 
 
-- **54% of dispositions took place within a month of the shipment date (most of them within a week)**
+Between January 01, 2000, and December 31, 2014, around **2 millions wildlife shipments were imported into the United States**, involving around 11,4 billions and 1,1 billion kg of wildlife items. 
 
-- **Most problematic countries are on both sides (country of origin & country to/from which the wildlife product is shipped)**
+A **shipment** refers to any container or group of containers that share a common control number, country of shipment and shipment date. Each shipment may be represented in the lemis dataset by multiple segments or rows, because the contents are derived from more than one species or type of product. 
 
-```{r echo=FALSE, out.width = '100%'}
-knitr::include_graphics("./_bookdown_files/report_bookdown_files/figure-html/unnamed-chunk-20-1.png")
-```
-
-**These are the American corporations that are importing the most.**
-```{r echo=FALSE, out.width = '100%'}
-knitr::include_graphics("./_bookdown_files/report_bookdown_files/figure-html/unnamed-chunk-16-2.png")
-```
-
-- **There has been an upward trend in the amount of dollars spent** from 2000 to 2012 (Although we don't have enough information about this variable in the data produced between 2008-2011 and 2013-2014. For more information, check the section 2.1.1.).
-
-```{r echo=FALSE, out.width = '100%'}
-knitr::include_graphics("./_bookdown_files/report_bookdown_files/figure-html/unnamed-chunk-34-2.png")
-```
-
-- **Most of the products are "Live specimens" (29.1%), followed by trophies (16.83%) and "Shell products" (9.49%), mainly import by commercial purposes (74.6%).**
-
-- **Most of the imports are mammals (29.16%), followed by shells (20.34%), reptiles (13.29%) and corals (12.63%)**
-```{r echo=FALSE,  out.width = '100%'}
-knitr::include_graphics("./_bookdown_files/report_bookdown_files/figure-html/unnamed-chunk-29-1.png")
-```
-
-
-
- 
-
-
+We will analyze the data based on different topics and trends. We'll analyze the number of seized shipments, as well as their volume and content.  
 

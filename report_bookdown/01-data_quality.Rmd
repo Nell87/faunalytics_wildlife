@@ -155,3 +155,146 @@ rm(classes, animalia_kingdom, bacterias_kingdom, chromista_kingdom,
    plantae_kingdom, fungi_kingdom)
 
 ```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Renaming 
+data <- data %>% 
+  
+  # Renaming units
+  mutate(unit = recode(unit, "NO" = "Number", "KG" = "Kilograms", 
+                       "GM"= "Grams", "M2"="Square_meters", 
+                       "LT"= "Liters", "ML"= "Milliliters", 
+                       "MT"="Meters", "CM" = "Centimeters", 
+                       "C3"= "Cubic_centimeters", "C2"="Square_centimeters",
+                       "MG"="Miligrams", "M3"="Cubic_meters"),
+         
+           # Renaming import_export       
+          import_export = recode(import_export, "I" = "Import"),
+         
+         # Renaming levels
+          action = recode(action, "C" = "Cleared", "R"= "Refused"),
+         
+         # Renaming countries
+          country_origin = countrycode(country_origin, "iso2c", 
+                                  "country.name", nomatch = NULL),
+         
+         
+          country_origin = recode(country_origin, "AN" = "Netherlands Antilles",
+                                "XX" = "Unknown","ZZ" = "High Seas"),
+         
+          country_imp_exp = countrycode(country_imp_exp, "iso2c", 
+                                  "country.name", nomatch = NULL),
+  
+          country_imp_exp = recode(country_imp_exp, "AN" = "Netherlands Antilles",
+                                "XX" = "Unknown","ZZ" = "High Seas"),
+         
+         # Renaming ports
+          port = recode(port, "AG" = "Agana, GU", "AL" = "Alcan, AK", "AN" = "Anchorage, AK",
+                        "AT" = "Atlanta, GA", "BA" = "Baltimore, MD", "BL" = "Blaine, WA", 
+                        "BN" = "Buffalo/Niagara Falls, NY", "BO" = "Boston, MA",
+                        "BV" = "Brownsville, TX", "CA" = "Calais, ME", "CH" = "Chicago, IL",
+                        "CL" = "Cleveland, OH", "CP" = "Champlain, NY", 
+                        "CX" = "Calexico, CA", "DF" = "Dallas/Fort Worth, TX", 
+                        "DE" = "Detroit, MI", "DG" = "Douglas, AZ", "DL" = "Derby Line, VT", 
+                        "DN" = "Denver, CO", "DR" = "Del Rio, TX" , "DS" = "Dunseith, ND", 
+                        "DU" = "Dulles, VA", "EA" = "Eastport, ID", "EL" = "El Paso, TX", 
+                        "FB" = "Fairbanks, AK", "GP" = "Grand Portage, MN", 
+                        "HO" = "Houlton, ME", "HA" = "Honolulu, HI","HN"= "Houston, TX", 
+                        "HS" = "Highgate Springs, VT", "IF" = "International Falls, MN", 
+                        "JK" = "Jackman, ME", "JU" = "Juneau, AK","LK" = "Lukeville, AZ",
+                        "LA" = "Los Angeles, CA", "LO" = "Louisville, KY ","LR" = "Laredo, TX", 
+                        "LV" = "Las Vegas, NV", "MC" = "McAllen, TX", "ME" = "Memphis, TN",
+                        "MI" = "Miami, FL","MP" = "Minneapolis/St. Paul, MN", 
+                        "NY" = "New York, NY", "NW" = "Newark, NJ","NF" = "Norfolk, VA", 
+                        "NG" = "Nogales, AZ", "NO" = "New Orleans, LA", "PA" = "Philadelphia, PA", 
+                        "PB" = "Pembina, ND", "PH" = "Port Huron, MI", "PL" = "Portal, ND", 
+                        "PT" = "Portland, OR", "PX" = "Phoenix, AZ", "RY" = "Raymond, MT", 
+                        "SF" = "San Francisco, CA","SE" = "Seattle, WA", "SJ" = "San Juan, PR", 
+                        "SL" = "San Luis, AZ", "SP" = "Saipan, MP", "SS" = "Sault Saint Marie, MI", 
+                        "SU" = "Sumas, WA", "SW" = "Sweetgrass, MT", 
+                        "SY" = "San Diego/San Ysidro, CA", "TP" = "Tampa, FL", "XX" = "Unknown",
+                        "1"= "Region 1 - Other", "2"= "Region 2 - Other","3"= "Region 3 - Other",
+                        "4"= "Region 4 - Other","5"= "Region 5 - Other","6"= "Region 6 - Other",
+                        "7"= "Region 7 - Other","8"= "Region 8 - Other"),
+                        
+         
+         # Renaming descriptions
+          description = recode(description, 
+                               "BAL" = "Baleen", "BAR" = "Bark", "BOC" = "Bone product",
+                               "BOD" = "Dead animal", "BON" = "Bone", "BOP" = "Bone piece",
+                               "CAL" = "Calipee", "CAP" = "Carapace", 
+                               "CAR" = "Carving", "CAV" = "Caviar", "CLA" = "Claw", 
+                               "CLO"= "Cloth", "COR" = "Coral", "CPR" = "Coral product",
+                               "CUL" = "Culture of an artificially propagated plant",
+                               "CUT" = "Cutting", 
+                               "DEA" = "Dead Specimen (died during shipment)",
+                               "DER" = "Derivative", "DPL" = "Dried plant",
+                               "EAR" = "Ear", "EGG" = "Egg (dead or blown)", 
+                               "EGL" = "Egg (live)", "ESH" = "Eggshell",
+                               "EXT" = "Extract", "FEA"= "Feather", "FIB" = "Fiber",
+                               "FIG" = "Fingerling", "FIN" = "Fin", "FLO" = "Flower", 
+                               "FOO" = "Foot", "GAB" = "Gall bladder", "GAL" = "Gall", 
+                               "GAR" = "Garment", "GEN" = "Genitalia", 
+                               "GRS" = "Graft rootstock", "HAI" = "Hair", 
+                               "HAP" = "Hair product" , "HOC" = "Horn carving",
+                               "HOP" = "Horn piece", "HOR" = "Horn", 
+                               "IJW" = "Ivory jewelry", "IVC" ="Ivory carving",
+                               "IVP" = "Ivory piece", "JWL" = "Jewelry", 
+                               "KEY" = "Ivory piano key", "LPL" = "Leather product (large)", 
+                               "LPS" = "Leather product (small)","LEG" = "Frog leg", 
+                               "LIV" = "Live specimen", "LVS" = "Leaves", "MEA" = "Meat",
+                               "MED" = "Medicinal part or product", "MUS" = "Musk",
+                               "NES" = "Nest", "OIL" = "Oil", 
+                               "PIV" = "Piano with ivory keys", 
+                               "PLA" = "Plate of fur skins", "PLY" = "Plywood", 
+                               "POW" = "Powder", "ROC" = "Coral rock (live rock)", 
+                               "RUG" = "Rug", "SAW" = "Sawn wood", "SCA" = "Scale", 
+                               "SEE" = "Seed", "SHE" = "Shell","SPR" = "Shell product",
+                               "SHO" = "Shoe", "SID" = "Side", "SKE" = "Skeleton",
+                               "SKI" = "Skin", "SKP" = "Skin piece", "SKU" = "Skull", 
+                               "SOU" = "Soup", "SPE" = "Specimen (scientific or museum)",
+                               "STE" = "Stem (plant)", "SWI" = "Swim bladder",
+                               "TAI" = "Tail", "TEE" = "Teeth", "TIM" = "Timber", 
+                               "TRI" = "Trim", "TRO" = "Trophy", "TUS" = "Tusk", 
+                               "UNS" = "Unspecified", "VEN" = "Veneer", "WAX" = "Wax", 
+                               "WNG" = "Wing", "WPR" = "Wood product"),
+   
+         
+          # Renaming purposes
+          purpose = recode(purpose, 
+                             "B" = "Breeding in captivity/artif. propag.", 
+                             "E" = "Educational", 
+                             "G" = "Botanical Gardens",
+                             "H" = "Hunting trophies", 
+                             "M" = "Biomedical research",
+                             "P" = "Personal", 
+                             "Q" = "Circuses/traveling exhibitions",
+                             "S" = "Scientific", 
+                             "T" = "Commercial", 
+                             "Y" = "Reintrod./introd. into the wild",
+                             "Z" = "Zoos",
+                             "L" = "Others",
+                             "non-standard value" = "Others"),
+         
+                   # Renaming sources
+          source = recode(source, 
+                                   "W" = "Specimens taken from the wild", 
+                                   "C" = "Animals bred in captivity", 
+                                   "R" = "Specimens orig. from a ranching op.",
+                                   "F" = "Animals born in captivity/not captive-bred",
+                                   "U" = "Source unknown", 
+                                   "D" = "commercially bred or propagated in CITES",
+                                   "I" = "Confiscated or seized specimens", 
+                                   "A" = "Plants art. propagated, parts and derivates",
+                                   "P" = "Others", 
+                                   "non-standard value" = "Others"))
+
+# To factor
+data$country_imp_exp<- as.factor(data$country_imp_exp)
+data$country_origin<-as.factor(data$country_origin)
+
+```
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+### Defining functions
+
+```

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 8 METHOD AND DATA INCLUDED | Faunalytics - Wildlife trade dataset</title>
+  <meta name="description" content="Chapter 8 METHOD AND DATA INCLUDED | Faunalytics - Wildlife trade dataset" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 8 METHOD AND DATA INCLUDED | Faunalytics - Wildlife trade dataset" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 8 METHOD AND DATA INCLUDED | Faunalytics - Wildlife trade dataset" />
+  
+  
+  
+
+
+
+<meta name="date" content="2020-07-07" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="introduction-1.html"/>
+<link rel="next" href="key-findings.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html"><i class="fa fa-check"></i><b>2</b> Data quality &amp; cleaning</a><ul>
+<li class="chapter" data-level="2.1" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#missing-values"><i class="fa fa-check"></i><b>2.1</b> Missing values</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#missing-values-in-value-year-over-year"><i class="fa fa-check"></i><b>2.1.1</b> Missing values in “value” year over year</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="data-quality-cleaning.html"><a href="data-quality-cleaning.html#excluding-plants-and-microorganisms"><i class="fa fa-check"></i><b>2.2</b> Excluding plants and microorganisms</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html"><i class="fa fa-check"></i><b>3</b> Exploratory analysis</a><ul>
+<li class="chapter" data-level="3.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-trade-process"><i class="fa fa-check"></i><b>3.1</b> Variables related with the trade process:</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#control_number"><i class="fa fa-check"></i><b>3.1.1</b> control_number</a></li>
+<li class="chapter" data-level="3.1.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#quantity-and-unit"><i class="fa fa-check"></i><b>3.1.2</b> quantity and unit</a></li>
+<li class="chapter" data-level="3.1.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#import_export"><i class="fa fa-check"></i><b>3.1.3</b> import_export</a></li>
+<li class="chapter" data-level="3.1.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#action"><i class="fa fa-check"></i><b>3.1.4</b> action</a></li>
+<li class="chapter" data-level="3.1.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#disposition"><i class="fa fa-check"></i><b>3.1.5</b> disposition</a></li>
+<li class="chapter" data-level="3.1.6" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#shipment_date-and-disposition_date"><i class="fa fa-check"></i><b>3.1.6</b> shipment_date and disposition_date</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-countries"><i class="fa fa-check"></i><b>3.2</b> Variables related with the countries</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#country_origin"><i class="fa fa-check"></i><b>3.2.1</b> country_origin</a></li>
+<li class="chapter" data-level="3.2.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#country_imp_exp"><i class="fa fa-check"></i><b>3.2.2</b> country_imp_exp</a></li>
+<li class="chapter" data-level="3.2.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#port"><i class="fa fa-check"></i><b>3.2.3</b> port</a></li>
+<li class="chapter" data-level="3.2.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#us_co"><i class="fa fa-check"></i><b>3.2.4</b> us_co</a></li>
+<li class="chapter" data-level="3.2.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#foreign_co"><i class="fa fa-check"></i><b>3.2.5</b> foreign_co</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#variables-related-with-the-product"><i class="fa fa-check"></i><b>3.3</b> Variables related with the product</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#description"><i class="fa fa-check"></i><b>3.3.1</b> description</a></li>
+<li class="chapter" data-level="3.3.2" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#value"><i class="fa fa-check"></i><b>3.3.2</b> value</a></li>
+<li class="chapter" data-level="3.3.3" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#purpose"><i class="fa fa-check"></i><b>3.3.3</b> purpose</a></li>
+<li class="chapter" data-level="3.3.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#source"><i class="fa fa-check"></i><b>3.3.4</b> source</a></li>
+<li class="chapter" data-level="3.3.5" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#species_code"><i class="fa fa-check"></i><b>3.3.5</b> species_code</a></li>
+<li class="chapter" data-level="3.3.6" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#taxa"><i class="fa fa-check"></i><b>3.3.6</b> taxa</a></li>
+<li class="chapter" data-level="3.3.7" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#class"><i class="fa fa-check"></i><b>3.3.7</b> class</a></li>
+<li class="chapter" data-level="3.3.8" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#genus"><i class="fa fa-check"></i><b>3.3.8</b> genus</a></li>
+<li class="chapter" data-level="3.3.9" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#species"><i class="fa fa-check"></i><b>3.3.9</b> species</a></li>
+<li class="chapter" data-level="3.3.10" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#subspecies"><i class="fa fa-check"></i><b>3.3.10</b> subspecies</a></li>
+<li class="chapter" data-level="3.3.11" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#generic_name"><i class="fa fa-check"></i><b>3.3.11</b> generic_name</a></li>
+<li class="chapter" data-level="3.3.12" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#specific_name"><i class="fa fa-check"></i><b>3.3.12</b> specific_name</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="exploratory-analysis.html"><a href="exploratory-analysis.html#more-data-cleaning-after-exploratory-analysis"><i class="fa fa-check"></i><b>3.4</b> More data cleaning after exploratory analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="trends-over-time.html"><a href="trends-over-time.html"><i class="fa fa-check"></i><b>4</b> Trends over time</a><ul>
+<li class="chapter" data-level="4.1" data-path="trends-over-time.html"><a href="trends-over-time.html#number-of-seized-shipments"><i class="fa fa-check"></i><b>4.1</b> Number of seized shipments</a></li>
+<li class="chapter" data-level="4.2" data-path="trends-over-time.html"><a href="trends-over-time.html#import-us-dollars"><i class="fa fa-check"></i><b>4.2</b> Import (US dollars)</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-disposition-year"><i class="fa fa-check"></i><b>4.2.1</b> Measured by disposition year</a></li>
+<li class="chapter" data-level="4.2.2" data-path="trends-over-time.html"><a href="trends-over-time.html#measured-by-shipment-year"><i class="fa fa-check"></i><b>4.2.2</b> Measured by shipment year</a></li>
+<li class="chapter" data-level="4.2.3" data-path="trends-over-time.html"><a href="trends-over-time.html#by-taxa-and-shipment-year"><i class="fa fa-check"></i><b>4.2.3</b> By taxa and shipment year</a></li>
+<li class="chapter" data-level="4.2.4" data-path="trends-over-time.html"><a href="trends-over-time.html#by-description-and-shipment-year"><i class="fa fa-check"></i><b>4.2.4</b> By description and shipment year</a></li>
+<li class="chapter" data-level="4.2.5" data-path="trends-over-time.html"><a href="trends-over-time.html#by-name-generic-specific-and-shipment-year"><i class="fa fa-check"></i><b>4.2.5</b> By name (generic + specific) and shipment year</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="trends-over-time.html"><a href="trends-over-time.html#content-number-of-items-and-kg"><i class="fa fa-check"></i><b>4.3</b> Content (number of items and kg)</a></li>
+<li class="chapter" data-level="4.4" data-path="trends-over-time.html"><a href="trends-over-time.html#refused-shipments"><i class="fa fa-check"></i><b>4.4</b> Refused shipments</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="explore-other-topics.html"><a href="explore-other-topics.html"><i class="fa fa-check"></i><b>5</b> Explore other topics</a><ul>
+<li class="chapter" data-level="5.1" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-taxa"><i class="fa fa-check"></i><b>5.1</b> Total import (US dollars) by taxa</a></li>
+<li class="chapter" data-level="5.2" data-path="explore-other-topics.html"><a href="explore-other-topics.html#average-import-us-dollars-by-taxa-for-those-with-number-and-kg-units"><i class="fa fa-check"></i><b>5.2</b> Average import (US dollars) by taxa (for those with number and kg units)</a></li>
+<li class="chapter" data-level="5.3" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-description"><i class="fa fa-check"></i><b>5.3</b> Total import (US dollars) by description</a></li>
+<li class="chapter" data-level="5.4" data-path="explore-other-topics.html"><a href="explore-other-topics.html#average-import-us-dollars-by-description-for-those-with-number-and-kg-units"><i class="fa fa-check"></i><b>5.4</b> Average import (US dollars) by description (for those with number and kg units)</a></li>
+<li class="chapter" data-level="5.5" data-path="explore-other-topics.html"><a href="explore-other-topics.html#total-import-us-dollars-by-name"><i class="fa fa-check"></i><b>5.5</b> Total import (US dollars) by name</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="work-in-progress.html"><a href="work-in-progress.html"><i class="fa fa-check"></i><b>6</b> Work in progress</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="7" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>7</b> INTRODUCTION</a></li>
+<li class="chapter" data-level="8" data-path="method-and-data-included.html"><a href="method-and-data-included.html"><i class="fa fa-check"></i><b>8</b> METHOD AND DATA INCLUDED</a></li>
+<li class="chapter" data-level="9" data-path="key-findings.html"><a href="key-findings.html"><i class="fa fa-check"></i><b>9</b> KEY FINDINGS</a></li>
+<li class="chapter" data-level="10" data-path="results-by-topic.html"><a href="results-by-topic.html"><i class="fa fa-check"></i><b>10</b> RESULTS BY TOPIC</a></li>
+<li class="chapter" data-level="11" data-path="results-by-trends.html"><a href="results-by-trends.html"><i class="fa fa-check"></i><b>11</b> RESULTS BY TRENDS</a><ul>
+<li class="chapter" data-level="11.1" data-path="results-by-trends.html"><a href="results-by-trends.html#seized-wildlife-shipments"><i class="fa fa-check"></i><b>11.1</b> Seized wildlife shipments</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Faunalytics - Wildlife trade dataset</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="method-and-data-included" class="section level1">
+<h1><span class="header-section-number">Chapter 8</span> METHOD AND DATA INCLUDED</h1>
+<p>The data collected by EcoHealth Alliance include includes records of plants, microorganisms and animals, among others. For this analysis, we’ll exclude those elements belonging to fungi, plantae, bacteria, chromista and unspecified kingdoms, considering only those organisms of the Kingdom Animalia.</p>
+<p>Between January 01, 2000, and December 31, 2014, around <strong>2 millions wildlife shipments were imported into the United States</strong>, involving around 11,4 billions and 1,1 billion kg of wildlife items.</p>
+<p>A <strong>shipment</strong> refers to any container or group of containers that share a common control number, country of shipment and shipment date. Each shipment may be represented in the lemis dataset by multiple segments or rows, because the contents are derived from more than one species or type of product.</p>
+<p>We will analyze the data based on different topics and trends. We’ll analyze the number of seized shipments, as well as their volume and content.</p>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="introduction-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="key-findings.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["report_bookdown.pdf", "report_bookdown.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

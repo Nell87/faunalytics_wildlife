@@ -41,30 +41,47 @@ Here you can check data fields and fields descriptions for all variables appeari
 ## Variables related with the trade process:
 
 ### control_number 
-**It represents a unique individual shipment processed by the USFWS.** 
+**It represents a unique individual shipment processed by the USFWS.** A **shipment** refers to any container or group of containers that share a common control number, country of shipment and shipment date. Each shipment may be represented in the lemis dataset by multiple segments or rows, because the contents are derived from more than one species or type of product.  
 
-- There are 2,088,676 unique shiptments 
-- Different wildlife products contained within the same shipment may be represented in the LEMIS data by multiple data rows, all of which share a common ‘control_number’. 
-- All rows of data sharing the same ‘control_number’ share the same country of shipment and shipment date. 
+- There are 2,079,637 unique shipments containing 5,451,832 segments.
+- Of those, 60% (1,265,491 unique shipments) represent single segments. It means that for 1,265,491 shipments only one species and one type of product were discovered. The remaining 40% (814,146 unique shipments) contain 4,186,341 segments.
+- These multiple segments shipments contain from 2 to 492 segments. The average number of segments in this kind of shipments is 5; the median is 3. 
+
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Dropping unused levels
+data$control_number <- droplevels(data$control_number)
+
+# Unique shipments
+shipments<- data %>% dplyr::group_by(control_number) %>%
+  dplyr::summarise(size_segments=n()) %>% ungroup() %>%
+  mutate(type_segment = ifelse(size_segments==1, "single", "multiple")) %>%
+  mutate(type_segment=as.factor(type_segment))
+
+shipments<- shipments %>% select(size_segments, type_segment) %>%
+  mutate(size_segments=as.factor(size_segments)) %>% 
+  dplyr::group_by(size_segments) %>%
+  dplyr::summarise(total_shipments=n())
+
+DT::datatable(shipments, rownames = FALSE,
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 1: ', 
+                htmltools::em('Number of unique shipments based on the amount of
+                              segments'))) %>%
+  formatRound('total_shipments',1) 
+
+rm(shipments)
+```
 
 ### quantity and unit
 **Quantity** represents the numeric quantity of the wildlife product, while **unit** represents the unit of measure for the numeric quantity.
 
-- There are 13 types of units. 
-- 94.64% of data is represented with the unit "numbers"
+- There are 13 types of units. 94.64% of data is measured with the unit "Number" (the number of individual wildlife items).
+- The shipments include around 11,5 billions of wildlife items plus 1,1 billion kg of wildlife items only measured in weight.  
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming levels
-data <- data %>% 
-  mutate(unit = recode(unit, "NO" = "Number", "KG" = "Kilograms", 
-                       "GM"= "Grams", "M2"="Square_meters", 
-                       "LT"= "Liters", "ML"= "Milliliters", 
-                       "MT"="Meters", "CM" = "Centimeters", 
-                       "C3"= "Cubic_centimeters", "C2"="Square_centimeters",
-                       "MG"="Miligrams", "M3"="Cubic_meters"))
-
 units <-data %>% group_by(unit) %>%
-  summarise(total = n(),percentage=n()/nrow(data)) %>%
+  summarise(total_segments = n(),percentage=n()/nrow(data)) %>%
   drop_na(unit) %>%
   arrange(desc(percentage)) 
 
@@ -73,26 +90,29 @@ DT::datatable(units,
                 style='caption-side: bottom; text-align: center;','Table 1: ', 
                 htmltools::em('Units of measure'
               ))) %>%
-  formatRound('total',1) %>%
+  formatRound('total_segments',1) %>%
   formatPercentage('percentage',2)
-  
-units %>% mutate(percentage=percentage*100) %>%
-plot_ly(x=~reorder(unit, desc(percentage)), y=~percentage, color=~unit) %>% 
-  add_bars() %>%
-  layout(title = "<b>Units of measure</b>",
-         xaxis= list(title= "<b>Units</b>" ,tickangle=-65),
-         yaxis = list(title = "<b>Percentage</b>"))
 
-rm(units)
+data$quantity<- as.numeric(data$quantity)
+
+quantity<- data %>%
+  dplyr::group_by(unit) %>%
+  drop_na(quantity) %>%
+  dplyr::summarise(quantity = sum(quantity, na.rm=TRUE)) %>%
+  arrange(desc(quantity)) 
+
+DT::datatable(quantity, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 1: ', 
+                htmltools::em('Quantity per unit'))) %>%
+  formatRound('quantity',1) 
+
+rm(units, quantity)
 ```
 ### import_export
 **It represents Whether the shipment is an (I)mport or (E)xport**. In this dataset, 100% of the data is an import. 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming levels
-data <- data %>% 
-  mutate(import_export = recode(import_export, "I" = "Import"))
-
 imports <-data %>% group_by(import_export) %>%
   summarise(total = n(), percentage=n()/nrow(data)) %>%
   arrange(desc(percentage)) 
@@ -118,15 +138,15 @@ rm(imports)
 ### action
 **Action taken by the USFWS on import ((C)leared/(R)efused)**
 
-- 98.28% of imports are cleared, just 1.73% is refused  
+- 98.28% of imports were legally declared, just 1.73% was refused. We can find cleared and refused segments in the same unique shipment. 
+- Most of the refused shipments included items related with mammals (28%) and reptils (27%)
+- Most illegal shipments are exported from Mexico (19%), Canada (9%) and China (8%).  
+- The country of origin of the refused shipments is mainly unknown (23%), followed by Mexico (14%), Canada (6%), Indonesia (6% )and China (6%)
+
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming levels
-data <- data %>% 
-  mutate(action = recode(action, "C" = "Cleared", "R"= "Refused"))
-
 action <-data %>% group_by(action) %>%
-  summarise(total = n(), percentage=n()/nrow(data)) %>%
+  summarise(total= n(), percentage=n()/nrow(data)) %>%
   drop_na(action) %>%
   arrange(desc(percentage)) 
 
@@ -144,8 +164,48 @@ plot_ly(x=~reorder(action, desc(percentage)), y=~percentage, color=~action) %>%
   layout(title = "<b>Action taken by the USFWS on imports</b>",
          xaxis= list(title= "<b>Actions</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
-                       
+             
 rm(action)
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+refused <- data %>% filter(action=="Refused")
+
+# Country of origin
+refused %>% group_by(country_origin) %>%
+  summarise(total=n(), percentage=n()/nrow(refused)*100) %>%
+  arrange(desc(percentage)) %>%
+  top_n(10, percentage) %>%
+  plot_ly(x=~reorder(country_origin, desc(percentage)), y=~percentage, 
+          color=~country_origin) %>%
+  add_bars() %>%
+  layout(title = "<b>Country of origin of refused shipments</b>",
+         xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
+# Country of export
+refused %>% group_by(country_imp_exp) %>%
+  summarise(total=n(), percentage=n()/nrow(refused)*100) %>%
+  arrange(desc(percentage)) %>%
+  top_n(10, percentage) %>%
+  plot_ly(x=~reorder(country_imp_exp, desc(percentage)), y=~percentage, 
+          color=~country_imp_exp) %>%
+  add_bars() %>%
+  layout(title = "<b>Country of export of refused shipments</b>",
+         xaxis= list(title= "<b>Country of export</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
+# Taxa
+refused %>% group_by(taxa) %>%
+  summarise(total=n(), percentage=n()/nrow(refused)*100) %>%
+  arrange(desc(percentage)) %>%
+  top_n(10, percentage) %>%
+  plot_ly(x=~reorder(taxa, desc(percentage)), y=~percentage, 
+          color=~taxa) %>%
+  add_bars() %>%
+  layout(title = "<b>Taxa of refused shipments</b>",
+         xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
 ```
 
@@ -223,12 +283,8 @@ rm(days)
 - The top 50 represents 94.4% of data 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming levels)
-data$country_origin<- countrycode(data$country_origin, "iso2c", 
-                                  "country.name", nomatch = NULL)
-data <- data %>% 
-  mutate(country_origin = recode(country_origin, "AN" = "Netherlands Antilles",
-                                "XX" = "Unknown","ZZ" = "High Seas"))
+# Dropping unused levels
+data$country_origin <- droplevels(data$country_origin)
 
 country_origin <-data %>% group_by(country_origin) %>%
   summarise(total = n(), percentage=n()/nrow(data)) %>%
@@ -244,15 +300,48 @@ DT::datatable(country_origin,
   formatPercentage('percentage',2)
   
 country_origin %>% mutate(percentage=percentage*100) %>%
-  top_n(30, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(country_origin, desc(percentage)), y=~percentage, 
         color=~country_origin) %>% 
   add_bars() %>%
-  layout(title = "<b>Country of origin of the wildlife product (Top 30)</b>",
+  layout(title = "<b>Country of origin of the wildlife product (Top 15)</b>",
          xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
 
+```
+
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+country_origin_illegal <-data %>% 
+  filter(action=="Refused")
+
+country_origin_illegal <- country_origin_illegal %>%
+  group_by(country_origin) %>%
+  summarise(total = n(), percentage=n()/nrow(country_origin_illegal)) %>%
+  drop_na(country_origin) %>%
+  arrange(desc(percentage))
+
+DT::datatable(country_origin_illegal, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 8: ', 
+                htmltools::em('Country of orogin (illegal imports)'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+country_origin_illegal %>% mutate(percentage=percentage*100) %>%
+  top_n(15, percentage) %>%
+  plot_ly(x=~reorder(country_origin, desc(percentage)), y=~percentage, 
+        color=~country_origin) %>% 
+  add_bars() %>%
+  layout(title = "<b>Country of origin (illegal imports) (Top 15)</b>",
+         xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
+rm(country_origin_illegal)
+
+rm(country_origin_illegal)
 ```
 
 ### country_imp_exp
@@ -263,12 +352,8 @@ country_origin %>% mutate(percentage=percentage*100) %>%
 - The top 50 represents 95.9% of data 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming levels)
-data$country_imp_exp<- countrycode(data$country_imp_exp, "iso2c", 
-                                  "country.name", nomatch = NULL)
-data <- data %>% 
-  mutate(country_imp_exp = recode(country_imp_exp, "AN" = "Netherlands Antilles",
-                                "XX" = "Unknown","ZZ" = "High Seas"))
+# Dropping unused levels
+data$country_imp_exp <- droplevels(data$country_imp_exp)
 
 country_imp_exp <-data %>% group_by(country_imp_exp) %>%
   summarise(total = n(), percentage=n()/nrow(data)) %>%
@@ -284,17 +369,47 @@ DT::datatable(country_imp_exp,
   formatPercentage('percentage',2)
   
 country_imp_exp %>% mutate(percentage=percentage*100) %>%
-  top_n(30, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(country_imp_exp, desc(percentage)), y=~percentage, 
         color=~country_imp_exp) %>% 
   add_bars() %>%
-  layout(title = "<b>Country to/from which the wildlife product is shipped (Top 30)</b>",
+  layout(title = "<b>Country to/from which the wildlife product is shipped (Top 15)</b>",
          xaxis= list(title= "<b>country_imp_exp</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
 ```
 
-**Most problematic countries are on both sides (country of origin & country to/from which the wildlife product is shipped)**
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+country_imp_exp_illegal <-data %>% 
+  filter(action=="Refused")
+
+country_imp_exp_illegal <- country_imp_exp_illegal %>%
+  group_by(country_imp_exp) %>%
+  summarise(total = n(), percentage=n()/nrow(country_imp_exp_illegal)) %>%
+  drop_na(country_imp_exp) %>%
+  arrange(desc(percentage))
+
+DT::datatable(country_imp_exp_illegal, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 8: ', 
+                htmltools::em('Country of export (illegal imports)'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+country_imp_exp_illegal %>% mutate(percentage=percentage*100) %>%
+  top_n(15, percentage) %>%
+  plot_ly(x=~reorder(country_imp_exp, desc(percentage)), y=~percentage, 
+        color=~country_imp_exp) %>% 
+  add_bars() %>%
+  layout(title = "<b>Country of export (illegal imports) (Top 15)</b>",
+         xaxis= list(title= "<b>Country of export</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
+rm(country_origin_illegal)
+```
+
+**Most active countries are on both sides (country of origin & country of export)**
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 
 country_origin <- country_origin %>%
@@ -311,7 +426,7 @@ countries %>%
   plot_ly(x=~reorder(country, desc(percentage)), y=~percentage, 
         color=~source) %>% 
   add_bars() %>%
-  layout(title = "<b>Most problematic countries</b>",
+  layout(title = "<b>Most active countries</b>",
          xaxis= list(title= "<b>Country</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
@@ -321,27 +436,21 @@ rm(countries)
 ```
 
 ### port
-**It represents the port or region of shipment entry**
+**It represents the port of entry**
+Although [there are around 328 ports of entry into the EEUU](https://www.cbp.gov/), only 73 of them are represented in this dataset. This is because not all of them are covered by FWS wildlife inspectors. By law, [only 18 of them are designated ports with  full-time inspectors](https://www.fws.gov/le/wildlife-inspectors.html).
 
-- There are 73 ports 
-- The top 15 represents 83.9% of data
+- Based on the number of declared imports, the top-five ports of entry were Los Angeles (20%), New York(19%), Miami(6%), Newark(5%) and San Francisco(5%). The top 15 represents 84% of data.
+
+- Based on the number of illegal imports, the top-five ports of entry were 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming levels
-data <- data %>% 
-  mutate(port = recode(port, "LA" = "Los Angeles, CA","NY" = "New York, NY",
-                             "MI" = "Miami, FL", "NW" = "Newark, NJ",
-                              "SF" = "San Francisco, CA", "CH" = "Chicago, IL", 
-                              "DF" = "Dallas/Fort Worth, TX", 
-                              "LO" = "Louisville, KY ", "AN" = "Anchorage, AK", 
-                              "HN"= "Houston, TX", "ME" = "Memphis, TN", 
-                              "AT" = "Atlanta, GA","HA" = "Honolulu, HI",
-                              "SE" = "Seattle, WA", "PB" = "Pembina, ND"))
+# Dropping unused levels
+data$port <- droplevels(data$port)
 
 port <-data %>% group_by(port) %>%
   summarise(total = n(), percentage=n()/nrow(data)) %>%
   drop_na(port) %>%
-  arrange(desc(percentage)) 
+  arrange(desc(percentage))
 
 DT::datatable(port, 
               caption = htmltools::tags$caption(
@@ -356,12 +465,64 @@ port %>% mutate(percentage=percentage*100) %>%
   plot_ly(x=~reorder(port, desc(percentage)), y=~percentage, 
         color=~port) %>% 
   add_bars() %>%
-  layout(title = "<b>Port or region of shipment entry (Top 15)</b>",
+  layout(title = "<b>Port of entry (Top 15)</b>",
          xaxis= list(title= "<b>Port</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
 rm(port)
 ```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+port_illegal <-data %>% 
+  filter(action=="Refused")
+
+port_illegal <- port_illegal %>%
+  group_by(port) %>%
+  summarise(total = n(), percentage=n()/nrow(port_illegal)) %>%
+  drop_na(port) %>%
+  arrange(desc(percentage))
+
+DT::datatable(port_illegal, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 8: ', 
+                htmltools::em('Port of entry (illegal imports)'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+port_illegal %>% mutate(percentage=percentage*100) %>%
+  top_n(15, percentage) %>%
+  plot_ly(x=~reorder(port, desc(percentage)), y=~percentage, 
+        color=~port) %>% 
+  add_bars() %>%
+  layout(title = "<b>Port of entry (illegal imports) (Top 15)</b>",
+         xaxis= list(title= "<b>Port</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
+rm(port)
+```
+
+### Trade routes
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+
+trade_routes <-data %>% group_by(country_imp_exp, port) %>%
+  summarise(total = n(), percentage=n()/nrow(data)) %>%
+  drop_na(port, country_imp_exp) %>%
+  arrange(desc(percentage))
+
+DT::datatable(trade_routes, 
+              caption = htmltools::tags$caption(
+                style='caption-side: bottom; text-align: center;','Table 8: ', 
+                htmltools::em('Trade routes'
+              ))) %>%
+  formatRound('total',1) %>%
+  formatPercentage('percentage',2)
+  
+rm(port)
+```
+
+
+
 
 ### us_co
 **It represents the US party of the shipment**
@@ -627,28 +788,24 @@ rm(foreign_co)
 
 ## Variables related with the product
 ### description
-**It represents the type/form of the wildlife product**
+**It represents the type/form of the wildlife product**. The FWS Import/Export Key recognizes 94 different descriptions for wildlife items, although only 87 of them were used in this dataset. 
 
-- There are 88 types/forms 
-- Most of them are "Live specimens" (29.1%), followed by trophies (16.83%) and "Shell products" (9.49%). 
-- The top 15 represents 94.19% of data 
+- There are 87 types/forms 
+- Based on the types of items by segment, most of the segments contain "Live specimens" (29%), followed by trophies (17%), "shell products" (9%), small leather products (7%) and jewelry (6%)
+- Most of the "live specimens" are corals (38%) and fishes (23%)
+- Most of the "trophies" are from mammals (89%)
+- Most of the "shell products" are from shells (98%)
+- Most of the "small leather products" are from reptiles (81%) 
+- Most of the "jewelry" is from shells (93%)
+
+- **Based on the number of items**, jewelry, shells, feathers, hair products and eggs (dead or blown) are the most common products.
+- **Based on the kg of items**, meat, dead animals, frog legs, live specimens and shells are the most common products.
+
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+
 # Dropping unused levels
 data$description <- droplevels(data$description)
-
-# Renaming levels)
-data <- data %>% 
-  mutate(description = recode(description, 
-                              "LIV" = "Live specimen", "TRO" = "Trophy", 
-                              "SPR" = "Shell product", "LPS" = "Leather product",
-                              "JWL" = "Jewelry", "GAR" = "Garment", 
-                              "SHO" = "Shoe", "TRI" = "Trim", "MEA" = "Meat",
-                              "SPE" = "Specimen", "SKI" = "Skin", 
-                              "BOD" = "Dead animal","LPL" = "Leather product",
-                              "SHE" = "Shell", "FEA"= "Feather", 
-                              "HOR" = "Horn", "IVC" ="Ivory carving", 
-                              "IVP" = "Ivory piece", "UNS" = "Unspecified"))
                        
 description <-data %>% 
   group_by(description) %>%
@@ -665,15 +822,72 @@ DT::datatable(description,
   formatPercentage('percentage',2)
   
 description %>% mutate(percentage=percentage*100) %>%
-  top_n(20, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(description, desc(percentage)), y=~percentage, 
         color=~description) %>% 
   add_bars() %>%
-  layout(title = "<b>Type/form of the wildlife product (Top 20)</b>",
+  layout(title = "<b>Common types of items by segment (Top 15)</b>",
          xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
 rm(description)
+```
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Descriptions by quantity
+# We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
+
+data %>% 
+  filter(unit=="Number") %>%
+  group_by(description, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(description, desc(total)), y=~total, 
+        color=~description) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of items (by number) (Top 15)</b>",
+         xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+data %>% 
+  filter(unit=="Kilograms") %>%
+  group_by(description, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(description, desc(total)), y=~total, 
+        color=~description) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of items (by Kilograms) (Top 15)</b>",
+         xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+  
+
+```
+
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+descriptions_top5<- data %>%
+  filter(description %in% c("Live specimen", "Trophy", "Shell product", 
+                            "Leather product (small)", "Jewelry")) %>%
+  group_by(description, taxa) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(description, desc(percentage)) %>%
+  top_n(3, percentage)
+
+descriptions_top5<- droplevels(descriptions_top5)
+
+plot_ly(descriptions_top5, x=~description, 
+                            y=~percentage, group= ~taxa, 
+                            type="bar", color=~taxa) %>%
+  layout(title = "<b>Common taxa by description</b>",
+         xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+
 ```
 
 ### value
@@ -698,22 +912,14 @@ data %>%
 ```
 
 ### purpose
-**It represents the reason the wildlife product is being imported**
-- There are 13 purpose levels 
-- Commercial (74.6%) and "hunting trophies" (17.81%) purposes represent 92.41 % of the data.  
+**It represents the reason the wildlife product is being imported**. The FWS Import/Export Key recognizes 11 different purposes of import. 
+
+- **Based on the purpose of items by segment**, most of the segments contain Commercial (75%) and "hunting trophies" (18%) purposes. 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming levels)
-data <- data %>% 
-  mutate(purpose = recode(purpose, 
-                   "B" = "Breeding in captivity or artificial propagation", 
-                   "E" = "Educational", "G" = "Botanical Gardens",
-                   "H" = "Hunting trophies", "M" = "Biomedical research",
-                   "P" = "Personal", "Q" = "Circuses/traveling exhibitions",
-                   "S" = "Scientific", "T" = "Commercial", 
-                   "Y" = "Reintroduction/introduction into the wild",
-                   "Z" = "Zoos"))
-                              
+# Dropping unused levels
+data$purpose <- droplevels(data$purpose)
+
 purpose <-data %>% 
   group_by(purpose) %>%
   summarise(total = n(), percentage=n()/nrow(data)) %>%
@@ -742,21 +948,12 @@ rm(purpose)
 ### source
 **It represents the type of source within the origin country (e.g., wild, bred)**
 - There are 10 source levels 
-- Specimens taken from the wild (77.9%) and animals bred in captivity (14.8%) sources represent 92.7 % of the data.  
+- **Based on the source of the items by segment**, the most common sources in the segments are "specimens taken from the wild" (78%) and "animals bred in captivity" (15%).
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming levels)
-data <- data %>% 
-  mutate(source = recode(source, 
-                         "W" = "Specimens taken from the wild", 
-                         "C" = "Animals bred in captivity", 
-                         "R" = "Specimens originating from a ranching operation",
-                         "F" = "Animals born in captivity or not captive-bred",
-                         "U" = "Source unknown", 
-                         "D" = "commercially bred or propagated in CITES",
-                         "I" = "Confiscated or seized specimens", 
-                         "A" = "Plants artificially propagated, parts and derivates"))
-                              
+# Dropping unused levels
+data$source <- droplevels(data$source)
+
 source <-data %>% 
   group_by(source) %>%
   summarise(total = n(), percentage=n()/nrow(data)) %>%
@@ -1102,20 +1299,20 @@ rm(specific_name)
 ## More data cleaning after exploratory analysis 
 **Let's exclude from the analysis those descriptions with less than 10 instances**. We reduce the number of descriptions from 88 to 78
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-data<-data %>% 
-  group_by(description) %>%
-  filter(n()>=10)     # 5,451,832 <- 5,451,800 rows
-
-# Dropping unused levels
-data$description <- droplevels(data$description)
+# data<-data %>% 
+#   group_by(description) %>%
+#   filter(n()>=10)     # 5,451,832 <- 5,451,800 rows
+# 
+# # Dropping unused levels
+# data$description <- droplevels(data$description)
 ```
 
 **Let's exclude from the analysis those species with less than 10 instances**. We reduce the number of species from 8,088 to 6,426
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-data<-data %>% 
-  group_by(species) %>%
-  filter(n()>=10)     # 5,451,800 <- 5,421,893 rows
-
-# Dropping unused levels
-data$species <- droplevels(data$species)
+# data<-data %>% 
+#   group_by(species) %>%
+#   filter(n()>=10)     # 5,451,800 <- 5,421,893 rows
+# 
+# # Dropping unused levels
+# data$species <- droplevels(data$species)
 ```
