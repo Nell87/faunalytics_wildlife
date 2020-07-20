@@ -49,11 +49,18 @@ There are 2,079,637 unique shipments containing 5,451,832 segments.
 
 <iframe src="./plotly/purposes.html" width="100%" height="600" id="igraph" scrolling="no" seamless="seamless" frameBorder="0"> </iframe>
 
+- Most of the segments were imported for commercial purposes. Most of their items came from shells (27%), corals (17%) and reptils (17%).
+
+- Hunting trophies imports made up 18% of all segments. They mainly involved mammals (87%) and birds (13%)
+
+- Personal imports made up 3% of all segments. They involved mammals (49%), birds (14%) and reptiles (13%)
+
+<iframe src="./plotly/purpose_taxa.html" width="100%" height="600" id="igraph" scrolling="no" seamless="seamless" frameBorder="0"> </iframe>
+
 ### Source
 **Based on the source of the items by segment**, the most common sources in the segments are "specimens taken from the wild" (78%) and "animals bred in captivity" (15%).
 
 <iframe src="./plotly/sources.html" width="100%" height="600" id="igraph" scrolling="no" seamless="seamless" frameBorder="0"> </iframe>
-
 
 ### Ports, countries and trade routes
 **This involves the ports of entry, the country of export and the country of origin.**
@@ -96,6 +103,13 @@ The trends analysis will focus on the number of seized shipments, the import (US
 <iframe src="./plotly/unique_seized_shipments_per_year.html" width="100%" height="400" id="igraph" scrolling="no" seamless="seamless" frameBorder="0"> </iframe>
 
 ### Import (US dollars)
+- **There has been an upward trend in the amount of dollars spent** from 2000 to 2012 (Although we don't have enough information about this variable in the data produced between 2008-2011 and 2013-2014. For more information, check the section 2.1.1.).
+
+<iframe src="./plotly/dollars_shipyear.html" width="100%" height="400" id="igraph" scrolling="no" seamless="seamless" frameBorder="0"> </iframe>
+
+**Items that involved mammals, shells and reptiles generate the highest amount of money throughout the years**
+
+<iframe src="./plotly/dollars_year_taxa.html" width="100%" height="400" id="igraph" scrolling="no" seamless="seamless" frameBorder="0"> </iframe>
 
 ### Content/quantity
 
@@ -108,12 +122,6 @@ As we mentioned before, 98.28% of imports were legally declared, just 1.73% was 
 - **54% of dispositions took place within a month of the shipment date (most of them within a week)**
 
 
-**These are the American corporations that are importing the most.**
-```{r echo=FALSE, out.width = '100%'}
-knitr::include_graphics("./_bookdown_files/report_bookdown_files/figure-html/unnamed-chunk-16-2.png")
-```
-
-- **There has been an upward trend in the amount of dollars spent** from 2000 to 2012 (Although we don't have enough information about this variable in the data produced between 2008-2011 and 2013-2014. For more information, check the section 2.1.1.).
 
 
 

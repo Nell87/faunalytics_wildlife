@@ -945,6 +945,28 @@ purpose %>% mutate(percentage=percentage*100) %>%
 rm(purpose)
 ```
 
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+purpose_taxa<- data %>%
+  filter(purpose %in%  c("Commercial", "Hunting trophies", "Personal", 
+                            "Scientific", "Educational")) %>%
+  group_by(purpose, taxa) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(purpose, desc(percentage)) %>%
+  top_n(3, percentage)
+
+purpose_taxa<- droplevels(purpose_taxa)
+
+purpose_taxa<- plot_ly(purpose_taxa, x=~purpose, 
+                            y=~percentage, group= ~taxa, 
+                            type="bar", color=~taxa) %>%
+  layout(title = "<b>Common taxa by purpose</b>",
+         xaxis= list(title= "<b>Purpose</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+
+```
+
 ### source
 **It represents the type of source within the origin country (e.g., wild, bred)**
 - There are 10 source levels 
@@ -1005,11 +1027,11 @@ DT::datatable(species_code,
   formatPercentage('percentage',2)
   
 species_code %>% mutate(percentage=percentage*100) %>%
-  top_n(20, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(species_code, desc(percentage)), y=~percentage, 
         color=~species_code) %>% 
   add_bars() %>%
-  layout(title = "<b>USFWS code for the wildlife product (Top 20)</b>",
+  layout(title = "<b>USFWS code for the wildlife product (Top 15)</b>",
          xaxis= list(title= "<b>USFWS code</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 

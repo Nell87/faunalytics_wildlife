@@ -54,9 +54,6 @@ plot_ly(unique_shipments_week,x = ~week, y = ~unique_shipments) %>%
 
 rm(unique_shipments_year,unique_shipments_yearmonth,unique_shipments_week)
 ```
-## Number of segments
-
-
 
 ## Import (US dollars)
 **It's important to take into account that since year 2008, this variable has a lot of missing values (check the 2.1. section)** So, we can just calculate the total import for the period between 2000-2007, and also for the year 2012.
@@ -121,6 +118,8 @@ rm(value_wildlifeproduct_shipyear)
 ```
 
 ### By taxa and shipment year
+**Items that involved mammals, shells and reptiles generate the highest amount of money throughout the years**
+
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 value_bytaxayear<- data %>% 
   group_by(taxa, shipment_year) %>%
