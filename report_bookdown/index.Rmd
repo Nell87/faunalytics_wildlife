@@ -17,5 +17,5 @@ Between January 01, 2000, and December 31, 2014, around **2 millions wildlife sh
 
 A **shipment** refers to any container or group of containers that share a common control number, country of shipment and shipment date. Each shipment may be represented in the lemis dataset by multiple segments or rows, because the contents are derived from more than one species or type of product. 
 
-We will analyze the data based on different topics and trends. We'll analyze the number of seized shipments, as well as their volume and content.  
+We will analyze the data based on different topics and trends. We'll analyze the number of shipments, as well as their volume and content.  
 

@@ -1,7 +1,7 @@
 # Trends over time
-The trends analysis will focus on the number of seized shipments, the import (US dollars), the contents and the capacity of deter ilegal shipments (refused shipments). 
+The trends analysis will focus on the number of shipments, the import (US dollars), the contents and the capacity of deter ilegal shipments (refused shipments). 
 
-## Number of seized shipments
+## Number of shipments
 **In the 15 years analyzed, there are 2,079,637 unique shipments containing 5,451,832 segments**. We can see a clear upward trend in the number of cases from 2000 to 2006. Then, the curve reached its peak with around 162,000 unique shipments, decreased a bit, and started leveling off. 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
@@ -20,7 +20,7 @@ unique_shipments_year <- unique_shipments_yearmonth %>%
 # Plotly by year
 unique_shipments_year %>%
 plot_ly(x=~year, y=~unique_shipments,type = 'scatter', mode = 'lines') %>%
-    layout(title = "<b>Unique seized shipments per year</b>",
+    layout(title = "<b>Unique shipments per year</b>",
          xaxis= list(title= "<b>Year</b>"),
          yaxis = list(title = "<b>Total of unique shipments</b>"))
 
@@ -28,7 +28,7 @@ plot_ly(x=~year, y=~unique_shipments,type = 'scatter', mode = 'lines') %>%
 # Plotly by year and month
 unique_shipments_yearmonth %>%
   plot_ly(x = ~date, y=~unique_shipments, type = 'scatter', mode = 'lines') %>%
-    layout(title = "<b>Unique seized shipments per year and month</b>",
+    layout(title = "<b>Unique shipments per year and month</b>",
          xaxis= list(title= "<b>Date</b>"),
          yaxis = list(title = "<b>Total of unique shipments</b>"))
 

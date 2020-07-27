@@ -212,8 +212,8 @@ refused %>% group_by(taxa) %>%
 ### disposition
 **It represents the fate of the import**
 
-- There are 5 categories: C, S, A, R and non-standard value  
-- The C category represents 98.3% of data 
+- There are 5 categories: Cleared, abandoned, reexport, seized and others. 
+- Most of them (98.3%) are cleared. 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 disposition <-data %>% group_by(disposition) %>%
@@ -790,16 +790,15 @@ rm(foreign_co)
 ### description
 **It represents the type/form of the wildlife product**. The FWS Import/Export Key recognizes 94 different descriptions for wildlife items, although only 87 of them were used in this dataset. 
 
-- There are 87 types/forms 
-- Based on the types of items by segment, most of the segments contain "Live specimens" (29%), followed by trophies (17%), "shell products" (9%), small leather products (7%) and jewelry (6%)
-- Most of the "live specimens" are corals (38%) and fishes (23%)
-- Most of the "trophies" are from mammals (89%)
-- Most of the "shell products" are from shells (98%)
-- Most of the "small leather products" are from reptiles (81%) 
-- Most of the "jewelry" is from shells (93%)
+**Based on the types of items by segment**, most of them contain "Live specimens" (29%), followed by trophies (17%), "shell products" (9%), small leather products (7%) and jewelry (6%). Together, the top-five descriptions represent 68% of all segments. 
 
-- **Based on the number of items**, jewelry, shells, feathers, hair products and eggs (dead or blown) are the most common products.
-- **Based on the kg of items**, meat, dead animals, frog legs, live specimens and shells are the most common products.
+- Most of the "live specimens" are corals (38%) and fishes (23%)
+- Most of the "trophies" are made from mammals (89%)
+- Most of the "shell products" are derived from shells (98%)
+- Most of the "small leather products" are derived from reptiles (81%) 
+- Most of the "jewelry" is derived from shells (93%)
+
+**If we take into account the quantity of items in trade (instead of the type of segment): Based on the number of items**, jewelry, shells, feathers, hair products and eggs (dead or blown) are the most common products. And **based on the kg of items**, meat, dead animals, frog legs, live specimens and shells are the most common products.
 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
@@ -820,7 +819,7 @@ DT::datatable(description,
               ))) %>%
   formatRound('total',1) %>%
   formatPercentage('percentage',2)
-  
+
 description %>% mutate(percentage=percentage*100) %>%
   top_n(15, percentage) %>%
   plot_ly(x=~reorder(description, desc(percentage)), y=~percentage, 
@@ -912,9 +911,9 @@ data %>%
 ```
 
 ### purpose
-**It represents the reason the wildlife product is being imported**. The FWS Import/Export Key recognizes 11 different purposes of import. 
+**It represents the declared reason the wildlife product is being imported**. It's declared by the importer. The FWS Import/Export Key recognizes 12 different purposes of import and all of them were used in this dataset. 
 
-- **Based on the purpose of items by segment**, most of the segments contain Commercial (75%) and "hunting trophies" (18%) purposes. 
+**Based on the types of items by segment**, most of them were imported for "Commercial" (75%) and "hunting trophies" (18%) purposes. Together, both purposes represent 92% of all segments
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 # Dropping unused levels
@@ -946,6 +945,41 @@ rm(purpose)
 ```
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Purpose  by quantity
+# We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
+
+data %>% 
+  filter(unit=="Number") %>%
+  group_by(purpose, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(purpose, desc(total)), y=~total, 
+        color=~purpose) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of purpose (by number) </b>",
+         xaxis= list(title= "<b>Purpose </b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+data %>% 
+  filter(unit=="Kilograms") %>%
+  group_by(purpose, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(purpose, desc(total)), y=~total, 
+        color=~purpose) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of purpose (by Kilograms)</b>",
+         xaxis= list(title= "<b> Purpose</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+  
+
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 purpose_taxa<- data %>%
   filter(purpose %in%  c("Commercial", "Hunting trophies", "Personal", 
                             "Scientific", "Educational")) %>%
@@ -968,8 +1002,8 @@ purpose_taxa<- plot_ly(purpose_taxa, x=~purpose,
 ```
 
 ### source
-**It represents the type of source within the origin country (e.g., wild, bred)**
-- There are 10 source levels 
+**It represents the type of source within the origin country (e.g., wild, bred)**. The FWS Import/Export Key recognizes 10 different sources for wildlife items, although only 8 of them were used in this dataset. 
+
 - **Based on the source of the items by segment**, the most common sources in the segments are "specimens taken from the wild" (78%) and "animals bred in captivity" (15%).
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}

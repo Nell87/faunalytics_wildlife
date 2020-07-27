@@ -273,7 +273,15 @@ data <- data %>%
                              "T" = "Commercial", 
                              "Y" = "Reintrod./introd. into the wild",
                              "Z" = "Zoos",
-                             "L" = "Others",
+                             "L" = "Law Enforcement/Judicial/Forensic use",
+                             "non-standard value" = "Others"),
+         
+          # Renaming disposition
+          disposition = recode(disposition, 
+                             "C" = "Cleared", 
+                             "S" = "Seized", 
+                             "A" = "Abandoned",
+                             "R" = "Reexport",
                              "non-standard value" = "Others"),
          
                    # Renaming sources
@@ -285,7 +293,7 @@ data <- data %>%
                                    "U" = "Source unknown", 
                                    "D" = "commercially bred or propagated in CITES",
                                    "I" = "Confiscated or seized specimens", 
-                                   "A" = "Plants art. propagated, parts and derivates",
+                                   "A" = "Plants art. propagated",
                                    "P" = "Others", 
                                    "non-standard value" = "Others"))
 
