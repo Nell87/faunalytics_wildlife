@@ -7,7 +7,9 @@ The trends analysis will focus on the number of shipments, the import (US dollar
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 unique_shipments_yearmonth <-data %>% 
   group_by(year= year(shipment_date),month = month(shipment_date)) %>%
-  summarise(unique_shipments = n_distinct(control_number)) 
+  summarise(unique_shipments = n_distinct(control_number)) %>%
+  ungroup() %>%
+  mutate(year=as.factor(year))
 
 unique_shipments_yearmonth$date <- as.yearmon(paste(unique_shipments_yearmonth$year, 
                                           unique_shipments_yearmonth$month), "%Y %m")
@@ -24,13 +26,13 @@ plot_ly(x=~year, y=~unique_shipments,type = 'scatter', mode = 'lines') %>%
          xaxis= list(title= "<b>Year</b>"),
          yaxis = list(title = "<b>Total of unique shipments</b>"))
 
-
 # Plotly by year and month
-unique_shipments_yearmonth %>%
-  plot_ly(x = ~date, y=~unique_shipments, type = 'scatter', mode = 'lines') %>%
-    layout(title = "<b>Unique shipments per year and month</b>",
-         xaxis= list(title= "<b>Date</b>"),
-         yaxis = list(title = "<b>Total of unique shipments</b>"))
+plot_ly(unique_shipments_yearmonth,x = ~month, y = ~unique_shipments) %>%
+  add_lines(color=~year, colors="Dark2") %>%
+  layout(title = "<b>Number of unique shipments depending on the month of the year</b>",
+         xaxis= list(title= "<b>Month</b>"),
+         yaxis = list(title = "<b>Unique shipments</b>"))
+
 
 
 ```
@@ -273,14 +275,14 @@ DT::datatable(quantity_year_summary, filter = 'top',
   formatCurrency('quantity', currency = "",interval = 3, mark = ",")
 
 quantity_year_summary[quantity_year_summary$unit== "Number", ] %>% 
-  plot_ly(x=~shipment_year, y=~quantity) %>% 
+  plot_ly(x=~shipment_year, y=~quantity,color=~shipment_year) %>% 
   add_bars() %>%
   layout(title = "<b>Quantity (number of items) by shipment year</b>",
          xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Quantity (number of items)</b>"))
 
 quantity_year_summary[quantity_year_summary$unit== "Kilograms", ] %>% 
-  plot_ly(x=~shipment_year, y=~quantity) %>% 
+  plot_ly(x=~shipment_year, y=~quantity, color=~shipment_year) %>% 
   add_bars() %>%
   layout(title = "<b>Quantity (Kilograms) by shipment year</b>",
          xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
@@ -294,14 +296,14 @@ As we found in section 4.1.4., just 1.73% of shipments were refused.
 This would be the trend over time 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%' }
-refused_shipments<- data %>% 
+refused_segments<- data %>% 
   filter(!is.na(action))  %>%
   group_by(shipment_year, action) %>%
   summarise(total = n()) %>%
   mutate(percentage = total/sum(total)) %>%
   dplyr::filter(action=="Refused")
 
-DT::datatable(refused_shipments, 
+DT::datatable(refused_segments, 
               caption = htmltools::tags$caption(
                 style='caption-side: bottom; text-align: center;','Table 29: ', 
                 htmltools::em('Refused shipments by shipment year'
@@ -309,14 +311,14 @@ DT::datatable(refused_shipments,
   formatRound('total',1) %>%
   formatPercentage('percentage',2)
 
-refused_shipments%>% mutate(percentage=percentage*100) %>%
-  plot_ly(x=~shipment_year, y=~percentage) %>% 
+refused_segments%>% mutate(percentage=percentage*100) %>%
+  plot_ly(x=~shipment_year, y=~percentage, color=~shipment_year) %>% 
   add_bars() %>%
-  layout(title = "<b>Refused shipments by shipment year</b>",
+  layout(title = "<b>Refused segments by shipment year</b>",
          xaxis= list(title= "<b>Shipment Year</b>" ,tickangle=-65),
-         yaxis = list(title = "<b>Percentage of refused shipments</b>"))
+         yaxis = list(title = "<b>Percentage of refused segments</b>"))
 
-rm(refused_shipments)
+rm(refused_segments)
 ```
 
 

@@ -164,9 +164,10 @@ plot_ly(x=~reorder(action, desc(percentage)), y=~percentage, color=~action) %>%
   layout(title = "<b>Action taken by the USFWS on imports</b>",
          xaxis= list(title= "<b>Actions</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
-             
+
 rm(action)
 ```
+
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 refused <- data %>% filter(action=="Refused")
@@ -175,11 +176,11 @@ refused <- data %>% filter(action=="Refused")
 refused %>% group_by(country_origin) %>%
   summarise(total=n(), percentage=n()/nrow(refused)*100) %>%
   arrange(desc(percentage)) %>%
-  top_n(10, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(country_origin, desc(percentage)), y=~percentage, 
           color=~country_origin) %>%
   add_bars() %>%
-  layout(title = "<b>Country of origin of refused shipments</b>",
+  layout(title = "<b>Country of origin of refused segments (Top 15)</b>",
          xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
@@ -187,11 +188,11 @@ refused %>% group_by(country_origin) %>%
 refused %>% group_by(country_imp_exp) %>%
   summarise(total=n(), percentage=n()/nrow(refused)*100) %>%
   arrange(desc(percentage)) %>%
-  top_n(10, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(country_imp_exp, desc(percentage)), y=~percentage, 
           color=~country_imp_exp) %>%
   add_bars() %>%
-  layout(title = "<b>Country of export of refused shipments</b>",
+  layout(title = "<b>Country of export of refused segments (Top 15)</b>",
          xaxis= list(title= "<b>Country of export</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
@@ -199,14 +200,43 @@ refused %>% group_by(country_imp_exp) %>%
 refused %>% group_by(taxa) %>%
   summarise(total=n(), percentage=n()/nrow(refused)*100) %>%
   arrange(desc(percentage)) %>%
-  top_n(10, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(taxa, desc(percentage)), y=~percentage, 
           color=~taxa) %>%
   add_bars() %>%
-  layout(title = "<b>Taxa of refused shipments</b>",
+  layout(title = "<b>Taxa of refused segments (Top 15)</b>",
          xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
+# Genus
+refused %>% 
+  drop_na(genus) %>%
+  mutate(genus=paste(taxa,"-", genus)) %>%
+  group_by(genus) %>%
+  summarise(total=n(), percentage=n()/nrow(refused)*100) %>%
+  arrange(desc(percentage)) %>%
+  top_n(15, percentage) %>%
+  plot_ly(x=~reorder(genus, desc(percentage)), y=~percentage, 
+          color=~genus) %>%
+  add_bars() %>%
+  layout(title = "<b>Genus of refused segments (Top 15)</b>",
+         xaxis= list(title= "<b>Genus</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
+# Port
+refused %>% 
+  group_by(port) %>%
+  summarise(total=n(), percentage=n()/nrow(refused)*100) %>%
+  arrange(desc(percentage)) %>%
+  top_n(15, percentage) %>%
+  plot_ly(x=~reorder(port, desc(percentage)), y=~percentage, 
+          color=~port) %>%
+  add_bars() %>%
+  layout(title = "<b>Port of refused segments (Top 15)</b>",
+         xaxis= list(title= "<b>Port</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
+
+rm(refused)
 ```
 
 ### disposition
@@ -276,11 +306,7 @@ rm(days)
 
 ## Variables related with the countries
 ### country_origin
-**It represents the code for the country of origin of the wildlife product**
-
-- There are 252 countries of origin 
-- The top 15 represents 74.5% of data 
-- The top 50 represents 94.4% of data 
+**It represents the code for the country of origin of the wildlife product**. Shipments comes from 252 different countries of origin, although 75% of all the segments comes from the same 15 countries.The top-five countries of origin were Indonesia (15%), Canada (10%), South Africa (9%), Philippines (8%) and China (7%). Together, they represent around 50% of all segments.
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 # Dropping unused levels
@@ -313,43 +339,64 @@ country_origin %>% mutate(percentage=percentage*100) %>%
 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-country_origin_illegal <-data %>% 
-  filter(action=="Refused")
+# Country of origin by quantity
+# We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
 
-country_origin_illegal <- country_origin_illegal %>%
-  group_by(country_origin) %>%
-  summarise(total = n(), percentage=n()/nrow(country_origin_illegal)) %>%
-  drop_na(country_origin) %>%
-  arrange(desc(percentage))
-
-DT::datatable(country_origin_illegal, 
-              caption = htmltools::tags$caption(
-                style='caption-side: bottom; text-align: center;','Table 8: ', 
-                htmltools::em('Country of orogin (illegal imports)'
-              ))) %>%
-  formatRound('total',1) %>%
-  formatPercentage('percentage',2)
-  
-country_origin_illegal %>% mutate(percentage=percentage*100) %>%
-  top_n(15, percentage) %>%
-  plot_ly(x=~reorder(country_origin, desc(percentage)), y=~percentage, 
+data %>% 
+  filter(unit=="Number") %>%
+  group_by(country_origin, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(country_origin, desc(total)), y=~total, 
         color=~country_origin) %>% 
   add_bars() %>%
-  layout(title = "<b>Country of origin (illegal imports) (Top 15)</b>",
+  layout(title = "<b>Most common country of origin (by number) (Top 15)</b>",
          xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
-         yaxis = list(title = "<b>Percentage</b>"))
+         yaxis = list(title = "<b>Total</b>"))
 
-rm(country_origin_illegal)
+data %>% 
+  filter(unit=="Kilograms") %>%
+  group_by(country_origin, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(country_origin, desc(total)), y=~total, 
+        color=~country_origin) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common country of origin (by Kilograms) (Top 15)</b>",
+         xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
 
-rm(country_origin_illegal)
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+country_origin_top5<- data %>%
+  filter(country_origin %in% c("Indonesia", "Canada", "South Africa", 
+                            "Philippines", "China")) %>%
+  group_by(country_origin, taxa) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(country_origin, desc(percentage)) %>%
+  top_n(3, percentage)
+
+country_origin_top5<- droplevels(country_origin_top5)
+
+plot_ly(country_origin_top5, x=~country_origin, 
+                            y=~percentage, group= ~taxa, 
+                            type="bar", color=~taxa) %>%
+  layout(title = "<b>Common taxa by country of origin</b>",
+         xaxis= list(title= "<b>Country of origin</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+rm(country_origin_top5)
 ```
 
 ### country_imp_exp
-**It represents the code for the country to/from which the wildlife product is shipped**
-
-- There are 257 countries to/from which the product is shipped 
-- The top 15 represents 75.9% of data 
-- The top 50 represents 95.9% of data 
+**It represents the code for the country to/from which the wildlife product is shipped**.
+**Shipments were exported to the UUEE from 257 different countries, although the top 15 represent 75% of all segments.** The top-five countries of export were Canada (12%), Indonesia (12%), South Africa (8%), Philippines (8%) and Italy (7%).
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 # Dropping unused levels
@@ -380,33 +427,59 @@ country_imp_exp %>% mutate(percentage=percentage*100) %>%
 ```
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-country_imp_exp_illegal <-data %>% 
-  filter(action=="Refused")
+# Country of export by quantity
+# We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
 
-country_imp_exp_illegal <- country_imp_exp_illegal %>%
-  group_by(country_imp_exp) %>%
-  summarise(total = n(), percentage=n()/nrow(country_imp_exp_illegal)) %>%
-  drop_na(country_imp_exp) %>%
-  arrange(desc(percentage))
-
-DT::datatable(country_imp_exp_illegal, 
-              caption = htmltools::tags$caption(
-                style='caption-side: bottom; text-align: center;','Table 8: ', 
-                htmltools::em('Country of export (illegal imports)'
-              ))) %>%
-  formatRound('total',1) %>%
-  formatPercentage('percentage',2)
-  
-country_imp_exp_illegal %>% mutate(percentage=percentage*100) %>%
-  top_n(15, percentage) %>%
-  plot_ly(x=~reorder(country_imp_exp, desc(percentage)), y=~percentage, 
+data %>% 
+  filter(unit=="Number") %>%
+  group_by(country_imp_exp, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(country_imp_exp, desc(total)), y=~total, 
         color=~country_imp_exp) %>% 
   add_bars() %>%
-  layout(title = "<b>Country of export (illegal imports) (Top 15)</b>",
+  layout(title = "<b>Most common country of export (by number) (Top 15)</b>",
          xaxis= list(title= "<b>Country of export</b>" ,tickangle=-65),
-         yaxis = list(title = "<b>Percentage</b>"))
+         yaxis = list(title = "<b>Total</b>"))
 
-rm(country_origin_illegal)
+data %>% 
+  filter(unit=="Kilograms") %>%
+  group_by(country_imp_exp, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(country_imp_exp, desc(total)), y=~total, 
+        color=~country_imp_exp) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common country of export (by Kilograms) (Top 15)</b>",
+         xaxis= list(title= "<b>Country of export</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+country_export_top5<- data %>%
+  filter(country_imp_exp %in% c("Canada", "Indonesia", "South Africa", 
+                            "Philippines", "Italy")) %>%
+  group_by(country_imp_exp, taxa) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(country_imp_exp, desc(percentage)) %>%
+  top_n(3, percentage)
+
+country_export_top5<- droplevels(country_export_top5)
+
+plot_ly(country_export_top5, x=~country_imp_exp, 
+                            y=~percentage, group= ~taxa, 
+                            type="bar", color=~taxa) %>%
+  layout(title = "<b>Common taxa by country of export</b>",
+         xaxis= list(title= "<b>Country of export</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+rm(country_export_top5)
 ```
 
 **Most active countries are on both sides (country of origin & country of export)**
@@ -439,9 +512,7 @@ rm(countries)
 **It represents the port of entry**
 Although [there are around 328 ports of entry into the EEUU](https://www.cbp.gov/), only 73 of them are represented in this dataset. This is because not all of them are covered by FWS wildlife inspectors. By law, [only 18 of them are designated ports with  full-time inspectors](https://www.fws.gov/le/wildlife-inspectors.html).
 
-- Based on the number of declared imports, the top-five ports of entry were Los Angeles (20%), New York(19%), Miami(6%), Newark(5%) and San Francisco(5%). The top 15 represents 84% of data.
-
-- Based on the number of illegal imports, the top-five ports of entry were 
+Based on the number of segments, the top-five ports of entry were Los Angeles (20%), New York(19%), Miami(6%), Newark(5%) and San Francisco(5%). Together, they represent 56% of all segments. The top 15 represent 84% of all segments. It's interesting to point out that the top-five ports of entry are all designated ports. 
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 # Dropping unused levels
@@ -473,33 +544,61 @@ rm(port)
 ```
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-port_illegal <-data %>% 
-  filter(action=="Refused")
+# Ports by quantity
+# We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
 
-port_illegal <- port_illegal %>%
-  group_by(port) %>%
-  summarise(total = n(), percentage=n()/nrow(port_illegal)) %>%
-  drop_na(port) %>%
-  arrange(desc(percentage))
-
-DT::datatable(port_illegal, 
-              caption = htmltools::tags$caption(
-                style='caption-side: bottom; text-align: center;','Table 8: ', 
-                htmltools::em('Port of entry (illegal imports)'
-              ))) %>%
-  formatRound('total',1) %>%
-  formatPercentage('percentage',2)
-  
-port_illegal %>% mutate(percentage=percentage*100) %>%
-  top_n(15, percentage) %>%
-  plot_ly(x=~reorder(port, desc(percentage)), y=~percentage, 
+data %>% 
+  filter(unit=="Number") %>%
+  group_by(port, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(port, desc(total)), y=~total, 
         color=~port) %>% 
   add_bars() %>%
-  layout(title = "<b>Port of entry (illegal imports) (Top 15)</b>",
+  layout(title = "<b>Most common ports (by number) (Top 15)</b>",
          xaxis= list(title= "<b>Port</b>" ,tickangle=-65),
-         yaxis = list(title = "<b>Percentage</b>"))
+         yaxis = list(title = "<b>Total</b>"))
 
-rm(port)
+data %>% 
+  filter(unit=="Kilograms") %>%
+  group_by(port, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(port, desc(total)), y=~total, 
+        color=~port) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common ports (by Kilograms) (Top 15)</b>",
+         xaxis= list(title= "<b>Port</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+
+```
+
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+ports_top5<- data %>%
+  filter(port %in% c("Los Angeles, CA", "New York, NY", "Miami, FL", 
+                            "Newark, NJ", "San Francisco, CA")) %>%
+  group_by(port, taxa) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(port, desc(percentage)) %>%
+  top_n(3, percentage)
+
+ports_top5<- droplevels(ports_top5)
+
+plot_ly(ports_top5, x=~port, 
+                            y=~percentage, group= ~taxa, 
+                            type="bar", color=~taxa) %>%
+  layout(title = "<b>Common taxa by port</b>",
+         xaxis= list(title= "<b>Port</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+rm(ports_top5)
 ```
 
 ### Trade routes
@@ -518,10 +617,34 @@ DT::datatable(trade_routes,
   formatRound('total',1) %>%
   formatPercentage('percentage',2)
   
-rm(port)
+rm(trade_routes, port)
 ```
 
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+routes_top5<- data %>%
+  mutate(route = paste(country_imp_exp,"-", port)) %>%
+  filter(route %in% c("Indonesia - Los Angeles, CA", 
+                      "Italy - New York, NY", 
+                      "South Africa - New York, NY", 
+                      "Hong Kong SAR China - New York, NY",
+                      "Philippines - Los Angeles, CA")) %>%
+  group_by(route, taxa) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(route, desc(percentage)) %>%
+  top_n(3, percentage)
 
+routes_top5<- droplevels(routes_top5)
+
+plot_ly(routes_top5, x=~route, 
+                            y=~percentage, group= ~taxa, 
+                            type="bar", color=~taxa) %>%
+  layout(title = "<b>Common taxa by route</b>",
+         xaxis= list(title= "<b>Route</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+rm(routes_top5)
+```
 
 
 ### us_co
@@ -565,151 +688,14 @@ We want to analyze which American corporations are importing the most. So, we ha
 We’ve grouped most of those companies that represent at least 19% of the data, covering approximately 1.000.000 observations.
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
-data$corporation<- # Fashion/Luxury/Design products 
-                   ifelse(grepl("prada", data$us_co, ignore.case = TRUE), "Prada", 
-                   ifelse(grepl("ralph lauren", data$us_co, ignore.case = TRUE), 
-                          "Ralph Lauren", 
-                   ifelse(grepl("LOUIS VUITTON", data$us_co, ignore.case = TRUE), 
-                          "Louis Vuitton",
-                   ifelse(grepl("MONCLER", data$us_co, ignore.case = TRUE), 
-                          "Moncler",
-                   ifelse(grepl("BOTTEGA VENETA", data$us_co, ignore.case = TRUE), 
-                          "Bottega Veneta",                         
-                   ifelse(grepl("RICHEMONT", data$us_co, ignore.case = TRUE), 
-                          "Richemont",   
-                   ifelse(grepl("FENDI", data$us_co, ignore.case = TRUE), 
-                          "Fendi", 
-                   ifelse(grepl("HERMES", data$us_co, ignore.case = TRUE), 
-                          "Hermès",
-                   ifelse(grepl("GUCCI", data$us_co, ignore.case = TRUE), 
-                          "Gucci",
-                   ifelse(grepl("Beeline", data$us_co, ignore.case = TRUE), 
-                          "Beeline Group",    
-                   ifelse(grepl("fossil partner", data$us_co, ignore.case = TRUE), 
-                          "Fossil Partners, L.P.",         
-                   ifelse(grepl("dfs", data$us_co, ignore.case = TRUE), 
-                          "DFS Group",      
-                   ifelse(grepl("gluck", data$us_co, ignore.case = TRUE), 
-                          "E. Gluck Corporation",     
-                   ifelse(grepl("ferragamo", data$us_co, ignore.case = TRUE), 
-                          "Salvatore Ferragamo",                               
-                   ifelse(grepl("jacadi", data$us_co, ignore.case = TRUE), 
-                          "Jacadi",    
-                   ifelse(grepl("bomac", data$us_co, ignore.case = TRUE), 
-                          "Bomac International Corp",                           
-                   ifelse(data$us_co %in% c("PIER I IMPORTS, INC.", 
-                                            "PIER 1 IMPORTS, INC.	"), 
-                          "Pier 1",  
-                          
-                   # Museums
-                   ifelse(grepl("museum", data$us_co, ignore.case = TRUE), 
-                          "Museums", 
-                   ifelse(grepl("smithsonian", data$us_co, ignore.case = TRUE), 
-                          "Museums",                           
-                          
-                   # Animals or animal products providers   
-                   ifelse(grepl("SEA DWELLING", data$us_co, ignore.case = TRUE), 
-                          "Sea Dwelling creatures",   
-                   ifelse(grepl("HIPPOCAMPE", data$us_co, ignore.case = TRUE), 
-                          "Hippocampe USA", 
-                   ifelse(grepl("AQUA-NAUTIC", data$us_co, ignore.case = TRUE), 
-                          "Aqua Nautic Specialist", 
-                   ifelse(grepl("UNDERWATER WORLD", data$us_co, ignore.case = TRUE), 
-                          "Underwater World",
-                   ifelse(grepl("GOLDEN INA", data$us_co, ignore.case = TRUE), 
-                          "Golden Ina",
-                   ifelse(grepl("QUALITY MARINE", data$us_co, ignore.case = TRUE), 
-                          "Quality Marine",
-                   ifelse(grepl("Arsian", data$us_co, ignore.case = TRUE), 
-                          "Arsian Imports",      
-                   ifelse(grepl("aquarium arts", data$us_co, ignore.case = TRUE), 
-                          "Aquarium Arts", 
-                   ifelse(grepl("WALT SMITH", data$us_co, ignore.case = TRUE), 
-                          "Walt Smith International", 
-                   ifelse(grepl("all seas fisheries", data$us_co, ignore.case = TRUE), 
-                          "Allseas Fisheries",        
-                   ifelse(grepl("sun pet ltd", data$us_co, ignore.case = TRUE), 
-                          "Sun Pet LTD",         
-                   ifelse(grepl("pacific aqua farms", data$us_co, ignore.case = TRUE), 
-                          "Pacific Aquafarms",  
-                   ifelse(grepl("INTINENTAL", data$us_co, ignore.case = TRUE), 
-                          "Intinental Pri",                    
-                   ifelse(grepl("AQUACO", data$us_co, ignore.case = TRUE), 
-                          "Aquaco",                       
-                   ifelse(grepl("all seas marine", data$us_co, ignore.case = TRUE), 
-                          "Allseas Marine",                    
-                   ifelse(grepl("transship discounts", data$us_co, ignore.case = TRUE), 
-                          "Transship Discounts LTD",     
-                   ifelse(grepl("SEGREST FARMS", data$us_co, ignore.case = TRUE), 
-                          "Segrest Farms",  
-                   ifelse(grepl("fish head", data$us_co, ignore.case = TRUE), 
-                          "Fish Heads Inc",     
-                   ifelse(grepl("holiday coral", data$us_co, ignore.case = TRUE), 
-                          "Holiday Coral Inc",                           
-                   ifelse(grepl("pacific island imp", data$us_co, ignore.case = TRUE), 
-                          "Pacific Island Imports",     
-                   ifelse(grepl("PAN OCEAN AQUARIUM", data$us_co, ignore.case = TRUE), 
-                          "Pan Ocean Aquarium, Inc",   
-                   ifelse(grepl("SALTWATER INC.", data$us_co, ignore.case = TRUE), 
-                          "Saltwater Inc",      
-                   ifelse(grepl("saltwaterfish", data$us_co, ignore.case = TRUE), 
-                          "Saltwaterfish",         
-                   ifelse(grepl("golden sea int", data$us_co, ignore.case = TRUE), 
-                          "Golden Sea Inc",                           
-                   ifelse(grepl("strictly reptiles", data$us_co, ignore.case = TRUE), 
-                          "Strictly Reptiles Inc",                            
-                   ifelse(grepl("emark tropical", data$us_co, ignore.case = TRUE), 
-                          "Emark Tropical Imports, Inc",                              
-                          	
-                   ifelse(data$us_co %in% c("DOLPHIN INTERNATIONAL", "DOLPHIN INT'L",
-                                            "DOLPHIN INTERNAITONAL"), 
-                          "Dolphin International", 
-                   ifelse(data$us_co %in% c("a & m aquatics", "A&M AQUATICS"), 
-                          "A&M Aquatics",           
-                   ifelse(data$us_co %in% c("LPS LLC", "LPS, LLC", "LPS"), 
-                          "LPS LLC",    
-                   ifelse(data$us_co %in% c("APET, INC", "APET INC"), 
-                          "Apet Inc",   
-
-                          "Other")))))))))))))))))))))))))))))))))))))))))))))))))
-
-data_corporations <- data %>%
-  mutate(corporation = as.factor(corporation)) 
-
-# Let's classify these corporations
-corp_fashion<- c("Beeline Group", "Bomac International Corp", "Bottega Veneta", 
-                 "DFS Group","E. Gluck Corporation", "Fendi", 
-                 "Fossil Partners, L.P.", "Gucci", "Hermès", "Jacadi", 
-                 "Louis Vuitton","Moncler", "Pier 1","Prada", "Ralph Lauren",
-                 "Richemont", "Salvatore Ferragamo")
-
-corp_animalproviders<-c("A&M Aquatics", "Aqua Nautic Specialist", "Aquaco",
-                        "Aquarium Arts", "Allseas Fisheries", "Allseas Marine",
-                        "Apet Inc", "Arsian Imports", "Dolphin International",
-                        "Emark Tropical Imports, Inc", "Fish Heads Inc",
-                        "Golden Ina", "Golden Sea Inc", "Hippocampe USA",
-                        "Holiday Coral Inc", "Intinental Pri", "LPS LLC",
-                        "Pacific Aquafarms", "Pacific Island Imports",
-                        "Pan Ocean Aquarium, Inc", "Quality Marine",
-                        "Saltwater Inc", "Saltwaterfish", "Sea Dwelling creatures",
-                        "Segrest Farms", "Strictly Reptiles Inc", "Sun Pet LTD",
-                        "Transship Discounts LTD", "Underwater World",
-                        "Walt Smith International")
-
-data$corp_classif<- ifelse(data$corporation %in% corp_fashion, "Fashion/Luxury/Design",
-                    ifelse(data$corporation %in% corp_animalproviders, 
-                           "Animal/animal prod. providers", 
-                    ifelse(data$corporation %in% "Museums", "Museums", "Others"))) 
-
-data$corporation<-as.factor(data$corporation)
-data$corp_classif<- as.factor(data$corp_classif)
 
 # Let's summarize and graph these corporations
 data_corporations<- data %>% 
+  filter(corp_classif!="Others") %>%
   group_by(corp_classif, corporation) %>%
   dplyr::summarise(total=n(), percentage=n()/nrow(data)) %>%
-  arrange(desc(total)) %>%
-  filter(corporation!="Other") 
+  arrange(desc(total)) 
+  
 
 DT::datatable(data_corporations, 
               caption = htmltools::tags$caption(
@@ -719,15 +705,6 @@ DT::datatable(data_corporations,
   formatRound('total',1) %>%
   formatPercentage('percentage',2)
   
-data_corporations %>% mutate(percentage=percentage*100) %>%
-  top_n(15, percentage) %>%
-  plot_ly(x=~reorder(corporation, desc(percentage)), y=~percentage, 
-        color=~corp_classif) %>% 
-  add_bars() %>%
-  layout(title = "<b>Which American corporations are importing the most (Top 15)</b>",
-         xaxis= list(title= "<b>American corporation</b>" ,tickangle=-65),
-         yaxis = list(title = "<b>Percentage</b>"))
-
 ## Graph by classification
 data_corporations %>% mutate(percentage=percentage*100) %>%
   filter(corp_classif == "Fashion/Luxury/Design") %>%
@@ -747,8 +724,17 @@ data_corporations %>% mutate(percentage=percentage*100) %>%
          xaxis= list(title= "<b>American corporation</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
-rm(corp_animalproviders, corp_fashion, data_corporations)
+data_corporations %>% 
+  group_by(corp_classif) %>%
+  dplyr::summarise(total=sum(total), percentage=sum(percentage)) %>%
+  mutate(percentage=percentage*100) %>%
+  plot_ly(x=~reorder(corp_classif, desc(percentage)), y=~percentage, 
+  color=~corp_classif) %>%  add_bars() %>%
+  layout(title = "<b>American corporation classification </b>",
+         xaxis= list(title= "<b>American corporation</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Percentage</b>"))
 
+rm(data_corporations)
 ```
 
 ### foreign_co
@@ -886,7 +872,7 @@ plot_ly(descriptions_top5, x=~description,
          xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Total</b>"))
 
-
+rm(descriptions_top5)
 ```
 
 ### value
@@ -998,13 +984,13 @@ purpose_taxa<- plot_ly(purpose_taxa, x=~purpose,
          xaxis= list(title= "<b>Purpose</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Total</b>"))
 
-
+rm(purpose_taxa)
 ```
 
 ### source
 **It represents the type of source within the origin country (e.g., wild, bred)**. The FWS Import/Export Key recognizes 10 different sources for wildlife items, although only 8 of them were used in this dataset. 
 
-- **Based on the source of the items by segment**, the most common sources in the segments are "specimens taken from the wild" (78%) and "animals bred in captivity" (15%).
+**Based on the source of the items by segment**, the most common sources in the segments are "specimens taken from the wild" (78%) and "animals bred in captivity" (15%). Together, both represent around 93% of all segments (Figure 10)..
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
 # Dropping unused levels
@@ -1104,9 +1090,43 @@ taxa %>% mutate(percentage=percentage*100) %>%
   layout(title = "<b>USFWS-derived broad taxonomic categorization</b>",
          xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
-
 rm(taxa)
 ```
+
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Taxa  by quantity
+# We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
+
+data %>% 
+  filter(unit=="Number") %>%
+  group_by(taxa, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  plot_ly(x=~reorder(taxa, desc(total)), y=~total, 
+        color=~taxa) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of taxa (by number) </b>",
+         xaxis= list(title= "<b>Taxa </b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+data %>% 
+  filter(unit=="Kilograms") %>%
+  group_by(taxa, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  plot_ly(x=~reorder(taxa, desc(total)), y=~total, 
+        color=~taxa) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of taxa (by Kilograms)</b>",
+         xaxis= list(title= "<b> Taxa </b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+
+```
+
 
 ### class
 **It represents the EHA-derived class-level taxonomic designation**
@@ -1169,15 +1189,79 @@ DT::datatable(genus,
   formatPercentage('percentage',2)
   
 genus %>% mutate(percentage=percentage*100) %>%
-  top_n(20, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(genus, desc(percentage)), y=~percentage, 
         color=~genus) %>% 
   add_bars() %>%
-  layout(title = "<b>Genus (or higher-level taxonomic name) of the wildlife product (Top 20)</b>",
+  layout(title = "<b>Genus (or higher-level taxonomic name) of the wildlife product (Top 15)</b>",
          xaxis= list(title= "<b>Genus</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
 
 rm(genus)
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+genus_species<- data %>%
+  filter(genus %in% c("Pinctada", "Alligator", "Ursus", "Python", "Mustela")) %>%
+  group_by(genus, species) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(genus, desc(percentage)) 
+
+genus_species<- droplevels(genus_species)
+
+plot_ly(genus_species, x=~genus, 
+                            y=~percentage, group= ~species, 
+                            type="bar", color=~species) %>%
+  layout(title = "<b>Common species by genus</b>",
+         xaxis= list(title= "<b>Genus</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+
+genus_description<- data %>%
+  filter(genus %in% c("Pinctada", "Alligator", "Ursus", "Python", "Mustela")) %>%
+  group_by(genus, description) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(genus, desc(percentage)) %>%
+  top_n(3, percentage)
+
+rm(genus_species,genus_description)
+
+```
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Genus  by quantity
+# We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
+
+data %>% 
+  filter(unit=="Number") %>%
+  group_by(genus, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(genus, desc(total)), y=~total, 
+        color=~genus) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of genus (by number) </b>",
+         xaxis= list(title= "<b> Genus </b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+data %>% 
+  filter(unit=="Kilograms") %>%
+  group_by(genus, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(genus, desc(total)), y=~total, 
+        color=~genus) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of genus (by Kilograms)</b>",
+         xaxis= list(title= "<b> Genus </b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+
 ```
 
 ### species
@@ -1215,18 +1299,100 @@ DT::datatable(species,
   formatPercentage('percentage',2)
   
 species %>% mutate(percentage=percentage*100) %>%
-  top_n(20, percentage) %>%
+  top_n(15, percentage) %>%
   plot_ly(x=~reorder(species, desc(percentage)), y=~percentage, 
         color=~species) %>% 
   add_bars() %>%
-  layout(title = "<b>Species of the wildlife product (Top 20)</b>",
+  layout(title = "<b>Species of the wildlife product (Top 15)</b>",
          xaxis= list(title= "<b>Species</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Percentage</b>"))
+
 
 # Combine genus + species in the dataset
 data <- data %>% mutate(species = as.factor(paste(genus, "-",species)))
 
 rm(species)
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+species_description<- data %>%
+  filter(species %in% c("Alligator - mississippiensis", "Ursus - americanus", 
+                      "Mustela - vison", "Struthio - camelus", 
+                      "Pinctada - margaritifera")) %>%
+  group_by(species, description) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(species, desc(percentage)) %>%
+  top_n(3, percentage)
+
+species_description<- droplevels(species_description)
+
+plot_ly(species_description, x=~species, 
+                            y=~percentage, group= ~description, 
+                            type="bar", color=~description) %>%
+  layout(title = "<b>Common descriptions by species</b>",
+         xaxis= list(title= "<b>Species</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+species_source<- data %>%
+  filter(species %in% c("Alligator - mississippiensis", "Ursus - americanus", 
+                      "Mustela - vison", "Struthio - camelus", 
+                      "Pinctada - margaritifera")) %>%
+  group_by(species, source) %>%
+  dplyr::summarise(n=n()) %>%
+  mutate(percentage = n/sum(n)*100) %>%
+  arrange(species, desc(percentage)) %>%
+  top_n(3, percentage)
+
+species_source<- droplevels(species_source)
+
+plot_ly(species_source, x=~species, 
+                            y=~percentage, group= ~source, 
+                            type="bar", color=~source) %>%
+  layout(title = "<b>Common sources by species</b>",
+         xaxis= list(title= "<b>Species</b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+
+rm(species_description,species_source)
+```
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
+# Species  by quantity
+# We'll only include in the analysis those items measured in "number" and "kg" units, because they represent 99.45% of the data. 
+
+data %>% 
+  filter(!grepl('maxima|sp.|in trop fish &|(marine sp.)|
+                (freshwater sp.)|(including goldfish)|NA - NA', species)) %>%
+  filter(unit=="Number") %>%
+  group_by(species, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(species, desc(total)), y=~total, 
+        color=~species) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of species (by number) </b>",
+         xaxis= list(title= "<b> Species </b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
+data %>% 
+  filter(!grepl('maxima|sp.|in trop fish &|(marine sp.)|
+                (freshwater sp.)|(including goldfish)|NA - NA', species)) %>%
+  filter(unit=="Kilograms") %>%
+  group_by(species, unit) %>%
+  summarise(total = sum(quantity))  %>%
+  arrange(desc(total)) %>%
+  ungroup() %>%
+  top_n(15, total) %>%
+  plot_ly(x=~reorder(species, desc(total)), y=~total, 
+        color=~species) %>% 
+  add_bars() %>%
+  layout(title = "<b>Most common type of species (by Kilograms)</b>",
+         xaxis= list(title= "<b> Species </b>" ,tickangle=-65),
+         yaxis = list(title = "<b>Total</b>"))
+
 ```
 
 ### subspecies

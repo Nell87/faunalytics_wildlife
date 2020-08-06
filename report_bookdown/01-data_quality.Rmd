@@ -67,7 +67,10 @@ missing_value<- data %>%
 
 ggplot(data=missing_value, aes(x=shipment_year, y=percentage, fill=key)) +
   geom_bar(position = "dodge", stat = "identity") +
-  theme_bw() +  facet_grid(~shipment_year,scales = "free_x") +   scale_fill_manual(values=c("springgreen4", "rosybrown"))
+  theme_bw() +  facet_grid(~shipment_year,scales = "free_x") +   
+  scale_fill_manual(values=c("springgreen4", "rosybrown")) +
+  labs(title = "Missing values in the import (dollars) per shipment year")
+
 
 rm(missing_value)
 ```
@@ -157,7 +160,7 @@ rm(classes, animalia_kingdom, bacterias_kingdom, chromista_kingdom,
 ```
 
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-# Renaming 
+# RENAMING
 data <- data %>% 
   
   # Renaming units
@@ -297,9 +300,149 @@ data <- data %>%
                                    "P" = "Others", 
                                    "non-standard value" = "Others"))
 
-# To factor
+# NEW VARIABLES
+# Corporations
+data$corporation<- # Fashion/Luxury/Design products 
+                   ifelse(grepl("prada", data$us_co, ignore.case = TRUE), "Prada", 
+                   ifelse(grepl("ralph lauren", data$us_co, ignore.case = TRUE), 
+                          "Ralph Lauren", 
+                   ifelse(grepl("LOUIS VUITTON", data$us_co, ignore.case = TRUE), 
+                          "Louis Vuitton",
+                   ifelse(grepl("MONCLER", data$us_co, ignore.case = TRUE), 
+                          "Moncler",
+                   ifelse(grepl("BOTTEGA VENETA", data$us_co, ignore.case = TRUE), 
+                          "Bottega Veneta",                         
+                   ifelse(grepl("RICHEMONT", data$us_co, ignore.case = TRUE), 
+                          "Richemont",   
+                   ifelse(grepl("FENDI", data$us_co, ignore.case = TRUE), 
+                          "Fendi", 
+                   ifelse(grepl("HERMES", data$us_co, ignore.case = TRUE), 
+                          "Hermès",
+                   ifelse(grepl("GUCCI", data$us_co, ignore.case = TRUE), 
+                          "Gucci",
+                   ifelse(grepl("Beeline", data$us_co, ignore.case = TRUE), 
+                          "Beeline Group",    
+                   ifelse(grepl("fossil partner", data$us_co, ignore.case = TRUE), 
+                          "Fossil Partners, L.P.",         
+                   ifelse(grepl("dfs", data$us_co, ignore.case = TRUE), 
+                          "DFS Group",      
+                   ifelse(grepl("gluck", data$us_co, ignore.case = TRUE), 
+                          "E. Gluck Corporation",     
+                   ifelse(grepl("ferragamo", data$us_co, ignore.case = TRUE), 
+                          "Salvatore Ferragamo",                               
+                   ifelse(grepl("jacadi", data$us_co, ignore.case = TRUE), 
+                          "Jacadi",    
+                   ifelse(grepl("bomac", data$us_co, ignore.case = TRUE), 
+                          "Bomac International Corp",                           
+                   ifelse(data$us_co %in% c("PIER I IMPORTS, INC.", 
+                                            "PIER 1 IMPORTS, INC.	"), 
+                          "Pier 1",  
+                          
+                   # Museums
+                   ifelse(grepl("museum", data$us_co, ignore.case = TRUE), 
+                          "Museums", 
+                   ifelse(grepl("smithsonian", data$us_co, ignore.case = TRUE), 
+                          "Museums",                           
+                          
+                   # Animals or animal products providers   
+                   ifelse(grepl("SEA DWELLING", data$us_co, ignore.case = TRUE), 
+                          "Sea Dwelling creatures",   
+                   ifelse(grepl("HIPPOCAMPE", data$us_co, ignore.case = TRUE), 
+                          "Hippocampe USA", 
+                   ifelse(grepl("AQUA-NAUTIC", data$us_co, ignore.case = TRUE), 
+                          "Aqua Nautic Specialist", 
+                   ifelse(grepl("UNDERWATER WORLD", data$us_co, ignore.case = TRUE), 
+                          "Underwater World",
+                   ifelse(grepl("GOLDEN INA", data$us_co, ignore.case = TRUE), 
+                          "Golden Ina",
+                   ifelse(grepl("QUALITY MARINE", data$us_co, ignore.case = TRUE), 
+                          "Quality Marine",
+                   ifelse(grepl("Arsian", data$us_co, ignore.case = TRUE), 
+                          "Arsian Imports",      
+                   ifelse(grepl("aquarium arts", data$us_co, ignore.case = TRUE), 
+                          "Aquarium Arts", 
+                   ifelse(grepl("WALT SMITH", data$us_co, ignore.case = TRUE), 
+                          "Walt Smith International", 
+                   ifelse(grepl("all seas fisheries", data$us_co, ignore.case = TRUE), 
+                          "Allseas Fisheries",        
+                   ifelse(grepl("sun pet ltd", data$us_co, ignore.case = TRUE), 
+                          "Sun Pet LTD",         
+                   ifelse(grepl("pacific aqua farms", data$us_co, ignore.case = TRUE), 
+                          "Pacific Aquafarms",  
+                   ifelse(grepl("INTINENTAL", data$us_co, ignore.case = TRUE), 
+                          "Intinental Pri",                    
+                   ifelse(grepl("AQUACO", data$us_co, ignore.case = TRUE), 
+                          "Aquaco",                       
+                   ifelse(grepl("all seas marine", data$us_co, ignore.case = TRUE), 
+                          "Allseas Marine",                    
+                   ifelse(grepl("transship discounts", data$us_co, ignore.case = TRUE), 
+                          "Transship Discounts LTD",     
+                   ifelse(grepl("SEGREST FARMS", data$us_co, ignore.case = TRUE), 
+                          "Segrest Farms",  
+                   ifelse(grepl("fish head", data$us_co, ignore.case = TRUE), 
+                          "Fish Heads Inc",     
+                   ifelse(grepl("holiday coral", data$us_co, ignore.case = TRUE), 
+                          "Holiday Coral Inc",                           
+                   ifelse(grepl("pacific island imp", data$us_co, ignore.case = TRUE), 
+                          "Pacific Island Imports",     
+                   ifelse(grepl("PAN OCEAN AQUARIUM", data$us_co, ignore.case = TRUE), 
+                          "Pan Ocean Aquarium, Inc",   
+                   ifelse(grepl("SALTWATER INC.", data$us_co, ignore.case = TRUE), 
+                          "Saltwater Inc",      
+                   ifelse(grepl("saltwaterfish", data$us_co, ignore.case = TRUE), 
+                          "Saltwaterfish",         
+                   ifelse(grepl("golden sea int", data$us_co, ignore.case = TRUE), 
+                          "Golden Sea Inc",                           
+                   ifelse(grepl("strictly reptiles", data$us_co, ignore.case = TRUE), 
+                          "Strictly Reptiles Inc",                            
+                   ifelse(grepl("emark tropical", data$us_co, ignore.case = TRUE), 
+                          "Emark Tropical Imports, Inc",                              
+                          	
+                   ifelse(data$us_co %in% c("DOLPHIN INTERNATIONAL", "DOLPHIN INT'L",
+                                            "DOLPHIN INTERNAITONAL"), 
+                          "Dolphin International", 
+                   ifelse(data$us_co %in% c("a & m aquatics", "A&M AQUATICS"), 
+                          "A&M Aquatics",           
+                   ifelse(data$us_co %in% c("LPS LLC", "LPS, LLC", "LPS"), 
+                          "LPS LLC",    
+                   ifelse(data$us_co %in% c("APET, INC", "APET INC"), 
+                          "Apet Inc",   
+
+                          "Other")))))))))))))))))))))))))))))))))))))))))))))))))
+
+
+## Let's classify these corporations
+corp_fashion<- c("Beeline Group", "Bomac International Corp", "Bottega Veneta", 
+                 "DFS Group","E. Gluck Corporation", "Fendi", 
+                 "Fossil Partners, L.P.", "Gucci", "Hermès", "Jacadi", 
+                 "Louis Vuitton","Moncler", "Pier 1","Prada", "Ralph Lauren",
+                 "Richemont", "Salvatore Ferragamo")
+
+corp_animalproviders<-c("A&M Aquatics", "Aqua Nautic Specialist", "Aquaco",
+                        "Aquarium Arts", "Allseas Fisheries", "Allseas Marine",
+                        "Apet Inc", "Arsian Imports", "Dolphin International",
+                        "Emark Tropical Imports, Inc", "Fish Heads Inc",
+                        "Golden Ina", "Golden Sea Inc", "Hippocampe USA",
+                        "Holiday Coral Inc", "Intinental Pri", "LPS LLC",
+                        "Pacific Aquafarms", "Pacific Island Imports",
+                        "Pan Ocean Aquarium, Inc", "Quality Marine",
+                        "Saltwater Inc", "Saltwaterfish", "Sea Dwelling creatures",
+                        "Segrest Farms", "Strictly Reptiles Inc", "Sun Pet LTD",
+                        "Transship Discounts LTD", "Underwater World",
+                        "Walt Smith International")
+
+data$corp_classif<- ifelse(data$corporation %in% corp_fashion, "Fashion/Luxury/Design",
+                    ifelse(data$corporation %in% corp_animalproviders, 
+                           "Animal/animal prod. providers", 
+                    ifelse(data$corporation %in% "Museums", "Museums", "Others"))) 
+
+rm(corp_animalproviders, corp_fashion)
+
+# TO FACTOR
 data$country_imp_exp<- as.factor(data$country_imp_exp)
 data$country_origin<-as.factor(data$country_origin)
+data$corporation<-as.factor(data$corporation)
+data$corp_classif<- as.factor(data$corp_classif)
 
 ```
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}

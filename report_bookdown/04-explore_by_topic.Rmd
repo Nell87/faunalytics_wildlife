@@ -14,13 +14,16 @@ DT::datatable(total_bytaxa,
               ))) %>%
   formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
-total_bytaxa %>% 
+dollars_taxa<-total_bytaxa %>% 
   plot_ly(x=~reorder(taxa, desc(value)), y=~value, 
         color=~taxa) %>% 
   add_bars() %>%
   layout(title = "<b>Import (US dollars) by taxa</b>",
          xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
          yaxis = list(title = "<b>US dollars</b>"))
+
+saveWidget(dollars_taxa, file="dollars_taxa.html")
+
 
 rm(total_bytaxa)
 ```
