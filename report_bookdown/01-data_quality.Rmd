@@ -69,7 +69,7 @@ ggplot(data=missing_value, aes(x=shipment_year, y=percentage, fill=key)) +
   geom_bar(position = "dodge", stat = "identity") +
   theme_bw() +  facet_grid(~shipment_year,scales = "free_x") +   
   scale_fill_manual(values=c("springgreen4", "rosybrown")) +
-  labs(title = "Missing values in the import (dollars) per shipment year")
+  labs(title = "Figure 41: Missing values in the import (dollars) per shipment year")
 
 
 rm(missing_value)

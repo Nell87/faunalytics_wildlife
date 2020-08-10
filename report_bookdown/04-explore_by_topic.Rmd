@@ -14,19 +14,32 @@ DT::datatable(total_bytaxa,
               ))) %>%
   formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
-dollars_taxa<-total_bytaxa %>% 
+total_bytaxa %>% 
   plot_ly(x=~reorder(taxa, desc(value)), y=~value, 
         color=~taxa) %>% 
   add_bars() %>%
-  layout(title = "<b>Import (US dollars) by taxa</b>",
+  layout(title = "<b>Figure 47: Import (US dollars) by taxa</b>",
          xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
          yaxis = list(title = "<b>US dollars</b>"))
-
-saveWidget(dollars_taxa, file="dollars_taxa.html")
 
 
 rm(total_bytaxa)
 ```
+## Total import (US dollars) by taxa & description (Top 5). 
+
+```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
+total_bytaxa_descrip<- data %>% 
+  filter(taxa %in% c("mammal", "shell", "reptile", 
+                            "fish", "insect")) %>%
+  group_by(taxa, description) %>%
+  filter(!is.na(value))  %>%
+  summarise(value=sum(as.numeric(value))) %>%
+  mutate(percentage = value/sum(value)*100) %>%
+  arrange(desc(value)) %>%
+  top_n(3, value)
+
+```
+
 
 ## Average import (US dollars) by taxa (for those with number and kg units)
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
@@ -47,16 +60,16 @@ DT::datatable(average_bytaxa,
   formatCurrency('import_median_per_unit', currency = "$",interval = 3, mark = ",") 
 
 average_bytaxa[average_bytaxa$unit== "Number", ] %>%
-  plot_ly(x=~reorder(taxa, desc(import_median_per_unit)), y=~import_median_per_unit) %>% 
+  plot_ly(x=~reorder(taxa, desc(import_median_per_unit)), y=~import_median_per_unit, color=~taxa) %>% 
   add_bars() %>%
-  layout(title = "<b>Average import per unit by taxa (items measured by numbers)</b>",
+  layout(title = "<b>Figure 48: Average import per unit by taxa (items measured by numbers)</b>",
          xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Average import (US dollars)</b>"))
 
 average_bytaxa[average_bytaxa$unit== "Kilograms", ] %>%
-  plot_ly(x=~reorder(taxa, desc(import_median_per_unit)), y=~import_median_per_unit) %>% 
+  plot_ly(x=~reorder(taxa, desc(import_median_per_unit)), y=~import_median_per_unit,color=~taxa) %>% 
   add_bars() %>%
-  layout(title = "<b>Average import per unit by taxa (items measured by Kilograms)</b>",
+  layout(title = "<b>Figure 49: Average import per unit by taxa (items measured by Kilograms)</b>",
          xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Average import (US dollars)</b>"))  
 
@@ -78,12 +91,12 @@ DT::datatable(value_bydescription,
   formatCurrency('value', currency = "$",interval = 3, mark = ",") 
 
 value_bydescription %>% 
-  top_n(20) %>%
+  top_n(15) %>%
   plot_ly(x=~reorder(description, desc(value)), y=~value, 
         color=~description) %>% 
   add_bars() %>%
-  layout(title = "<b>Import (US dollars) by description (Top 20)</b>",
-         xaxis= list(title= "<b>Taxa</b>" ,tickangle=-65),
+  layout(title = "<b>Figure 50: Import (US dollars) by description (Top 15)</b>",
+         xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
          yaxis = list(title = "<b>US dollars</b>"))
 
 rm(value_bydescription)
@@ -92,6 +105,9 @@ rm(value_bydescription)
 ## Average import (US dollars) by description (for those with number and kg units)
 ```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE, out.width='90%'}
 average_bydescription<- data %>% 
+  group_by(description) %>%
+  filter(n()>=10)  %>%
+  ungroup() %>%
   filter(unit=="Number"| unit=="Kilograms") %>%
   group_by(description, unit) %>%
   filter(!is.na(value))  %>%
@@ -111,18 +127,18 @@ DT::datatable(average_bydescription,
 average_bydescription[average_bydescription$unit== "Number", ] %>%
   ungroup()%>%
   top_n(15, import_median_per_unit) %>%
-  plot_ly(x=~reorder(description, desc(import_median_per_unit)), y=~import_median_per_unit) %>% 
+  plot_ly(x=~reorder(description, desc(import_median_per_unit)), y=~import_median_per_unit, color=~description) %>% 
   add_bars() %>%
-  layout(title = "<b>Average import per unit by description (items measured by numbers)</b>",
+  layout(title = "<b>Figure 51: Average import per unit by description (items measured by numbers)</b>",
          xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Average import (US dollars)</b>"))
 
 average_bydescription[average_bydescription$unit== "Kilograms", ] %>%
   ungroup()%>%
   top_n(15, import_median_per_unit) %>%
-  plot_ly(x=~reorder(description, desc(import_median_per_unit)), y=~import_median_per_unit) %>% 
+  plot_ly(x=~reorder(description, desc(import_median_per_unit)), y=~import_median_per_unit, color=~description) %>% 
   add_bars() %>%
-  layout(title = "<b>Average import per unit by description (items measured by Kilograms)</b>",
+  layout(title = "<b>Figure 52: Average import per unit by description (items measured by Kilograms)</b>",
          xaxis= list(title= "<b>Description</b>" ,tickangle=-65),
          yaxis = list(title = "<b>Average import (US dollars)</b>"))  
 
