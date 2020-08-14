@@ -3,7 +3,24 @@
 
 The aim of this study is to analyze United States wildlife and wildlife product imports. For this purpose, we reviewed 15 years (2000-2014) of data from the Law Enforcement Managment Information System (LEMIS), originally collected by the United States Fish and Wildlife Service (USFWS), cleaned, standardized and stored into a R package called lemis by EcoHealth Alliance. You can find more information about this dataset [Here](https://www.nature.com/articles/s41597-020-0354-5).
 
-## METHOD AND DATA INCLUDED
+## KEY FINDINGS
+- 1. **The description “live specimens” and “trophies” was ranked as the first two based on the number of segments.** Although jewelry and shells were the items with a higher number of items and meat was the item with a higher amount of kg. 
+
+- 2. **Most of the items were “specimens taken from the wild” and imported for "commercial" reasons.**
+
+- 3. **Most problematic countries were Indonesia, Canada, South Africa and The Philippines.** All of them are in the top five countries of origin and in the top five countries of export.  The top five ports of entry (Los Angeles, New York, Miami, Newark and San Francisco) were all designated ports.
+
+
+- 4. **Half of the segments involved mammals and shells.** And the top-five genus levels were Pinctada, Alligator, Ursus, Python and Mustela.
+
+- 5. **98.28% of segments were legally declared, just 1.73% was refused.** Most of the refused shipments included items related with mammals and reptiles. They have been decreasing slightly since 2009.
+
+- 6. **We can see a clear upward trend in the number of shipments from 2000 to 2006.** Then, the curve reached its peak, decreased a bit, and started leveling off. On average, there is a higher average of shipments between August and November.
+
+- 7. **There has been an upward trend in the amount of dollars spent from 2000 to 2012.** Related to the taxa, Items that involve mammals, shells and reptiles generate the highest amount of money throughout the years, while items that involve annelids and spiders generate the lowest amount of money. Related to the type of product, Items that involve shell products, garment and live specimens have generated a high amount of money throughout the years, although items that involve dead animals and meat have increased dramatically the amount of money since 2008.
+
+
+METHOD AND DATA INCLUDED
 The data collected by EcoHealth Alliance includes records of plants, microorganisms and animals, among others. For this analysis, we'll exclude those elements belonging to fungi, plantae, bacteria, chromista and unspecified kingdoms, considering only those organisms of the Kingdom Animalia. 
 
 Between January 01, 2000, and December 31, 2014, around **2 million wildlife shipments were imported into the United States**, involving around 11,5 billions of wildlife items plus 1,1 billion kg of wildlife items only measured in weight.  
@@ -19,11 +36,6 @@ We carried out three types of analyses:
 - (2) We analyzed general trends: number of shipments, percentage of refused shipments, money spent and amount of items. 
 
 - (3) We analyzed the amount of money spent based on different categories
-
-## KEY FINDINGS
-
-
-
 
 ## EXPLORATORY ANALYSIS
 A total of 2,079,637 unique shipments containing 5,451,832 segments were identified between January 01, 2000, and December 31, 2014. 
@@ -150,7 +162,7 @@ The top-five corporations related to fashion, luxury and design are Prada, Herm�
 The variables related to the taxa, genus and species provide us information to identify the wildlife or wildlife product. 
 
 #### Taxa level
-**The taxa represents the USFWS-derived broad taxonomic categorization**.Using the provided "species_code" field and USFWS keys. It doesn't represent a consistent biological classification scheme but a way of categorizing groups of organisms in the trade. 
+**The taxa represents the USFWS-derived broad taxonomic categorization** (using the provided "species_code" field and USFWS keys). It doesn't represent a consistent biological classification scheme but a way of categorizing groups of organisms in the trade. 
 
 In total, 13 different taxa categories were used in this dataset. **Based on the segments**, the top-five taxa levels were mammal (29%), shell (20%), reptile (13%), coral (12%) and fish (8%) (Figure 25). 
 
@@ -290,9 +302,13 @@ Although, if we analyzed the data based on the average import, items that involv
 
 Although, if we analyzed the data based on the average import, items that involved shell products  had the highest average import by unit (Figure 51). And items that involved piano with ivory keys and calipees had the highest average import by kg (Figure 52).  
 
+## LIMITATIONS
+As with all studies, there are some limitations we should bear in mind. First, the LEMIS dataset covers only those imports cleared and refused by the wildlife inspectors. So, there will be many illegal shipments not included in this analysis. Second, there is a lack of  precision in the species analysis because part of the data includes missing values and generic identifiers like “sp”, “tropical fish” or “marine sp.” Third, we don’t know how representative this study is of the international trade in wildlife, since the LEMIS dataset is only focused on the imports into the EEUU.
 
-### Pending info
-- **54% of dispositions took place within a month of the shipment date (most of them within a week)**
+Despite these limitations, we hope these results can help to understand more deeply the situation of wildlife trafficking into the EEUU and take things a step further understanding the big picture of the global trade of wildlife. 
+
+
+
 
 
 
