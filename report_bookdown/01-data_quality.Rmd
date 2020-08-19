@@ -445,7 +445,4 @@ data$corporation<-as.factor(data$corporation)
 data$corp_classif<- as.factor(data$corp_classif)
 
 ```
-```{r eval=TRUE, echo=TRUE, warning=FALSE, include=TRUE}
-### Defining functions
 
-```

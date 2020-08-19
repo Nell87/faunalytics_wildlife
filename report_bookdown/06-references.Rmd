@@ -1,8 +1,0 @@
-`r if (knitr::is_html_output()) '
-# References {-}
-'`
-**Sources:** 
-
-* https://www.iucnredlist.org/ 
-* http://www.catalogueoflife.org/ 
-* https://plants.usda.gov/classification.html 
