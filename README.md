@@ -1,5 +1,6 @@
 # FAUNALYTICS WILDLIFE
-In this project, we will be working with an existing dataset to produce estimates of the imports of various wildlife and wildlife products year-over-year
+In this project, we will be working with an existing dataset to produce estimates of the imports of various wildlife and wildlife products year-over-year.
+Here it's the final report Faunalytics created with this analysis: https://faunalytics.org/wildlife-imports/
 
 ## USAGE
 
